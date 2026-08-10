@@ -5,6 +5,48 @@
 
 ---
 
+## Sessão 3 — 10/08/2026 — Banco no ar
+
+### ⚠️ O VPN do trabalho bloqueia o banco
+
+Se `npm run db:migrate` ou o site local travar com `CONNECT_TIMEOUT`, **a causa
+quase certa é o GlobalProtect ligado**. Desconecte e tente de novo.
+
+O diagnóstico já foi feito por completo, não precisa refazer: DNS resolve, a
+porta 5432 abre em 35ms e o projeto responde por HTTPS — mas a conversa do
+Postgres trava sem resposta. O adaptador `PANGP Virtual Ethernet Adapter`
+(rede `tjgo.gov`) deixa passar navegação e descarta tráfego de banco. Não é
+SSL, não é o endereço do pooler e não é o Supabase.
+
+Isso atrapalha só o desenvolvimento nesta máquina. Na Vercel a rede é outra.
+
+### Valores gravados na configuração da loja
+
+| Campo    | Valor           | Observação                                          |
+| -------- | --------------- | --------------------------------------------------- |
+| Nome     | Paiva Swimwear  |                                                     |
+| Cidade   | Goiânia         |                                                     |
+| WhatsApp | `5562999802030` | Só números, com o 55 na frente. `wa.me/5562999802030` |
+| Entrega  | `0` centavos    | **Zero significa "a combinar"**, como é hoje.        |
+
+Ela muda os quatro pelo painel; o arquivo de migração não é mexido de novo.
+
+### Conferido, funcionando
+
+- Banco: 5 tabelas, **todas com RLS ligado e zero políticas** (ninguém acessa
+  de fora, só o nosso servidor). 3 migrações registradas.
+- Vitrine em `/` lendo o banco e mostrando o nome da loja e a cidade.
+- `/admin` sem login redireciona (307) para `/admin/login`. Proteção ok.
+- Formulário de login com os campos de e-mail e senha.
+
+### Pendência de segurança
+
+**A senha do banco não foi trocada.** O `.env.local` está com a senha que passou
+pelo chat. Trocar em _Project Settings > Database > Reset database password_,
+atualizar o `.env.local` e, quando existir, a variável na Vercel.
+
+---
+
 ## Sessão 2 — 10/08/2026 — GitHub fechado, modelo do catálogo
 
 ### Decisões tomadas
