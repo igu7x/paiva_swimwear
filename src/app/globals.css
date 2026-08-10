@@ -1,1 +1,30 @@
 @import "tailwindcss";
+
+/*
+  Base provisória.
+
+  Isto NÃO é a identidade visual da loja — é só o suficiente para as telas não
+  ficarem ilegíveis enquanto a fundação sobe. A direção visual de verdade vem na
+  Etapa 2, depois de conversarmos sobre a marca.
+*/
+
+@theme {
+  --color-areia: #faf7f4;
+  --color-tinta: #1c1917;
+  --color-suave: #78716c;
+  --color-linha: #e7e2dd;
+}
+
+html {
+  /* Evita o zoom automático do iPhone ao tocar num campo de formulário. */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-areia);
+  color: var(--color-tinta);
+  font-family:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
