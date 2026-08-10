@@ -24,7 +24,7 @@ export default async function Home() {
         {config ? config.cidade : "Carregando"}
       </p>
 
-      <h1 className="mt-3 text-4xl font-light tracking-tight">
+      <h1 className="font-serif mt-3 text-4xl">
         {config ? config.nomeLoja : "Loja"}
       </h1>
 
