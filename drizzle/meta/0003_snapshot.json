@@ -1,0 +1,420 @@
+{
+  "id": "90fbb175-4b36-4201-a4d0-9f3a5c65209c",
+  "prevId": "8e2f250e-3385-4b96-a667-f7c5177e261f",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.config_loja": {
+      "name": "config_loja",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "default": 1
+        },
+        "nome_loja": {
+          "name": "nome_loja",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cidade": {
+          "name": "cidade",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "whatsapp": {
+          "name": "whatsapp",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "frete_centavos": {
+          "name": "frete_centavos",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "atualizado_em": {
+          "name": "atualizado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "config_loja_linha_unica": {
+          "name": "config_loja_linha_unica",
+          "value": "\"config_loja\".\"id\" = 1"
+        }
+      },
+      "isRLSEnabled": true
+    },
+    "public.estoque": {
+      "name": "estoque",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "estoque_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "variacao_id": {
+          "name": "variacao_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tamanho": {
+          "name": "tamanho",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quantidade": {
+          "name": "quantidade",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "estoque_variacao_id_variacoes_id_fk": {
+          "name": "estoque_variacao_id_variacoes_id_fk",
+          "tableFrom": "estoque",
+          "tableTo": "variacoes",
+          "columnsFrom": [
+            "variacao_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "estoque_tamanho_por_variacao": {
+          "name": "estoque_tamanho_por_variacao",
+          "nullsNotDistinct": false,
+          "columns": [
+            "variacao_id",
+            "tamanho"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "estoque_quantidade_nao_negativa": {
+          "name": "estoque_quantidade_nao_negativa",
+          "value": "\"estoque\".\"quantidade\" >= 0"
+        }
+      },
+      "isRLSEnabled": true
+    },
+    "public.fotos": {
+      "name": "fotos",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "fotos_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "produto_id": {
+          "name": "produto_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "variacao_id": {
+          "name": "variacao_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "caminho": {
+          "name": "caminho",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "posicao": {
+          "name": "posicao",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "fotos_produto_id_produtos_id_fk": {
+          "name": "fotos_produto_id_produtos_id_fk",
+          "tableFrom": "fotos",
+          "tableTo": "produtos",
+          "columnsFrom": [
+            "produto_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "fotos_variacao_do_mesmo_produto": {
+          "name": "fotos_variacao_do_mesmo_produto",
+          "tableFrom": "fotos",
+          "tableTo": "variacoes",
+          "columnsFrom": [
+            "variacao_id",
+            "produto_id"
+          ],
+          "columnsTo": [
+            "id",
+            "produto_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": true
+    },
+    "public.produtos": {
+      "name": "produtos",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "produtos_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "nome": {
+          "name": "nome",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "descricao": {
+          "name": "descricao",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "''"
+        },
+        "preco_centavos": {
+          "name": "preco_centavos",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ativo": {
+          "name": "ativo",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "atualizado_em": {
+          "name": "atualizado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "produtos_slug_unique": {
+          "name": "produtos_slug_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "slug"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "produtos_preco_positivo": {
+          "name": "produtos_preco_positivo",
+          "value": "\"produtos\".\"preco_centavos\" > 0"
+        }
+      },
+      "isRLSEnabled": true
+    },
+    "public.variacoes": {
+      "name": "variacoes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "variacoes_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "produto_id": {
+          "name": "produto_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nome": {
+          "name": "nome",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "posicao": {
+          "name": "posicao",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "variacoes_produto_id_produtos_id_fk": {
+          "name": "variacoes_produto_id_produtos_id_fk",
+          "tableFrom": "variacoes",
+          "tableTo": "produtos",
+          "columnsFrom": [
+            "produto_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "variacoes_nome_por_produto": {
+          "name": "variacoes_nome_por_produto",
+          "nullsNotDistinct": false,
+          "columns": [
+            "produto_id",
+            "nome"
+          ]
+        },
+        "variacoes_id_com_produto": {
+          "name": "variacoes_id_com_produto",
+          "nullsNotDistinct": false,
+          "columns": [
+            "id",
+            "produto_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": true
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

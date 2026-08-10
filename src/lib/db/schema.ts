@@ -2,6 +2,7 @@ import { relations, sql } from "drizzle-orm";
 import {
   boolean,
   check,
+  foreignKey,
   integer,
   pgTable,
   text,
@@ -134,35 +135,64 @@ export const variacoes = pgTable(
       .defaultNow(),
   },
   (t) => [
-    // Duas estampas "Coral" no mesmo produto seria erro de digitação dela.
+    // Duas cores "Terracota" no mesmo produto seria erro de digitação dela.
     unique("variacoes_nome_por_produto").on(t.produtoId, t.nome),
+    // Só existe para a tabela `fotos` conseguir apontar para o par
+    // (variação, produto) de uma vez. Ver o comentário lá embaixo.
+    unique("variacoes_id_com_produto").on(t.id, t.produtoId),
   ],
 ).enableRLS();
 
 /**
- * As fotos de uma variação.
+ * As fotos.
+ *
+ * Toda foto pertence a um produto. Ela PODE pertencer também a uma cor:
+ *
+ *   variacao_id preenchido  → foto daquela cor (o "Terracota" no cabide)
+ *   variacao_id vazio       → foto do produto inteiro: a capa, a arte com
+ *                             modelo, a foto de detalhe do tecido
+ *
+ * Essa segunda linha veio das artes reais da loja: a capa do Asa Delta é uma
+ * foto azul, e azul nem está entre as cores à venda. Uma foto assim não teria
+ * onde morar se toda foto fosse obrigada a ter dono entre as cores.
  *
  * `caminho` não é o endereço completo da imagem, é o caminho dentro do
- * armazenamento do Supabase (algo como `produtos/marina/coral-1.jpg`). Guardar
- * o caminho em vez da URL inteira é o que permite trocar de provedor de imagem
- * um dia sem reescrever todas as linhas da tabela.
+ * armazenamento do Supabase (algo como `produtos/asa-delta/terracota-1.jpg`).
+ * Guardar o caminho em vez da URL inteira é o que permite trocar de provedor de
+ * imagem um dia sem reescrever todas as linhas da tabela.
  *
- * A foto de `posicao` 0 é a capa: é ela que aparece na vitrine e no link do
- * WhatsApp.
+ * A foto de `posicao` 0 é a capa: é ela que aparece na vitrine e na prévia do
+ * link mandado no WhatsApp.
  */
 export const fotos = pgTable(
   "fotos",
   {
     id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-    variacaoId: integer("variacao_id")
+    produtoId: integer("produto_id")
       .notNull()
-      .references(() => variacoes.id, { onDelete: "cascade" }),
+      .references(() => produtos.id, { onDelete: "cascade" }),
+    // Sem `.notNull()`: vazio significa "foto do produto, não de uma cor".
+    variacaoId: integer("variacao_id"),
     caminho: text("caminho").notNull(),
     posicao: integer("posicao").notNull().default(0),
     criadoEm: timestamp("criado_em", { withTimezone: true })
       .notNull()
       .defaultNow(),
   },
+  (t) => [
+    // Aponta para as DUAS colunas ao mesmo tempo, e não só para variacao_id.
+    // Assim o banco garante que a cor da foto pertence ao mesmo produto da
+    // foto — sem isso, um defeito no código poderia pendurar a foto do Asa
+    // Delta numa cor do Fio Duplo, e a cliente veria a peça errada.
+    //
+    // Quando variacao_id está vazio, o Postgres não checa nada — que é
+    // exatamente o que queremos para as fotos de capa.
+    foreignKey({
+      columns: [t.variacaoId, t.produtoId],
+      foreignColumns: [variacoes.id, variacoes.produtoId],
+      name: "fotos_variacao_do_mesmo_produto",
+    }).onDelete("cascade"),
+  ],
 ).enableRLS();
 
 /**
@@ -206,6 +236,7 @@ export const estoque = pgTable(
 
 export const produtosRelacoes = relations(produtos, ({ many }) => ({
   variacoes: many(variacoes),
+  fotos: many(fotos),
 }));
 
 export const variacoesRelacoes = relations(variacoes, ({ one, many }) => ({
@@ -218,6 +249,10 @@ export const variacoesRelacoes = relations(variacoes, ({ one, many }) => ({
 }));
 
 export const fotosRelacoes = relations(fotos, ({ one }) => ({
+  produto: one(produtos, {
+    fields: [fotos.produtoId],
+    references: [produtos.id],
+  }),
   variacao: one(variacoes, {
     fields: [fotos.variacaoId],
     references: [variacoes.id],
