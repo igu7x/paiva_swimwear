@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { cache } from "react";
 
 import { ambienteSupabase } from "./ambiente";
 
@@ -39,11 +40,21 @@ export async function criarClienteSupabase() {
  * servidor do Supabase se o login ainda vale. O getSession só olha o cookie,
  * que é um dado que veio do navegador e portanto não serve para decidir
  * permissão.
+ *
+ * O `cache()` em volta é o que impede essa pergunta de ser feita várias vezes
+ * na mesma visita. O layout do painel precisa dela para barrar quem não está
+ * logado, e a tela precisa dela para mostrar o e-mail — sem isto, são duas
+ * viagens até o Supabase para responder a mesma coisa, e cada viagem custa
+ * uns 200ms de tela parada.
+ *
+ * O cache vale só enquanto aquela requisição está sendo respondida. A visita
+ * seguinte pergunta de novo, como tem que ser: login expirado precisa ser
+ * percebido.
  */
-export async function obterUsuarioLogado() {
+export const obterUsuarioLogado = cache(async () => {
   const supabase = await criarClienteSupabase();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   return user;
-}
+});

@@ -14,8 +14,19 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Não roda em arquivos estáticos, imagens e ícone — só gastaria tempo.
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif)$).*)",
-  ],
+  /**
+   * Só o painel.
+   *
+   * Antes isto rodava em TODA página do site. A conta era ruim: a cliente não
+   * tem login nenhum para renovar, e mesmo assim cada visita à vitrine passava
+   * por aqui antes de qualquer coisa acontecer.
+   *
+   * Quem tem sessão para renovar é a vendedora, e ela só existe dentro de
+   * /admin. A tela de login entra na conta de propósito: é lá que o cookie é
+   * criado.
+   *
+   * Isso não afrouxa segurança nenhuma: quem barra o acesso ao painel é o
+   * layout em (painel)/layout.tsx, dentro da aplicação, não este arquivo.
+   */
+  matcher: ["/admin/:path*"],
 };
