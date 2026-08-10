@@ -5,6 +5,65 @@
 
 ---
 
+## Sessão 4 — 10/08/2026 — Etapa 2: cadastro de peças
+
+### Direção visual aprovada: "sol e areia"
+
+Tirada da logo e das artes da própria loja, não inventada. Está em
+`src/app/globals.css`:
+
+| Papel            | Cor       |                                          |
+| ---------------- | --------- | ---------------------------------------- |
+| Fundo            | `#faf4ea` | o areia das artes da marca               |
+| Texto            | `#4a3626` | marrom escuro, não preto                 |
+| Texto secundário | `#786652` | escolhido para passar em contraste       |
+| Bordas           | `#e9decb` |                                          |
+| Dourado          | `#e0a11b` | **detalhe apenas**, nunca texto corrido  |
+
+Títulos em **Playfair Display** (serifada de contraste alto, próxima da logo),
+textos em **Jost**. As duas servidas do nosso endereço pelo `next/font` — a
+página não espera servidor de fora, e nada da cliente vai para o Google.
+
+Descartadas: "foto manda em tudo" (neutra demais para a marca) e "sol forte"
+(os blocos de amarelo das artes antigas brigam com a elegância da logo).
+
+### O que a marca respondeu
+
+- **Conjunto sai todo no mesmo tamanho.** Está escrito na tabela de tamanhos
+  dela. Isso encerra a dúvida que estava marcada para reavaliar na Etapa 3.
+- Tamanhos reais: **P, M, G, GG**, com medidas de quadril e busto já em
+  `src/lib/tamanhos.ts`, prontas para a tela de "qual é o meu tamanho".
+- Bronzeador nas artes é só cenário, não é vendido.
+- As artes de produto antigas (blocos de amarelo) e a arte nova com a logo são
+  duas linguagens visuais diferentes. Seguimos a nova.
+
+### O que já está pronto
+
+- `/admin/produtos` — lista com estoque somado e aviso de peça zerada
+- `/admin/produtos/nova` — cadastro: nome, preço, descrição, aparecer na loja
+- `/admin/produtos/[id]` — edição, cores e a grade de estoque por tamanho
+- Preço aceita "99", "99,00", "R$ 99,00" e "1.299,90"
+- Link da peça sai do nome: "Biquíni Asa Delta" → `/biquini-asa-delta`
+- Testado contra o banco de verdade: 13 verificações, incluindo as travas de
+  preço zero, estoque negativo, cor repetida e foto apontando para cor de outro
+  produto. O teste roda em transação desfeita, não suja o banco.
+
+### O que falta na Etapa 2
+
+1. **Fotos.** Precisa da chave `service_role` do Supabase no `.env.local` e na
+   Vercel — é ela que autoriza gravar arquivo no Storage. Nunca pode ir para o
+   Git nem aparecer no navegador.
+2. **Vitrine e página da peça** com o visual aprovado.
+3. Tela de "qual é o meu tamanho" usando as medidas.
+
+### Pendência de segurança que continua aberta
+
+**A senha do banco não foi trocada** — o `.env.local` está com a que passou pelo
+chat. _Project Settings > Database > Reset database password_, e depois atualizar
+o `.env.local` **e** a variável na Vercel.
+
+---
+
 ## Sessão 3 — 10/08/2026 — Banco no ar
 
 ### ⚠️ O VPN do trabalho bloqueia o banco

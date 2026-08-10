@@ -1,18 +1,35 @@
 @import "tailwindcss";
 
 /*
-  Base provisória.
+  IDENTIDADE VISUAL — direção "sol e areia".
 
-  Isto NÃO é a identidade visual da loja — é só o suficiente para as telas não
-  ficarem ilegíveis enquanto a fundação sobe. A direção visual de verdade vem na
-  Etapa 2, depois de conversarmos sobre a marca.
+  As cores não foram inventadas: saíram da logo e das artes da própria loja.
+  O dourado é o da logo, o fundo é o mesmo areia das peças de divulgação, e o
+  texto é o marrom escuro que ela já usa. O site tem que parecer a mesma marca
+  de quem chega vindo do Instagram.
+
+  Uma regra sobre o dourado: ele é para DETALHE — borda, foco de campo, um
+  traço. Nunca para texto corrido sobre o fundo claro, porque a leitura fica
+  fraca no celular no sol. Texto é sempre tinta ou suave.
 */
 
 @theme {
-  --color-areia: #faf7f4;
-  --color-tinta: #1c1917;
-  --color-suave: #78716c;
-  --color-linha: #e7e2dd;
+  /* Fundo de tudo: areia quente, o mesmo das artes da marca. */
+  --color-areia: #faf4ea;
+  /* Cartões e campos, um pouco acima do fundo. */
+  --color-creme: #fffdf9;
+  /* Texto principal: o marrom escuro da marca, não preto. */
+  --color-tinta: #4a3626;
+  /* Texto secundário. Escolhido para passar em contraste sobre o areia. */
+  --color-suave: #786652;
+  /* Bordas e divisórias. */
+  --color-linha: #e9decb;
+  /* O dourado da logo. Detalhe, não texto. */
+  --color-dourado: #e0a11b;
+
+  /* A serifada dos títulos vem do next/font, em src/app/layout.tsx. */
+  --font-serif: var(--fonte-titulo), ui-serif, Georgia, serif;
+  --font-sans: var(--fonte-texto), ui-sans-serif, system-ui, sans-serif;
 }
 
 html {
@@ -23,8 +40,16 @@ html {
 body {
   background-color: var(--color-areia);
   color: var(--color-tinta);
-  font-family:
-    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
-    Arial, sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+}
+
+/*
+  Títulos em serifada, seguindo a logo. O espaçamento negativo é o que faz a
+  serifada parecer desenhada em vez de solta — do mesmo jeito que as letras da
+  logo se aproximam.
+*/
+.font-serif {
+  font-family: var(--font-serif);
+  letter-spacing: -0.01em;
 }

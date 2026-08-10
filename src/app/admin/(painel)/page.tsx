@@ -1,4 +1,7 @@
+import Link from "next/link";
+
 import { obterConfigLoja } from "@/lib/db/config-loja";
+import { listarProdutos, somarEstoque } from "@/lib/db/produtos";
 import { formatarReais } from "@/lib/formato";
 import { obterUsuarioLogado } from "@/lib/supabase/servidor";
 
@@ -12,16 +15,19 @@ import { sair } from "./acoes";
  * seguintes.
  */
 export default async function PainelPage() {
-  const [usuario, config] = await Promise.all([
+  const [usuario, config, produtos] = await Promise.all([
     obterUsuarioLogado(),
     obterConfigLoja(),
+    listarProdutos(),
   ]);
+
+  const semEstoque = produtos.filter((p) => somarEstoque(p) === 0).length;
 
   return (
     <main className="mx-auto max-w-md px-6 py-12">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-light tracking-tight">Painel</h1>
+          <h1 className="font-serif text-2xl">Painel</h1>
           <p className="mt-1 text-sm text-[var(--color-suave)]">
             {usuario?.email}
           </p>
@@ -37,7 +43,26 @@ export default async function PainelPage() {
         </form>
       </div>
 
-      <section className="mt-10 rounded-2xl border border-[var(--color-linha)] bg-white p-5">
+      <Link
+        href="/admin/produtos"
+        className="mt-10 block rounded-2xl border border-[var(--color-linha)] bg-white p-5"
+      >
+        <span className="font-medium">Peças</span>
+        <span className="mt-1 block text-sm text-[var(--color-suave)]">
+          {produtos.length === 0
+            ? "Nenhuma peça cadastrada ainda"
+            : `${produtos.length} ${produtos.length === 1 ? "peça cadastrada" : "peças cadastradas"}`}
+        </span>
+        {semEstoque > 0 ? (
+          <span className="mt-2 block text-xs text-red-700">
+            {semEstoque === 1
+              ? "1 peça está sem estoque"
+              : `${semEstoque} peças estão sem estoque`}
+          </span>
+        ) : null}
+      </Link>
+
+      <section className="mt-4 rounded-2xl border border-[var(--color-linha)] bg-white p-5">
         <h2 className="text-sm font-medium">Configurações da loja</h2>
 
         {config ? (
