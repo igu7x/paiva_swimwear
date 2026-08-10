@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 
 import { obterUsuarioLogado } from "@/lib/supabase/servidor";
 
+import { Cabecalho } from "./cabecalho";
+
 /**
  * Trava do painel.
  *
@@ -27,5 +29,10 @@ export default async function PainelLayout({ children }: LayoutProps<"/admin">) 
     redirect("/admin/login");
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      <Cabecalho />
+      {children}
+    </>
+  );
 }
