@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { obterConfigLoja } from "@/lib/db/config-loja";
 import { linkWhatsApp } from "@/lib/formato";
 
@@ -19,16 +21,31 @@ export default async function Home() {
   const config = await obterConfigLoja();
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-6 py-16">
-      <p className="text-xs uppercase tracking-[0.2em] text-[var(--color-suave)]">
-        {config ? config.cidade : "Carregando"}
-      </p>
+    <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center px-6 py-16 text-center">
+      {/*
+        A logo é a marca inteira, então ela É o título da página — por isso está
+        dentro do h1, com o nome da loja no `alt`. Quem enxerga vê o desenho;
+        um leitor de tela e o Google leem "Paiva Swimwear".
 
-      <h1 className="font-serif mt-3 text-4xl">
-        {config ? config.nomeLoja : "Loja"}
+        `priority` manda carregar esta imagem antes das outras: ela é a primeira
+        coisa que a cliente vê, e o site abre no celular com internet ruim.
+      */}
+      <h1>
+        <Image
+          src="/logo.png"
+          alt={config?.nomeLoja ?? "Paiva Swimwear"}
+          width={1024}
+          height={622}
+          priority
+          className="mx-auto h-auto w-56"
+        />
       </h1>
 
-      <p className="mt-6 text-[var(--color-suave)]">
+      <p className="mt-2 text-xs uppercase tracking-[0.25em] text-[var(--color-suave)]">
+        {config ? config.cidade : ""}
+      </p>
+
+      <p className="mt-8 text-[var(--color-suave)]">
         O catálogo está sendo montado. Em breve você vai ver todas as peças por
         aqui, com os tamanhos disponíveis.
       </p>
@@ -39,7 +56,7 @@ export default async function Home() {
             config.whatsapp,
             "Oi! Vi o site e queria saber mais sobre as peças.",
           )}
-          className="mt-8 inline-flex items-center justify-center rounded-full bg-[var(--color-tinta)] px-6 py-3.5 text-sm font-medium text-[var(--color-areia)]"
+          className="mt-8 inline-flex items-center justify-center rounded-full bg-[var(--color-tinta)] px-6 py-3.5 text-sm font-medium text-white"
         >
           Falar no WhatsApp
         </a>
