@@ -5,6 +5,63 @@
 
 ---
 
+## Sessão 2 — 10/08/2026 — GitHub fechado, modelo do catálogo
+
+### Decisões tomadas
+
+| Decisão                        | Escolha                                                     | Observação                                                                       |
+| ------------------------------ | ----------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Autoria de IA nos commits      | Proibida, com três travas                                    | Ver seção abaixo. Regra no `AGENTS.md` + hook que recusa o commit.                |
+| Branch principal               | `main` (era `master`)                                        | Renomeada antes do primeiro push.                                                 |
+| E-mail do Git                  | Pessoal, configurado **só neste projeto**                    | Global segue com o do trabalho, para os repositórios do TJGO.                     |
+| Como a peça varia              | **Uma variação só**, de nome livre, com fotos próprias        | "Preto" e "Onda Coral" são a mesma ideia. Evita cadastro de dois eixos.           |
+| Onde fica o preço              | No produto, não na variação                                  | Todas as estampas custam igual hoje. Se mudar, é uma coluna nova em `variacoes`.  |
+| Onde ficam as fotos            | Na variação                                                  | A cliente precisa ver a estampa que escolheu.                                     |
+| Lista de tamanhos              | Fixa no código (`src/lib/tamanhos.ts`), texto no banco       | Cadastro vira clique em vez de digitação; pedido antigo guarda o tamanho da época. |
+
+### Sobre a regra de autoria de IA
+
+Três camadas, porque memória sozinha não é garantia:
+
+1. Memória do Claude Code (só minha, só neste projeto).
+2. `AGENTS.md` — vale para qualquer agente e vai junto no Git.
+3. `.githooks/commit-msg` — **recusa** o commit. Ativar numa máquina nova com
+   `git config core.hooksPath .githooks`.
+
+### O que já está pronto no código
+
+- Tabelas do catálogo em `src/lib/db/schema.ts`: `produtos`, `variacoes`,
+  `fotos`, `estoque` — com RLS ligado, cascata no apagar e as travas de preço
+  positivo e estoque não negativo.
+- Migração `drizzle/0002_catalogo.sql` gerada (**ainda não aplicada no banco**).
+- `src/lib/tamanhos.ts` com a lista fixa e a ordenação correta.
+- Typecheck e lint passando.
+
+### O que FALTA (nesta ordem)
+
+1. **Supabase** — criar o projeto (região São Paulo), preencher o `.env.local`,
+   criar o usuário da vendedora em _Authentication > Users_.
+2. **Valores reais** em `drizzle/0001_config_inicial.sql`: cidade, WhatsApp e
+   valor da entrega. **Antes** de migrar — essa migração só roda uma vez.
+3. `npm run db:migrate`.
+4. **Vercel** — conectar o repositório, cadastrar as variáveis, publicar.
+5. Só então: tela de cadastro de produto no painel.
+
+### Próximo passo concreto
+
+Criar o projeto no Supabase e preencher o `.env.local`.
+
+### Ainda em aberto
+
+- **Identidade visual** — sem isso não dá para propor a direção visual, e a
+  vitrine de verdade não começa sem ela aprovada. Levantar com a vendedora:
+  existe logo, paleta, tipografia? Praiano e colorido, minimalista e neutro, ou
+  sensual e sofisticado? Quais marcas ela gosta?
+- Existe opção de a cliente retirar em vez de receber? (afeta a Etapa 3)
+- Confirmar: acompanhar o pedido por link secreto, sem senha nem cadastro.
+
+---
+
 ## Sessão 1 — 10/08/2026 — Etapa 1: Fundação
 
 ### Decisões tomadas

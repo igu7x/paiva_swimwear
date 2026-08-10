@@ -1,5 +1,13 @@
-import { sql } from "drizzle-orm";
-import { check, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { relations, sql } from "drizzle-orm";
+import {
+  boolean,
+  check,
+  integer,
+  pgTable,
+  text,
+  timestamp,
+  unique,
+} from "drizzle-orm/pg-core";
 
 /**
  * Este arquivo é a descrição das tabelas do banco em TypeScript.
@@ -47,3 +55,184 @@ export const configLoja = pgTable(
 
 /** O formato de uma linha de config_loja, para usar nos tipos das telas. */
 export type ConfigLoja = typeof configLoja.$inferSelect;
+
+/* ---------------------------------------------------------------------------
+ * CATÁLOGO
+ *
+ * O desenho é uma árvore de três níveis:
+ *
+ *     Produto "Biquíni Marina"          ← nome, descrição, PREÇO
+ *     └── Variação "Onda Preta"         ← as fotos ficam aqui
+ *         └── Estoque tamanho M: 2      ← a quantidade fica aqui
+ *
+ * Duas decisões que valem explicar, porque não são óbvias:
+ *
+ * O PREÇO FICA NO PRODUTO, não na variação. Ou seja: todas as estampas de uma
+ * mesma peça custam igual. É o caso hoje, e um preço por variação dobraria os
+ * campos do cadastro para resolver um problema que ainda não existe. Se um dia
+ * precisar, é uma coluna nova em `variacoes` — mudança pequena.
+ *
+ * AS FOTOS PENDURAM NA VARIAÇÃO, não no produto. Essa é a razão de a variação
+ * existir: a cliente precisa ver a estampa Coral quando escolhe Coral. Foto no
+ * produto obrigaria a mostrar a estampa errada.
+ * ------------------------------------------------------------------------- */
+
+/**
+ * Uma peça do catálogo.
+ *
+ * O `slug` é o pedaço do endereço que vai no link do WhatsApp:
+ * `/biquini-marina` em vez de `/produto/7`. Link legível dá mais confiança a
+ * quem recebe, e é isto que ela vai colar na conversa dezenas de vezes por dia.
+ *
+ * O `ativo` existe para ela conseguir tirar uma peça do ar sem apagar. Apagar
+ * levaria junto o histórico, e um pedido antigo precisa continuar sabendo o que
+ * foi vendido.
+ */
+export const produtos = pgTable(
+  "produtos",
+  {
+    id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+    nome: text("nome").notNull(),
+    slug: text("slug").notNull().unique(),
+    descricao: text("descricao").notNull().default(""),
+    precoCentavos: integer("preco_centavos").notNull(),
+    ativo: boolean("ativo").notNull().default(true),
+    criadoEm: timestamp("criado_em", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    atualizadoEm: timestamp("atualizado_em", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    // Biquíni de graça não existe: o banco recusa preço zero ou negativo.
+    check("produtos_preco_positivo", sql`${t.precoCentavos} > 0`),
+  ],
+).enableRLS();
+
+/**
+ * Como a peça aparece: uma estampa ou uma cor. O campo é de texto livre porque
+ * "Preto" e "Onda Coral" são a mesma ideia para quem compra — o jeito que a
+ * peça se parece — e separar em dois campos só encompridaria o cadastro.
+ *
+ * `posicao` decide a ordem em que as variações aparecem na página. Ela arrasta,
+ * o número muda.
+ */
+export const variacoes = pgTable(
+  "variacoes",
+  {
+    id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+    produtoId: integer("produto_id")
+      .notNull()
+      // Apagou o produto, some tudo que pendura nele. Sem isso o banco encheria
+      // de variação órfã apontando para produto que não existe mais.
+      .references(() => produtos.id, { onDelete: "cascade" }),
+    nome: text("nome").notNull(),
+    posicao: integer("posicao").notNull().default(0),
+    criadoEm: timestamp("criado_em", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    // Duas estampas "Coral" no mesmo produto seria erro de digitação dela.
+    unique("variacoes_nome_por_produto").on(t.produtoId, t.nome),
+  ],
+).enableRLS();
+
+/**
+ * As fotos de uma variação.
+ *
+ * `caminho` não é o endereço completo da imagem, é o caminho dentro do
+ * armazenamento do Supabase (algo como `produtos/marina/coral-1.jpg`). Guardar
+ * o caminho em vez da URL inteira é o que permite trocar de provedor de imagem
+ * um dia sem reescrever todas as linhas da tabela.
+ *
+ * A foto de `posicao` 0 é a capa: é ela que aparece na vitrine e no link do
+ * WhatsApp.
+ */
+export const fotos = pgTable(
+  "fotos",
+  {
+    id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+    variacaoId: integer("variacao_id")
+      .notNull()
+      .references(() => variacoes.id, { onDelete: "cascade" }),
+    caminho: text("caminho").notNull(),
+    posicao: integer("posicao").notNull().default(0),
+    criadoEm: timestamp("criado_em", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+).enableRLS();
+
+/**
+ * O estoque de verdade: quantas unidades existem de cada tamanho, dentro de
+ * cada variação. Esta é a tabela que mais importa para ela — é a que impede de
+ * vender o que já acabou.
+ *
+ * `tamanho` é texto, mas as telas oferecem a lista fixa de TAMANHOS (ver
+ * `src/lib/tamanhos.ts`). Texto no banco com lista fixa na tela dá o melhor dos
+ * dois: o cadastro fica sendo clique em vez de digitação, e acrescentar um
+ * tamanho novo no futuro é mexer numa linha de código, não migrar o banco.
+ */
+export const estoque = pgTable(
+  "estoque",
+  {
+    id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+    variacaoId: integer("variacao_id")
+      .notNull()
+      .references(() => variacoes.id, { onDelete: "cascade" }),
+    tamanho: text("tamanho").notNull(),
+    quantidade: integer("quantidade").notNull().default(0),
+  },
+  (t) => [
+    // Uma linha por tamanho dentro da variação. Sem isto, dois cadastros do
+    // tamanho M criariam duas linhas e a conta do estoque ficaria errada.
+    unique("estoque_tamanho_por_variacao").on(t.variacaoId, t.tamanho),
+    // Estoque negativo é sempre defeito nosso, não situação real. O banco
+    // recusando é a última rede de proteção quando o pedido baixar a
+    // quantidade, lá na etapa do pagamento.
+    check("estoque_quantidade_nao_negativa", sql`${t.quantidade} >= 0`),
+  ],
+).enableRLS();
+
+/* ---------------------------------------------------------------------------
+ * Ligações entre as tabelas.
+ *
+ * Isto não muda nada no banco — é o que permite pedir "o produto com as
+ * variações, e as fotos de cada uma" numa consulta só, em vez de quatro
+ * consultas costuradas na mão.
+ * ------------------------------------------------------------------------- */
+
+export const produtosRelacoes = relations(produtos, ({ many }) => ({
+  variacoes: many(variacoes),
+}));
+
+export const variacoesRelacoes = relations(variacoes, ({ one, many }) => ({
+  produto: one(produtos, {
+    fields: [variacoes.produtoId],
+    references: [produtos.id],
+  }),
+  fotos: many(fotos),
+  estoque: many(estoque),
+}));
+
+export const fotosRelacoes = relations(fotos, ({ one }) => ({
+  variacao: one(variacoes, {
+    fields: [fotos.variacaoId],
+    references: [variacoes.id],
+  }),
+}));
+
+export const estoqueRelacoes = relations(estoque, ({ one }) => ({
+  variacao: one(variacoes, {
+    fields: [estoque.variacaoId],
+    references: [variacoes.id],
+  }),
+}));
+
+/** Formatos das linhas, para usar nos tipos das telas. */
+export type Produto = typeof produtos.$inferSelect;
+export type Variacao = typeof variacoes.$inferSelect;
+export type Foto = typeof fotos.$inferSelect;
+export type Estoque = typeof estoque.$inferSelect;
