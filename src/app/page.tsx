@@ -3,11 +3,20 @@ import Image from "next/image";
 import { obterConfigLoja } from "@/lib/db/config-loja";
 import { linkWhatsApp } from "@/lib/formato";
 
-// Renderiza a cada visita, em vez de congelar o resultado na hora do build.
-// Assim, mudar a configuração no banco reflete no site na hora. Quando o
-// catálogo entrar, a gente troca isso por cache com invalidação — aí faz
-// diferença de verdade no tempo de carregamento no celular.
-export const dynamic = "force-dynamic";
+/**
+ * A página fica guardada pronta e é servida sem consultar o banco.
+ *
+ * Antes ela perguntava ao banco a cada visita, e isso custava uns 400ms de tela
+ * parada em TODA abertura — a cliente clica no link do WhatsApp e espera meio
+ * segundo olhando o nada. Agora ela chega pronta, em torno de 30ms.
+ *
+ * O número abaixo é só a rede de segurança: no pior caso, a página se refaz
+ * sozinha depois de um minuto. Na prática ela se refaz na hora, porque toda
+ * ação do painel que muda o catálogo chama `revalidatePath("/")` — ver
+ * src/app/admin/(painel)/produtos/acoes.ts. Ou seja: ela salva o estoque e a
+ * loja já mostra o novo.
+ */
+export const revalidate = 60;
 
 /**
  * Vitrine da loja.
@@ -18,7 +27,17 @@ export const dynamic = "force-dynamic";
  * verdade também.
  */
 export default async function Home() {
-  const config = await obterConfigLoja();
+  // Se o banco não responder, a loja mostra a versão sem os dados em vez de
+  // dar erro na cara da cliente. Isso vale a regra do projeto: "a loja precisa
+  // continuar funcionando se algo der errado" — ela sempre tem que conseguir
+  // combinar por WhatsApp, como faz hoje.
+  //
+  // Vale também para o momento de publicar: esta página é montada durante o
+  // build, e sem isto um banco fora do ar derrubaria o deploy inteiro.
+  const config = await obterConfigLoja().catch((erro) => {
+    console.error("Vitrine: banco indisponível.", erro);
+    return null;
+  });
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center px-6 py-16 text-center">

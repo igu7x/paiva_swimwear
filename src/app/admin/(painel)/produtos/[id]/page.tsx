@@ -5,6 +5,7 @@ import { obterProduto } from "@/lib/db/produtos";
 import { TAMANHOS } from "@/lib/tamanhos";
 
 import { adicionarCor, gravarEstoque, removerCor, removerProduto } from "../acoes";
+import { BotaoEnviar } from "../botao-enviar";
 import { FormularioProduto } from "../formulario-produto";
 
 const campo =
@@ -96,23 +97,19 @@ export default async function PecaPage({
                       ))}
                     </div>
 
-                    <button
-                      type="submit"
-                      className="mt-4 w-full rounded-full border border-[var(--color-tinta)] px-4 py-2.5 text-sm"
-                    >
-                      Salvar estoque de {variacao.nome}
-                    </button>
+                    <div className="mt-4">
+                      <BotaoEnviar enviando="Salvando...">
+                        Salvar estoque de {variacao.nome}
+                      </BotaoEnviar>
+                    </div>
                   </form>
 
                   <form action={removerCor} className="mt-2">
                     <input type="hidden" name="produtoId" value={produto.id} />
                     <input type="hidden" name="variacaoId" value={variacao.id} />
-                    <button
-                      type="submit"
-                      className="w-full py-1 text-xs text-[var(--color-suave)]"
-                    >
+                    <BotaoEnviar variante="texto" enviando="Removendo...">
                       Remover a cor {variacao.nome}
-                    </button>
+                    </BotaoEnviar>
                   </form>
                 </li>
               );
@@ -135,12 +132,9 @@ export default async function PecaPage({
               className={campo}
             />
           </label>
-          <button
-            type="submit"
-            className="mt-3 w-full rounded-full border border-[var(--color-tinta)] px-4 py-2.5 text-sm"
-          >
-            Acrescentar
-          </button>
+          <div className="mt-3">
+            <BotaoEnviar enviando="Acrescentando...">Acrescentar</BotaoEnviar>
+          </div>
         </form>
       </section>
 
