@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Revelar } from "@/components/revelar";
-import { ATRIBUTOS } from "@/components/simbolos";
+import { ATRIBUTOS, Sol } from "@/components/simbolos";
 import { obterConfigLoja } from "@/lib/db/config-loja";
 import { capaDoProduto, listarVitrine, somarEstoque } from "@/lib/db/produtos";
 import { formatarReais } from "@/lib/formato";
@@ -73,10 +73,26 @@ function FaixaCorrendo() {
 }
 
 export default async function Home() {
-  const [config, pecas] = await Promise.all([
+  const [config, catalogo] = await Promise.all([
     obterConfigLoja().catch(() => null),
     listarVitrine().catch(() => []),
   ]);
+
+  /**
+   * Quem tem foto vai na frente.
+   *
+   * As primeiras posições do ritmo são as maiores — a de largura inteira abre
+   * a vitrine. Dar essa posição a uma peça sem foto rende um retângulo vazio
+   * do tamanho da tela, que é a pior coisa que a página pode mostrar.
+   *
+   * Dentro de cada grupo a ordem alfabética é mantida, então a vitrine não
+   * fica embaralhando sozinha a cada foto que ela sobe.
+   */
+  const pecas = [...catalogo].sort((a, b) => {
+    const temA = capaDoProduto(a) ? 0 : 1;
+    const temB = capaDoProduto(b) ? 0 : 1;
+    return temA - temB || a.nome.localeCompare(b.nome, "pt-BR");
+  });
 
   return (
     <div>
@@ -150,7 +166,12 @@ export default async function Home() {
                 >
                   <Link href={`/${peca.slug}`} className="group block">
                     <div
-                      className={`relative ${lugar.forma} overflow-hidden rounded-[1.5rem] bg-[var(--color-creme)]`}
+                      className={`relative overflow-hidden rounded-[1.5rem] bg-[var(--color-creme)] ${
+                        // Sem foto, a moldura encolhe: uma peça sem imagem não
+                        // merece ocupar a tela inteira, e um vazio quadrado
+                        // incomoda muito menos que um vazio deitado e enorme.
+                        capa ? lugar.forma : "aspect-[4/5]"
+                      }`}
                     >
                       {capa ? (
                         <Image
@@ -161,8 +182,22 @@ export default async function Home() {
                           className="aproximar object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.04]"
                         />
                       ) : (
-                        <span className="absolute inset-0 grid place-items-center text-xs text-[var(--color-suave)]">
-                          sem foto
+                        /*
+                          O lugar da foto que ainda não existe.
+
+                          Deixar o retângulo em branco faz a loja parecer
+                          quebrada. Com o sol da marca e o nome da peça, o vazio
+                          vira uma escolha — e a página continua parecendo
+                          desenhada enquanto ela fotografa as peças.
+                        */
+                        <span className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-[radial-gradient(120%_90%_at_50%_20%,var(--color-areia-funda),var(--color-creme))] px-6 text-center">
+                          <Sol className="h-8 w-8 text-[var(--color-dourado)] opacity-60" />
+                          <span className="font-serif text-base text-[var(--color-suave)]">
+                            {peca.nome}
+                          </span>
+                          <span className="text-[0.56rem] uppercase tracking-[0.2em] text-[var(--color-suave)] opacity-70">
+                            foto em breve
+                          </span>
                         </span>
                       )}
 
