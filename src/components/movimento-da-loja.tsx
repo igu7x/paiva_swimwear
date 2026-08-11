@@ -44,6 +44,19 @@ export function MovimentoDaLoja() {
       syncTouch: false,
     });
 
+    /*
+      A posição da rolagem vira uma variável que o CSS lê.
+
+      É assim que as ondas fluem com o dedo: elas não têm animação de relógio,
+      só leem este número. Parou a rolagem, parou a onda; voltou, a onda volta.
+
+      Escrever uma variável no documento é barato — o navegador recalcula só
+      quem depende dela. Bem mais barato do que mexer no estilo de cada faixa.
+    */
+    lenis.on("scroll", ({ scroll }: { scroll: number }) => {
+      raiz.style.setProperty("--rolagem", String(Math.round(scroll)));
+    });
+
     let quadro = 0;
     const passo = (tempo: number) => {
       lenis.raf(tempo);

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { MovimentoDaLoja } from "@/components/movimento-da-loja";
+import { Ondas } from "@/components/ondas";
 import { ATRIBUTOS, Sol } from "@/components/simbolos";
 import { obterConfigLoja } from "@/lib/db/config-loja";
 import { capaDoProduto, listarVitrine, somarEstoque } from "@/lib/db/produtos";
@@ -127,6 +128,13 @@ export default async function Home() {
           className="veu-agua pointer-events-none absolute inset-0 z-0"
         />
 
+        {/* As ondas fluem com a rolagem. Ficam acima do véu e abaixo das
+            peças, então nunca cobrem nome nem preço. */}
+        <div className="pointer-events-none absolute inset-0 z-[5]">
+          <Ondas posicao="topo" />
+          <Ondas posicao="base" />
+        </div>
+
         <div className="relative z-10">
         {pecas.length === 0 ? (
           <p className="mx-auto max-w-xs px-6 py-32 text-center text-[var(--color-suave)]">
@@ -150,7 +158,10 @@ export default async function Home() {
                   className={`w-full sm:w-1/2 ${espelhada ? "sm:order-2" : ""}`}
                 >
                   <Link href={`/${peca.slug}`} className="group block">
-                    <div className="relative aspect-[4/5] overflow-hidden rounded-[1.5rem] bg-[var(--color-creme)]">
+                    {/* A sombra tira a peça do fundo. Sem ela, a foto encosta
+                        na praia e as duas viram a mesma superfície — foi a
+                        queixa de que a peça se mistura com o fundo. */}
+                    <div className="relative aspect-[4/5] overflow-hidden rounded-[1.5rem] bg-[var(--color-creme)] shadow-[0_30px_70px_-30px_rgba(58,40,26,0.75)]">
                       {capa ? (
                         // A cortina sobe revelando a foto conforme ela entra.
                         <div className="cortina absolute inset-0">
@@ -174,38 +185,42 @@ export default async function Home() {
                   </Link>
                 </div>
 
+                {/*
+                  O texto fica sobre uma placa clara, com desfoque atrás.
+
+                  Sem ela o nome e o preço pousavam direto na areia: mesma cor,
+                  mesmo brilho, e o olho não sabia onde parar. A placa devolve
+                  uma superfície de leitura sem esconder a praia, porque o que
+                  está atrás continua aparecendo desfocado.
+                */}
                 <div
-                  className={`w-full sm:w-1/2 ${espelhada ? "sm:order-1 sm:text-right" : ""}`}
+                  className={`w-full sm:w-1/2 ${espelhada ? "sm:order-1" : ""}`}
                 >
-                  <p
+                  <div
                     data-revelar
-                    className="text-[0.58rem] uppercase tracking-[0.3em] text-[var(--color-suave)]"
+                    className={`rounded-[1.5rem] border border-white/40 bg-[var(--color-areia)]/80 p-7 shadow-[0_24px_60px_-32px_rgba(58,40,26,0.6)] backdrop-blur-md sm:p-8 ${
+                      espelhada ? "sm:text-right" : ""
+                    }`}
                   >
-                    {esgotada
-                      ? "esgotado"
-                      : `${cores} ${cores === 1 ? "cor" : "cores"}`}
-                  </p>
+                    <p className="text-[0.58rem] uppercase tracking-[0.3em] text-[var(--color-dourado)]">
+                      {esgotada
+                        ? "esgotado"
+                        : `${cores} ${cores === 1 ? "cor" : "cores"}`}
+                    </p>
 
-                  <h2
-                    data-revelar
-                    style={{ transitionDelay: "80ms" }}
-                    className="mt-3 font-serif text-[clamp(2rem,6vw,3.2rem)] leading-[1.02] tracking-[-0.02em]"
-                  >
-                    {peca.nome}
-                  </h2>
+                    <h2 className="mt-3 font-serif text-[clamp(2.1rem,6vw,3.4rem)] leading-[1.02] tracking-[-0.02em] text-[var(--color-tinta)]">
+                      {peca.nome}
+                    </h2>
 
-                  <p
-                    data-revelar
-                    style={{ transitionDelay: "160ms" }}
-                    className="mt-3 text-lg text-[var(--color-suave)]"
-                  >
-                    {formatarReais(peca.precoCentavos)}
-                  </p>
+                    {/* Preço na cor do texto, não na apagada: é a segunda
+                        informação que a cliente procura, depois do nome. */}
+                    <p className="mt-3 text-2xl text-[var(--color-tinta)]">
+                      {formatarReais(peca.precoCentavos)}
+                    </p>
 
-                  <div data-revelar style={{ transitionDelay: "240ms" }}>
                     <Link
                       href={`/${peca.slug}`}
-                      className={`mt-8 inline-flex touch-manipulation items-center gap-3 border-b border-[var(--color-dourado)] pb-1.5 text-[0.66rem] uppercase tracking-[0.28em] transition-[gap,opacity] duration-300 hover:gap-5 active:opacity-60`}
+                      className="mt-7 inline-flex touch-manipulation items-center gap-3 rounded-full bg-[var(--color-tinta)] px-6 py-3 text-[0.62rem] uppercase tracking-[0.24em] text-white transition-[transform,gap] duration-300 hover:gap-5 active:scale-[0.97]"
                     >
                       Ver a peça
                       <span aria-hidden className="text-[var(--color-dourado)]">

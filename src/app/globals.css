@@ -417,6 +417,34 @@ html.lenis body {
   }
 }
 
+/* ---------------------------------------------------------------------------
+   AS ONDAS
+
+   O deslocamento vem de `--rolagem`, que é a posição da rolagem em pixels,
+   escrita no documento a cada quadro (ver movimento-da-loja.tsx). Não há
+   animação de relógio: parou o dedo, parou a onda.
+
+   Três velocidades diferentes. A de trás anda devagar, a da frente anda
+   rápido, e o olho lê isso como profundidade. Todas negativas para a água
+   correr no sentido contrário ao da descida, que é como onda quebra.
+   ------------------------------------------------------------------------- */
+
+.onda {
+  will-change: transform;
+}
+
+.onda-fundo {
+  transform: translate3d(calc(var(--rolagem, 0) * -0.06px), 0, 0);
+}
+
+.onda-meio {
+  transform: translate3d(calc(var(--rolagem, 0) * -0.13px), 0, 0);
+}
+
+.onda-frente {
+  transform: translate3d(calc(var(--rolagem, 0) * -0.22px), 0, 0);
+}
+
 /*
   A camada de luz sobre a água.
 
