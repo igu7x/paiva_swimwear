@@ -6,8 +6,8 @@
 
 | | |
 | --- | --- |
-| Original | 3264×4896 JPEG, 2,5 MB |
-| No site | 1400×2100 WebP, 227 KB |
+| Original | 8064×5376 JPEG, 28 MB |
+| No site | 1600×1067 WebP, 246 KB |
 
 Sendo foto da loja, não há licença de terceiro envolvida e não existe crédito a
 prestar. É o cenário certo: nenhum banco de imagem mostra o produto no contexto
@@ -24,11 +24,11 @@ Coloque a nova foto em `assets/originais/`, gere a versão do site e substitua
 
 ```
 sharp('assets/originais/fotopraia.jpg')
-  .resize({ width: 1400 })
-  .webp({ quality: 68 })
+  .resize({ width: 1600 })
+  .webp({ quality: 70 })
 ```
 
-227 KB é o maior arquivo do site. Foi escolhido depois de comparar seis
+246 KB é o maior arquivo do site. Foi escolhido depois de comparar seis
 combinações de tamanho e compressão: abaixo disso a areia começa a manchar, e
 acima o ganho não se vê, porque a foto fica atrás de uma camada de luz.
 

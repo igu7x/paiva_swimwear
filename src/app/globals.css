@@ -417,65 +417,52 @@ html.lenis body {
   para aparecer: fora do desenho é transparente, e o degradê termina em
   transparente antes de chegar ao limite.
 */
-/*
-  RAIOS, NÃO BORRÃO.
+/* ---------------------------------------------------------------------------
+   A CAPA É A PRAIA
 
-  Antes existia aqui uma mancha dourada desfocada. Ela nunca funcionou: dourado
-  borrado atrás de uma logo dourada tira o contraste da marca, e mancha grande
-  não tem desenho — é só cor ocupando espaço.
+   Duas tentativas de pôr alguma coisa atrás da logo foram rejeitadas: primeiro
+   uma mancha desfocada, depois raios desenhados. As duas erravam pelo mesmo
+   motivo — eram enfeite ocupando espaço, sem dizer nada.
 
-  No lugar entram raios finos, que é o que a própria logo tem em cima do arco.
-  A marca ganha uma versão em escala grande de si mesma por trás, e o centro
-  fica limpo, então a logo pousa sobre fundo liso.
+   A resposta é trocar a pergunta. Em vez de "o que colocar atrás da marca?", a
+   capa passa a ser a própria praia, que é o assunto da loja e é foto dela.
 
-  Como é feito: um leque de faixas iguais em volta do centro (o
-  `repeating-conic-gradient`), recortado por uma máscara circular que apaga o
-  miolo e as pontas. O que sobra é uma coroa de raios que nasce do nada e
-  some no nada — sem borda, sem arquivo de imagem.
-*/
-.raios-abertura {
-  background-image: repeating-conic-gradient(
-    from -90deg at 50% 32%,
-    color-mix(in oklab, var(--color-dourado) 20%, transparent) 0deg 0.55deg,
-    transparent 0.55deg 7.5deg
-  );
-  -webkit-mask-image: radial-gradient(
-    38% 32% at 50% 32%,
-    transparent 30%,
-    #000 52%,
-    transparent 88%
-  );
-  mask-image: radial-gradient(
-    38% 32% at 50% 32%,
-    transparent 30%,
-    #000 52%,
-    transparent 88%
-  );
+   O véu por cima resolve dois problemas ao mesmo tempo: dá superfície clara
+   para a marca dourada e o texto marrom aparecerem, e emenda o fim da capa com
+   o areia da faixa seguinte, sem corte.
+   ------------------------------------------------------------------------- */
+
+.capa-praia {
+  background-color: var(--color-areia);
+  background-image: url("/praia.webp");
+  background-size: cover;
+  /* Enquadra a parte de baixo: areia e mar, longe do sol e das palmeiras.
+     É a região calma da foto, onde a marca tem onde pousar. */
+  background-position: 50% 78%;
 }
 
 /*
-  Na abertura os raios se abrem girando um pouco, como luz aparecendo. O giro é
-  pequeno: 6 graus bastam para o olho perceber que algo se moveu.
+  O véu clareia a praia até a marca aparecer, mas SEM apagá-la.
+
+  A primeira tentativa usava 62% a 88% de areia por cima, e o resultado foi a
+  foto desaparecer: a capa virou o mesmo creme de antes, e trocar a capa não
+  serviu de nada. Agora ele é forte só onde precisa — atrás do texto, no meio —
+  e abre nas pontas, onde a praia pode aparecer.
+
+  Embaixo ele fecha em areia sólida para emendar com a faixa seguinte sem corte.
 */
-.js-pronto .raios-abertura {
-  animation: abrir-raios 3s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-@keyframes abrir-raios {
-  from {
-    opacity: 0;
-    transform: rotate(-6deg) scale(0.82);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .js-pronto .raios-abertura {
-    animation: none;
-  }
+.veu-capa {
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--color-areia) 26%, transparent) 0%,
+    color-mix(in oklab, var(--color-areia) 52%, transparent) 22%,
+    /* faixa da marca: mais fechada, para o dourado não cair na montanha */
+      color-mix(in oklab, var(--color-areia) 80%, transparent) 38%,
+    color-mix(in oklab, var(--color-areia) 78%, transparent) 56%,
+    color-mix(in oklab, var(--color-areia) 62%, transparent) 74%,
+    color-mix(in oklab, var(--color-areia) 90%, transparent) 92%,
+    var(--color-areia) 100%
+  );
 }
 
 /* O fio dourado que se estende sozinho ao entrar na tela. */
