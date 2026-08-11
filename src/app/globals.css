@@ -368,26 +368,43 @@ html.lenis body {
   O sol abrindo por trás da marca. Começa pequeno e concentrado, cresce até o
   tamanho de repouso. É a primeira coisa que se move na página.
 */
+/*
+  O sol abrindo por trás da marca.
+
+  O QUE CRESCE É O DESENHO, NÃO A CAIXA.
+
+  A primeira versão redimensionava o elemento. O problema: ao encolher, a borda
+  do retângulo entrava na área visível, e como o degradê ainda tinha cor ali, o
+  corte aparecia como uma linha reta atravessando a tela.
+
+  Animando o tamanho do desenho dentro de uma caixa parada, não existe borda
+  para aparecer: fora do desenho é transparente, e o degradê termina em
+  transparente antes de chegar ao limite.
+*/
 .brilho-abertura {
-  background: radial-gradient(
-    52% 40% at 50% 12%,
-    color-mix(in oklab, var(--color-dourado) 34%, transparent) 0%,
-    transparent 72%
+  background-image: radial-gradient(
+    closest-side,
+    color-mix(in oklab, var(--color-dourado) 30%, transparent) 0%,
+    color-mix(in oklab, var(--color-dourado) 12%, transparent) 45%,
+    transparent 100%
   );
+  background-repeat: no-repeat;
+  background-position: 50% -8%;
+  background-size: 130% 95%;
 }
 
 .js-pronto .brilho-abertura {
-  animation: abrir-sol 2.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: abrir-sol 2.8s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes abrir-sol {
   from {
     opacity: 0;
-    transform: scale(0.55) translateY(6%);
+    background-size: 46% 34%;
   }
   to {
     opacity: 1;
-    transform: none;
+    background-size: 130% 95%;
   }
 }
 
