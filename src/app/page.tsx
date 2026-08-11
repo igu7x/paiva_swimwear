@@ -97,15 +97,18 @@ export default async function Home() {
           width={1024}
           height={622}
           priority
-          className="animate-entrada h-auto w-64 sm:w-[26rem]"
+          data-revelar
+          className="h-auto w-64 sm:w-[26rem]"
         />
 
         <h1 className="mt-12 font-serif text-[clamp(2.05rem,8vw,4.25rem)] leading-[0.98] tracking-[-0.02em]">
-          <span className="linha-corte">
-            <span style={{ animationDelay: "140ms" }}>Feito para o sol.</span>
+          {/* Cada linha é observada por conta própria: elas sobem em cascata ao
+              entrar e descem ao sair, toda vez — não só na primeira visita. */}
+          <span className="linha-corte" data-linha>
+            <span style={{ transitionDelay: "120ms" }}>Feito para o sol.</span>
           </span>
-          <span className="linha-corte">
-            <span style={{ animationDelay: "300ms" }}>
+          <span className="linha-corte" data-linha>
+            <span style={{ transitionDelay: "260ms" }}>
               Feito para{" "}
               <em className="italic text-[var(--color-dourado)]">você</em>.
             </span>

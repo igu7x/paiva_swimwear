@@ -304,16 +304,33 @@ html.lenis body {
 
 .linha-corte > span {
   display: block;
-  animation: subir 1s cubic-bezier(0.19, 1, 0.22, 1) both;
 }
 
-@keyframes subir {
-  from {
-    transform: translateY(105%);
-  }
-  to {
-    transform: none;
-  }
+/*
+  A linha sobe quando entra e desce quando sai.
+
+  Antes isto era uma animação de carregamento: tocava uma vez, ao abrir a
+  página, e nunca mais. Agora é uma transição comandada pela mesma classe das
+  outras revelações — então a capa se refaz toda vez que a pessoa volta ao topo,
+  igual ao resto da página.
+*/
+/*
+  Quem é observado é a MOLDURA, não a linha que se move.
+
+  A linha, escondida, fica deslocada para fora da moldura — e a moldura corta o
+  que passa dela. O observador de tela leva esse corte em conta: uma linha
+  escondida conta como fora da tela, e por isso nunca recebia o aviso de
+  voltar. Ela se escondia de um jeito que a impedia de reaparecer.
+
+  A moldura não se move nunca, então ela sempre pode dizer "estou visível".
+*/
+.js-pronto [data-linha] > span {
+  transform: translateY(105%);
+  transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.js-pronto [data-linha].dentro > span {
+  transform: none;
 }
 
 /* O fio dourado que se estende sozinho ao entrar na tela. */

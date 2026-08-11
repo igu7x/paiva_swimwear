@@ -51,19 +51,28 @@ export function MovimentoDaLoja() {
     };
     quadro = requestAnimationFrame(passo);
 
+    /*
+      A revelação é reversível: desce e aparece, sobe e some.
+
+      Antes cada elemento era revelado uma vez e deixava de ser observado. Isso
+      economizava trabalho, mas fazia a página só animar na primeira passagem —
+      quem rolasse de volta encontrava tudo parado, e a página perdia a
+      sensação de responder ao gesto.
+
+      Agora o observador continua acompanhando todos, e a classe entra e sai.
+      Como a animação é uma transição de CSS, o próprio navegador cuida de
+      inverter o caminho quando o elemento sai.
+    */
     const observador = new IntersectionObserver(
       (entradas) => {
         for (const entrada of entradas) {
-          if (!entrada.isIntersecting) continue;
-          entrada.target.classList.add("dentro");
-          // Revelou, não precisa mais ser observado.
-          observador.unobserve(entrada.target);
+          entrada.target.classList.toggle("dentro", entrada.isIntersecting);
         }
       },
-      { threshold: 0.15, rootMargin: "0px 0px -8% 0px" },
+      { threshold: 0.12, rootMargin: "0px 0px -6% 0px" },
     );
 
-    for (const alvo of document.querySelectorAll("[data-revelar], [data-fio]")) {
+    for (const alvo of document.querySelectorAll("[data-revelar], [data-fio], [data-linha]")) {
       observador.observe(alvo);
     }
 
