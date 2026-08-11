@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { ambienteSupabase } from "./ambiente";
+import { obterChavesPublicas } from "./chaves";
 
 /**
  * Renova o login da vendedora a cada requisição.
@@ -40,7 +41,14 @@ export async function atualizarSessao(request: NextRequest) {
   });
 
   // É esta chamada que dispara a renovação do cookie, quando necessário.
-  await supabase.auth.getUser();
+  //
+  // Usa `getClaims` com a chave pública em mãos, e não `getUser`: o getUser
+  // sairia pela rede até o Supabase a cada visita, e isso custava uns 160ms
+  // aqui mais outro tanto no layout. O getClaims chama getSession() por dentro
+  // — que é quem renova o cookie — e confere a assinatura na memória.
+  await supabase.auth.getClaims(undefined, {
+    jwks: await obterChavesPublicas(),
+  });
 
   return resposta;
 }

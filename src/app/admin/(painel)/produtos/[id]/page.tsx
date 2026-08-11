@@ -30,6 +30,7 @@ export default async function PecaPage({
       <Link
         href="/admin/produtos"
         transitionTypes={["volta"]}
+        prefetch
         className="text-sm text-[var(--color-suave)]"
       >
         ← Peças

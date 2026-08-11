@@ -48,6 +48,10 @@ export default async function PainelPage() {
       <Link
         href="/admin/produtos"
         transitionTypes={["ida"]}
+        // Busca a tela inteira antes do clique, e não só o esqueleto de
+        // carregamento. É o que faz a troca ser imediata em vez de esperar o
+        // servidor no momento do toque.
+        prefetch
         className={`${cartaoClicavel} mt-4`}
       >
         <span className="font-medium">

@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { cache } from "react";
 
 import { ambienteSupabase } from "./ambiente";
+import { obterChavesPublicas } from "./chaves";
 
 /**
  * Cliente do Supabase para usar no servidor (páginas, layouts e server actions).
@@ -53,8 +54,19 @@ export async function criarClienteSupabase() {
  */
 export const obterUsuarioLogado = cache(async () => {
   const supabase = await criarClienteSupabase();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  return user;
+
+  // `getClaims` confere a assinatura do login localmente, usando a chave
+  // pública que passamos — ver src/lib/supabase/chaves.ts para o porquê. Por
+  // dentro ele ainda chama getSession(), que renova o cookie quando está
+  // vencendo, então a vendedora não é deslogada sozinha.
+  const { data, error } = await supabase.auth.getClaims(undefined, {
+    jwks: await obterChavesPublicas(),
+  });
+
+  if (error || !data?.claims?.sub) return null;
+
+  return {
+    id: data.claims.sub,
+    email: typeof data.claims.email === "string" ? data.claims.email : null,
+  };
 });

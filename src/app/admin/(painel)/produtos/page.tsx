@@ -29,6 +29,7 @@ export default async function ProdutosPage() {
       <Link
         href="/admin/produtos/nova"
         transitionTypes={["ida"]}
+        prefetch
         className={`${botaoPrincipal} mt-6`}
       >
         Cadastrar peça
@@ -49,6 +50,10 @@ export default async function ProdutosPage() {
                 <Link
                   href={`/admin/produtos/${produto.id}`}
                   transitionTypes={["ida"]}
+                  // A tela da peça é a que ela mais abre, e é a mais pesada
+                  // (dados, cores, estoque). Buscar antes do toque é o que faz
+                  // a diferença aqui.
+                  prefetch
                   className={cartaoClicavel}
                 >
                   <div className="flex items-baseline justify-between gap-3">
