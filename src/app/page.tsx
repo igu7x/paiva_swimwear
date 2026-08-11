@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { Revelar } from "@/components/revelar";
+import { MovimentoDaLoja } from "@/components/movimento-da-loja";
 import { ATRIBUTOS, Sol } from "@/components/simbolos";
 import { obterConfigLoja } from "@/lib/db/config-loja";
 import { capaDoProduto, listarVitrine, somarEstoque } from "@/lib/db/produtos";
@@ -100,11 +100,11 @@ export default async function Home() {
 
   return (
     <div className="pb-4">
-      <Revelar />
+      <MovimentoDaLoja />
 
       {/* ---------------- capa ---------------- */}
       <div className={`${COLUNA} pt-4`}>
-        <header className="luz-do-sol overflow-hidden rounded-[1.75rem] px-6 pb-11 pt-14 text-center">
+        <header className="luz-do-sol capa-recua overflow-hidden rounded-[1.75rem] px-6 pb-11 pt-14 text-center">
           <Image
             src="/logo.png"
             alt={config?.nomeLoja ?? "Paiva Swimwear"}

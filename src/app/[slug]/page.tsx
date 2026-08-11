@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { Revelar } from "@/components/revelar";
+import { MovimentoDaLoja } from "@/components/movimento-da-loja";
 import { obterConfigLoja } from "@/lib/db/config-loja";
 import { capaDoProduto, obterProdutoPorSlug } from "@/lib/db/produtos";
 import { formatarReais } from "@/lib/formato";
@@ -74,7 +74,7 @@ export default async function PecaPage({ params }: PageProps<"/[slug]">) {
 
   return (
     <div className="animate-entrada">
-      <Revelar />
+      <MovimentoDaLoja />
 
       <header className="sticky top-0 z-20 border-b border-[var(--color-linha)] bg-[var(--color-areia)]/85 backdrop-blur-md">
         <div className="mx-auto flex w-full max-w-md items-center justify-between px-4 py-3">
