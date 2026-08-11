@@ -138,7 +138,10 @@ export default async function Home() {
           <Ondas posicao="base" />
         </div>
 
-        <div className="relative z-10">
+        {/* Respiro nas pontas: afasta a primeira peça da faixa de cima e a
+            última do rodapé. Sem ele, elas encostam nas emendas da seção e a
+            cena parece começar e terminar no meio. */}
+        <div className="relative z-10 py-14 sm:py-24">
         {pecas.length === 0 ? (
           <p className="mx-auto max-w-xs px-6 py-32 text-center text-[var(--color-suave)]">
             O catálogo está sendo montado. Em breve você vê todas as peças por
