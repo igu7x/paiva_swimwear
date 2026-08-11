@@ -5,6 +5,54 @@
 
 ---
 
+## Sessão 8 — 11/08/2026 — A vitrine que ele aprovou
+
+### A lição, de novo: medir em vez de supor
+
+Cinco tentativas de design foram rejeitadas. O que destravou foi ele mandar
+**três links de sites que acha bonitos** — e eu inspecionar o código deles em
+vez de interpretar a palavra "premium".
+
+Achado: `icomat.co.uk` usa **Lenis**, `abtc.com` tem motor próprio em
+`requestAnimationFrame`, `overlake.org` usa revelações por rolagem. O que os
+três compartilham não é animação de elemento — é **a rolagem com inércia**.
+
+Foi a primeira coisa que ele aprovou. Antes de mexer em design aqui, peça
+referência e leia o código dela.
+
+### Lenis — a única biblioteca do projeto
+
+8 KB comprimidos. Entrou porque é o efeito pedido, não enfeite escolhido.
+
+- **Só na loja, nunca no painel.** Inércia atrapalha quem preenche formulário.
+- **No celular fica desligada** (`syncTouch: false`): o toque já tem inércia do
+  aparelho, e sobrepor a nossa dá sensação de atraso.
+- **Um laço de animação só**, compartilhado com as revelações. Dois laços
+  disputando o mesmo quadro é o que faz página animada engasgar.
+- Calibragem em `lerp: 0.09`. Menor escorrega mais, maior fica mais seco.
+
+### O que mais aprendemos sobre o visual
+
+**A largura é a decisão mais importante da vitrine.** A direção aprovada foi
+desenhada numa coluna estreita; espalhada por 2000px vira outra coisa — as
+peças se afastam, o desencontro some, o título boia. A coluna é de 44rem e
+continua curta no desktop. Tela grande ganha margem, não conteúdo esticado.
+
+**Peça sem foto não ocupa posição de destaque**, e o lugar da foto que falta é
+um bloco de cor cheio, não um quadro vazio. Metade do que agradou no protótipo
+era a cor preenchendo a moldura.
+
+**As curvas combinam com a rolagem** (`cubic-bezier(.16,1,.3,1)`, ~1,1s).
+Conteúdo que chega antes da página parece descolado dela.
+
+### O que continua travando a avaliação
+
+O banco tem duas peças de teste sem foto. **Uma vitrine de biquíni é 80%
+fotografia** — enquanto não houver foto real, nem ele nem eu conseguimos
+separar falha de design de falta de imagem.
+
+---
+
 ## Sessão 7 — 10/08/2026 — Vitrine e página da peça
 
 ### ⚠️ MUDANÇA DE RUMO: o WhatsApp saiu do site
