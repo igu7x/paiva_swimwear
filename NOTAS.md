@@ -5,6 +5,67 @@
 
 ---
 
+## Sessão 5 — 10/08/2026 — Desempenho e movimento
+
+### A lição: medir antes de consertar
+
+Errei duas vezes por supor. O que resolveu foi entrar no painel de produção
+com o login da vendedora e cronometrar cada tela. **Antes de mexer em
+desempenho aqui, meça.**
+
+O achado que destravou tudo: `/admin/produtos/nova` é um formulário vazio, não
+toca no banco, e custava 407ms. Isso provou que o problema não era o banco nem
+a animação.
+
+### Números em produção, medidos
+
+| Tela                   | Antes | Depois |
+| ---------------------- | ----- | ------ |
+| `/` vitrine            | 430ms | 25ms   |
+| `/admin/produtos/nova` | 407ms | 212ms  |
+| `/admin/produtos`      | 488ms | 296ms  |
+| `/admin`               | 567ms | 416ms  |
+
+### O que causava, e o que foi feito
+
+**A vitrine consultava o banco a cada visita.** Agora fica guardada pronta e se
+refaz quando o painel muda o catálogo (`revalidatePath`). A renovação de 1
+minuto é só rede de segurança.
+
+**O painel perguntava três vezes por visita se o login valia**, pela rede: no
+proxy, no layout e na tela. Viraram duas (`cache()` do React) e depois zero
+viagens: o login é ES256, assimétrico, então a assinatura é conferida
+localmente com a chave pública (`src/lib/supabase/chaves.ts`). Em troca, uma
+sessão encerrada vale até o token vencer — no máximo uma hora.
+
+**O proxy rodava no site inteiro**, inclusive nas telas da cliente, que não têm
+sessão. Agora só em `/admin`.
+
+**Não havia movimento nenhum.** Foram acrescentados: encolher ao pressionar,
+aro girando ao salvar, bolinha no link (só depois de 120ms), entrada de
+conteúdo, esqueleto pulsando em cascata e troca de tela deslizando (ida para a
+esquerda, volta para a direita) com o cabeçalho ancorado. Tudo instantâneo para
+quem liga "reduzir movimento".
+
+**Os links buscam a tela inteira antes do clique** (`prefetch`). O padrão só
+buscava o esqueleto de carregamento.
+
+### O que sobrou, se voltar ao assunto
+
+- ~160ms por tela do painel que não são login nem banco: é a Vercel acordar a
+  função e montar a página. Só sumiria com o painel virando aplicação de tela.
+- `/admin` em 416ms faz duas consultas ao banco. O *transaction pooler* (porta
+  6543) conecta mais rápido em servidor deste tipo — é trocar a variável na
+  Vercel, sem código.
+- A chave pública fica em cache por instância; instância nova paga uma busca.
+
+### Pendências de segurança
+
+**Trocar a senha do banco E a senha da conta da vendedora** —
+`mariacpaiva@gmail.com`. As duas passaram pelo chat.
+
+---
+
 ## Sessão 4 — 10/08/2026 — Etapa 2: cadastro de peças
 
 ### Direção visual aprovada: "sol e areia"
