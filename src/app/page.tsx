@@ -53,34 +53,35 @@ function FraseQueAcende({ texto, className }: { texto: string; className?: strin
   );
 }
 
-function FaixaCorrendo() {
-  const frases = [
-    "Feito para o sol",
-    "Feito para você",
-    "Modelagem que valoriza o corpo",
-    "Tecido premium",
-  ];
-
+/**
+ * O que a marca promete, logo depois da capa.
+ *
+ * Aqui existia uma faixa correndo sem parar. Ela saiu: movimento que não
+ * responde a nada é enfeite, e enfeite em loop cansa em segundos — a pessoa
+ * não consegue nem ler porque o texto foge.
+ *
+ * No lugar, os quatro símbolos da própria arte da loja, parados. Mesmo espaço,
+ * informação de verdade, e o olho consegue pousar.
+ */
+function OQuePrometemos() {
   return (
-    <div className="overflow-hidden border-y border-[var(--color-linha)] py-4">
-      {/* O conteúdo é duplicado e a faixa anda metade da largura: quando
-          recomeça, a segunda cópia está exatamente onde a primeira estava. */}
-      <div className="correndo flex w-max gap-12 whitespace-nowrap">
-        {[0, 1].map((copia) => (
-          <div key={copia} className="flex gap-12" aria-hidden={copia === 1}>
-            {frases.map((frase) => (
-              <span
-                key={frase}
-                className="flex items-center gap-12 text-[0.62rem] uppercase tracking-[0.3em] text-[var(--color-suave)]"
-              >
-                {frase}
-                <span className="text-[var(--color-dourado)]">✳</span>
-              </span>
-            ))}
-          </div>
+    <section className="border-y border-[var(--color-linha)] px-5 py-10">
+      <ul className="mx-auto grid max-w-3xl grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-4">
+        {ATRIBUTOS.map(({ Icone, texto }, i) => (
+          <li
+            key={texto}
+            data-revelar
+            style={{ transitionDelay: `${i * 100}ms` }}
+            className="flex flex-col items-center gap-3 px-2 text-center"
+          >
+            <Icone className="h-7 w-7 text-[var(--color-dourado)]" />
+            <span className="text-[0.56rem] uppercase leading-relaxed tracking-[0.18em] text-[var(--color-suave)]">
+              {texto}
+            </span>
+          </li>
         ))}
-      </div>
-    </div>
+      </ul>
+    </section>
   );
 }
 
@@ -119,7 +120,7 @@ export default async function Home() {
           className="animate-entrada h-auto w-64 sm:w-[26rem]"
         />
 
-        <h1 className="mt-12 font-serif text-[clamp(2.6rem,11vw,5.5rem)] leading-[0.92] tracking-[-0.025em]">
+        <h1 className="mt-12 font-serif text-[clamp(2.05rem,8vw,4.25rem)] leading-[0.98] tracking-[-0.02em]">
           <span className="linha-corte">
             <span style={{ animationDelay: "140ms" }}>Feito para o sol.</span>
           </span>
@@ -141,7 +142,7 @@ export default async function Home() {
         />
       </section>
 
-      <FaixaCorrendo />
+      <OQuePrometemos />
 
       {/* ============ 3. uma cena por peça ============ */}
       <main>
@@ -237,39 +238,81 @@ export default async function Home() {
         )}
       </main>
 
-      {/* ============ 4. o que a marca promete ============ */}
-      <section className="border-t border-[var(--color-linha)] bg-[var(--color-areia-funda)] px-6 py-20">
-        <ul className="mx-auto grid max-w-4xl grid-cols-2 gap-y-14 sm:grid-cols-4">
-          {ATRIBUTOS.map(({ Icone, texto }, i) => (
-            <li
-              key={texto}
-              data-revelar
-              style={{ transitionDelay: `${i * 110}ms` }}
-              className="flex flex-col items-center gap-4 px-3 text-center"
-            >
-              <Icone className="h-9 w-9 text-[var(--color-dourado)]" />
-              <span className="text-[0.58rem] uppercase leading-relaxed tracking-[0.2em] text-[var(--color-suave)]">
-                {texto}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
+      {/* ============ 4. rodapé ============ */}
+      {/*
+        O rodapé anterior era uma logo centralizada num bloco vazio de meia
+        tela. Rodapé vazio lê como site inacabado — é o último lugar da página,
+        e terminar em nada faz parecer que faltou coisa.
 
-      {/* ============ 5. o fim ============ */}
-      <footer className="luz-do-sol flex min-h-[45svh] flex-col items-center justify-center px-6 text-center">
-        <Image
-          src="/logo.png"
-          alt=""
-          width={1024}
-          height={622}
-          className="h-auto w-32 opacity-80"
-        />
-        {config ? (
-          <p className="mt-7 text-[0.6rem] uppercase tracking-[0.3em] text-[var(--color-suave)]">
-            Entregas em {config.cidade}
-          </p>
-        ) : null}
+        Este é escuro, e isso resolve duas coisas de uma vez: fecha a página com
+        contraste em vez de dissolvê-la no mesmo areia, e dá um fim visual claro
+        à rolagem.
+
+        Alinhado à esquerda, como o resto: centralizar é o que fazia ele não
+        encaixar com nada.
+      */}
+      <footer className="bg-[var(--color-tinta)] px-5 pb-10 pt-16 text-[var(--color-areia)]">
+        <div className="mx-auto w-full max-w-[44rem]">
+          <div className="flex flex-col gap-12 sm:flex-row sm:justify-between">
+            <div className="max-w-xs">
+              <Image
+                src="/logo.png"
+                alt={config?.nomeLoja ?? "Paiva Swimwear"}
+                width={1024}
+                height={622}
+                className="h-auto w-32"
+              />
+              <p className="mt-5 text-sm leading-relaxed text-[var(--color-areia)]/60">
+                Biquínis costurados em quantidade pequena, para o sol de{" "}
+                {config?.cidade ?? "Goiânia"}.
+              </p>
+            </div>
+
+            <div className="flex gap-12 sm:gap-16">
+              <div>
+                <p className="text-[0.58rem] uppercase tracking-[0.24em] text-[var(--color-dourado)]">
+                  Loja
+                </p>
+                <ul className="mt-4 flex flex-col gap-2.5 text-sm">
+                  <li>
+                    <Link
+                      href="/"
+                      className="text-[var(--color-areia)]/80 transition-colors hover:text-[var(--color-areia)]"
+                    >
+                      Todas as peças
+                    </Link>
+                  </li>
+                  {pecas.slice(0, 3).map((p) => (
+                    <li key={p.id}>
+                      <Link
+                        href={`/${p.slug}`}
+                        className="text-[var(--color-areia)]/80 transition-colors hover:text-[var(--color-areia)]"
+                      >
+                        {p.nome}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div>
+                <p className="text-[0.58rem] uppercase tracking-[0.24em] text-[var(--color-dourado)]">
+                  Entrega
+                </p>
+                <ul className="mt-4 flex flex-col gap-2.5 text-sm text-[var(--color-areia)]/80">
+                  <li>Somente em {config?.cidade ?? "Goiânia"}</li>
+                  <li>Entrega feita pela loja</li>
+                  <li>Tamanhos P ao GG</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-14 flex flex-col gap-3 border-t border-[var(--color-areia)]/15 pt-6 text-[0.58rem] uppercase tracking-[0.2em] text-[var(--color-areia)]/40 sm:flex-row sm:justify-between">
+            <span>{config?.nomeLoja ?? "Paiva Swimwear"}</span>
+            <span>Feito para o sol</span>
+          </div>
+        </div>
       </footer>
     </div>
   );
