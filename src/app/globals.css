@@ -418,45 +418,62 @@ html.lenis body {
   transparente antes de chegar ao limite.
 */
 /*
-  O BRILHO FICA ACIMA DA LOGO, NÃO ATRÁS DELA.
+  RAIOS, NÃO BORRÃO.
 
-  A logo é dourada e o brilho também era. Dourado sobre dourado tira o
-  contraste: a marca sumia dentro da própria luz. Agora o miolo forte do sol
-  fica no alto da tela, e a logo pousa na parte limpa embaixo dele — o sol
-  continua nascendo, mas por trás e acima, como no desenho da marca.
+  Antes existia aqui uma mancha dourada desfocada. Ela nunca funcionou: dourado
+  borrado atrás de uma logo dourada tira o contraste da marca, e mancha grande
+  não tem desenho — é só cor ocupando espaço.
 
-  A intensidade também caiu: o que dá presença à logo é o entorno claro, não
-  mais cor em volta.
+  No lugar entram raios finos, que é o que a própria logo tem em cima do arco.
+  A marca ganha uma versão em escala grande de si mesma por trás, e o centro
+  fica limpo, então a logo pousa sobre fundo liso.
+
+  Como é feito: um leque de faixas iguais em volta do centro (o
+  `repeating-conic-gradient`), recortado por uma máscara circular que apaga o
+  miolo e as pontas. O que sobra é uma coroa de raios que nasce do nada e
+  some no nada — sem borda, sem arquivo de imagem.
 */
-.brilho-abertura {
-  background-image: radial-gradient(
-    closest-side,
-    color-mix(in oklab, var(--color-dourado) 22%, transparent) 0%,
-    color-mix(in oklab, var(--color-dourado) 7%, transparent) 48%,
-    transparent 100%
+.raios-abertura {
+  background-image: repeating-conic-gradient(
+    from -90deg at 50% 32%,
+    color-mix(in oklab, var(--color-dourado) 20%, transparent) 0deg 0.55deg,
+    transparent 0.55deg 7.5deg
   );
-  background-repeat: no-repeat;
-  background-position: 50% -34%;
-  background-size: 125% 88%;
+  -webkit-mask-image: radial-gradient(
+    38% 32% at 50% 32%,
+    transparent 30%,
+    #000 52%,
+    transparent 88%
+  );
+  mask-image: radial-gradient(
+    38% 32% at 50% 32%,
+    transparent 30%,
+    #000 52%,
+    transparent 88%
+  );
 }
 
-.js-pronto .brilho-abertura {
-  animation: abrir-sol 2.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+/*
+  Na abertura os raios se abrem girando um pouco, como luz aparecendo. O giro é
+  pequeno: 6 graus bastam para o olho perceber que algo se moveu.
+*/
+.js-pronto .raios-abertura {
+  animation: abrir-raios 3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-@keyframes abrir-sol {
+@keyframes abrir-raios {
   from {
     opacity: 0;
-    background-size: 42% 30%;
+    transform: rotate(-6deg) scale(0.82);
   }
   to {
     opacity: 1;
-    background-size: 125% 88%;
+    transform: none;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .js-pronto .brilho-abertura {
+  .js-pronto .raios-abertura {
     animation: none;
   }
 }

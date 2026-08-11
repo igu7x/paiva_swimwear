@@ -98,7 +98,7 @@ export default async function Home() {
       <section className="luz-do-sol capa-recua relative flex min-h-[92svh] flex-col items-center justify-center overflow-hidden px-6 text-center">
         <div
           aria-hidden
-          className="brilho-abertura pointer-events-none absolute inset-0"
+          className="raios-abertura pointer-events-none absolute inset-0"
         />
 
         <Image
