@@ -173,7 +173,7 @@ export default async function Home() {
                 className="mx-auto flex max-w-5xl flex-col items-center gap-0 px-4 py-14 sm:flex-row sm:gap-16 sm:px-6 sm:py-[14vh]"
               >
                 <div
-                  className={`w-[70%] sm:w-1/2 ${
+                  className={`w-[56%] sm:w-1/2 ${
                     espelhada
                       ? "self-end sm:order-2 sm:self-auto"
                       : "self-start sm:self-auto"
@@ -220,13 +220,13 @@ export default async function Home() {
 
                   A foto sozinha, ocupando a largura toda, tapava a praia — e
                   aí o fundo que a gente escolheu com tanto cuidado deixava de
-                  existir. Com as duas ocupando 70% e 78%, cada uma de um lado,
+                  existir. Com as duas ocupando 56% e 64%, cada uma de um lado,
                   sobra praia em volta e a cena ganha diagonal.
 
                   No desktop tudo isso é desligado: lá elas ficam lado a lado.
                 */}
                 <div
-                  className={`-mt-14 w-[78%] sm:mt-0 sm:w-1/2 ${
+                  className={`-mt-12 w-[64%] sm:mt-0 sm:w-1/2 ${
                     espelhada
                       ? "self-start sm:order-1 sm:self-auto"
                       : "self-end sm:self-auto"
