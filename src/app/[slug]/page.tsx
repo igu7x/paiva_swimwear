@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { Revelar } from "@/components/revelar";
 import { obterConfigLoja } from "@/lib/db/config-loja";
 import { capaDoProduto, obterProdutoPorSlug } from "@/lib/db/produtos";
 import { formatarReais } from "@/lib/formato";
@@ -73,6 +74,8 @@ export default async function PecaPage({ params }: PageProps<"/[slug]">) {
 
   return (
     <div className="animate-entrada">
+      <Revelar />
+
       <header className="sticky top-0 z-20 border-b border-[var(--color-linha)] bg-[var(--color-areia)]/85 backdrop-blur-md">
         <div className="mx-auto flex w-full max-w-md items-center justify-between px-4 py-3">
           <Link href="/" aria-label="Ver todas as peças">
@@ -106,7 +109,10 @@ export default async function PecaPage({ params }: PageProps<"/[slug]">) {
         />
 
         {caracteristicas.length > 0 ? (
-          <section className="revelar mt-14 border-t border-[var(--color-linha)] pt-8">
+          <section
+            data-revelar
+            className="mt-14 border-t border-[var(--color-linha)] pt-8"
+          >
             <h2 className="text-xs uppercase tracking-[0.2em] text-[var(--color-suave)]">
               Sobre a peça
             </h2>

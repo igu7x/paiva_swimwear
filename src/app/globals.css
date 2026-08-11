@@ -124,26 +124,38 @@ body {
    ------------------------------------------------------------------------- */
 
 /*
-  O conteúdo aparece conforme sobe na tela.
+  O conteúdo revela conforme entra na tela.
 
-  A animação é comandada pela ROLAGEM, não pelo relógio: a peça revela na
-  medida em que entra no campo de visão, e volta se a pessoa rolar para cima.
-  Isso é o que dá a sensação de coisa viva em vez de fade que toca uma vez.
+  A trava importante está no seletor: o estado escondido só existe DEPOIS que
+  o JavaScript marca o documento com `js-pronto`. Se o script não rodar — erro,
+  navegador antigo, bloqueador — nada fica escondido e a loja aparece inteira.
+  Escrever `opacity: 0` solto aqui seria apostar a vitrine numa linha de JS.
+*/
+@media (prefers-reduced-motion: no-preference) {
+  .js-pronto [data-revelar] {
+    opacity: 0;
+    transform: translateY(38px);
+    transition:
+      opacity 0.9s ease,
+      transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
 
-  O @supports é essencial. Em navegador que não entende linha do tempo de
-  rolagem, este bloco inteiro é ignorado e o conteúdo simplesmente aparece —
-  sem ele, um navegador antigo mostraria a loja em branco.
+  .js-pronto [data-revelar].dentro {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/*
+  A foto respira dentro da moldura enquanto a página rola: entra levemente
+  aproximada e vai assentando. Comandado pela ROLAGEM, não pelo relógio — é o
+  que faz parecer preso ao dedo em vez de um efeito que toca e acaba.
+
+  6% de movimento. Parece pouco escrito, mas é o suficiente para o olho
+  perceber; 20% embrulha o estômago.
 */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    .revelar {
-      animation: revelar linear both;
-      animation-timeline: view();
-      animation-range: entry 0% cover 26%;
-    }
-
-    /* A foto se aproxima devagar enquanto sobe. Movimento pequeno de
-       propósito: 6% já é percebido, 20% embrulha o estômago. */
     .aproximar {
       animation: aproximar linear both;
       animation-timeline: view();
@@ -152,26 +164,50 @@ body {
   }
 }
 
-@keyframes revelar {
+@keyframes aproximar {
   from {
-    opacity: 0;
-    transform: translateY(34px);
-    filter: blur(6px);
+    transform: scale(1.07) translateY(-1.5%);
   }
   to {
-    opacity: 1;
-    transform: none;
-    filter: blur(0);
+    transform: scale(1) translateY(1.5%);
   }
 }
 
-@keyframes aproximar {
+/*
+  As linhas do título sobem uma após a outra, saindo de trás de um corte.
+
+  O `overflow: hidden` no elemento de fora é o truque inteiro: a linha começa
+  deslocada para baixo e é revelada pela borda, como uma cortina. Sem ele, a
+  linha apareceria vindo de fora da tela.
+*/
+.linha-corte {
+  display: block;
+  overflow: hidden;
+}
+
+.linha-corte > span {
+  display: block;
+  animation: subir 1s cubic-bezier(0.19, 1, 0.22, 1) both;
+}
+
+@keyframes subir {
   from {
-    transform: scale(1.06);
+    transform: translateY(105%);
   }
   to {
-    transform: scale(1);
+    transform: none;
   }
+}
+
+/* O fio dourado que se estende sozinho ao entrar na tela. */
+.js-pronto [data-fio] {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.15s;
+}
+
+.js-pronto [data-fio].dentro {
+  transform: scaleX(1);
 }
 
 /*
