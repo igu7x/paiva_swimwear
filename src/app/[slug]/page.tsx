@@ -73,27 +73,31 @@ export default async function PecaPage({ params }: PageProps<"/[slug]">) {
 
   return (
     <div className="animate-entrada">
-      <header className="mx-auto flex w-full max-w-md items-center justify-between px-4 py-3">
-        <Link href="/" aria-label="Ver todas as peças">
-          <Image
-            src="/logo.png"
-            alt={config?.nomeLoja ?? "Paiva Swimwear"}
-            width={1024}
-            height={622}
-            className="h-6 w-auto"
-          />
-        </Link>
-        <Link
-          href="/"
-          className="text-xs text-[var(--color-suave)] transition-opacity active:opacity-60"
-        >
-          ver tudo
-        </Link>
+      <header className="sticky top-0 z-20 border-b border-[var(--color-linha)] bg-[var(--color-areia)]/85 backdrop-blur-md">
+        <div className="mx-auto flex w-full max-w-md items-center justify-between px-4 py-3">
+          <Link href="/" aria-label="Ver todas as peças">
+            <Image
+              src="/logo.png"
+              alt={config?.nomeLoja ?? "Paiva Swimwear"}
+              width={1024}
+              height={622}
+              className="h-6 w-auto"
+            />
+          </Link>
+          <Link
+            href="/"
+            className="text-[0.65rem] uppercase tracking-[0.2em] text-[var(--color-suave)] transition-opacity active:opacity-60"
+          >
+            ver tudo
+          </Link>
+        </div>
       </header>
 
-      <main className="mx-auto w-full max-w-md px-4 pb-20 pt-2">
-        <h1 className="font-serif text-3xl leading-tight">{peca.nome}</h1>
-        <p className="mt-1 mb-6 text-lg">{formatarReais(peca.precoCentavos)}</p>
+      <main className="mx-auto w-full max-w-md px-4 pb-24 pt-7">
+        <h1 className="font-serif text-[2.1rem] leading-[1.1]">{peca.nome}</h1>
+        <p className="mt-2 mb-7 text-lg text-[var(--color-suave)]">
+          {formatarReais(peca.precoCentavos)}
+        </p>
 
         <Escolha
           nome={peca.nome}
@@ -102,7 +106,7 @@ export default async function PecaPage({ params }: PageProps<"/[slug]">) {
         />
 
         {caracteristicas.length > 0 ? (
-          <section className="mt-12 border-t border-[var(--color-linha)] pt-7">
+          <section className="revelar mt-14 border-t border-[var(--color-linha)] pt-8">
             <h2 className="text-xs uppercase tracking-[0.2em] text-[var(--color-suave)]">
               Sobre a peça
             </h2>

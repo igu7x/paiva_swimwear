@@ -47,6 +47,10 @@
   --animate-entrada: entrada 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
   --animate-girar: girar 700ms linear infinite;
   --animate-pulsar: pulsar 1.2s ease-in-out infinite;
+
+  /* Tons de apoio da vitrine, tirados da arte da marca. */
+  --color-dourado-claro: #f5c96b;
+  --color-areia-funda: #f0e4d2;
 }
 
 @keyframes entrada {
@@ -106,6 +110,111 @@ body {
   respeitar. As animações não somem: elas ficam instantâneas, então nada de
   conteúdo aparecendo pela metade.
 */
+/* ---------------------------------------------------------------------------
+   A VITRINE.
+
+   O que faz uma loja parecer cara não é ter muita coisa na tela — é o
+   contrário. É espaço em volta das peças, um tipo de letra grande e bem
+   desenhado, e movimento que responde ao que a pessoa está fazendo.
+
+   Tudo aqui é CSS puro, sem biblioteca de animação. Não é preciosismo: cada
+   biblioteca dessas custa uns 30 a 50 KB que a cliente baixaria no 4G antes de
+   ver a primeira foto. Animação feita pelo navegador roda na placa de vídeo e
+   não trava a rolagem.
+   ------------------------------------------------------------------------- */
+
+/*
+  O conteúdo aparece conforme sobe na tela.
+
+  A animação é comandada pela ROLAGEM, não pelo relógio: a peça revela na
+  medida em que entra no campo de visão, e volta se a pessoa rolar para cima.
+  Isso é o que dá a sensação de coisa viva em vez de fade que toca uma vez.
+
+  O @supports é essencial. Em navegador que não entende linha do tempo de
+  rolagem, este bloco inteiro é ignorado e o conteúdo simplesmente aparece —
+  sem ele, um navegador antigo mostraria a loja em branco.
+*/
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .revelar {
+      animation: revelar linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 26%;
+    }
+
+    /* A foto se aproxima devagar enquanto sobe. Movimento pequeno de
+       propósito: 6% já é percebido, 20% embrulha o estômago. */
+    .aproximar {
+      animation: aproximar linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+  }
+}
+
+@keyframes revelar {
+  from {
+    opacity: 0;
+    transform: translateY(34px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+@keyframes aproximar {
+  from {
+    transform: scale(1.06);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/*
+  A faixa de atributos que corre sem parar, como na arte da marca.
+
+  O conteúdo é duplicado no HTML e a faixa anda exatamente metade da largura.
+  Quando a animação recomeça, a segunda cópia está no lugar exato onde a
+  primeira estava — e o corte fica invisível.
+*/
+.correndo {
+  animation: correr 34s linear infinite;
+}
+
+@keyframes correr {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .correndo {
+    animation: none;
+  }
+}
+
+/*
+  O brilho de sol atrás do topo. Dois círculos suaves em vez de imagem: pesa
+  zero e acompanha qualquer tamanho de tela.
+*/
+.luz-do-sol {
+  background:
+    radial-gradient(
+      60% 42% at 50% 0%,
+      color-mix(in oklab, var(--color-dourado) 26%, transparent) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      90% 60% at 50% 8%,
+      var(--color-areia-funda) 0%,
+      var(--color-areia) 60%
+    );
+}
+
 /* ---------------------------------------------------------------------------
    TROCA DE TELA.
 
