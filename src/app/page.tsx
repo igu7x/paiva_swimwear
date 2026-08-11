@@ -25,33 +25,13 @@ export const revalidate = 60;
  * Então a página deixou de ser "cabeçalho + grade + rodapé" e virou cenas:
  *
  *   1. a marca, ocupando a tela inteira
- *   2. a frase da marca, acendendo palavra por palavra
+ *   2. o que a marca promete, em quatro símbolos
  *   3. uma cena por peça, com a foto revelada por uma cortina
- *   4. o que a marca promete
- *   5. o fim
+ *   4. o rodapé, escuro, fechando a página
  *
  * Isso funciona melhor com POUCAS peças, que é o caso desta loja — dar uma
  * tela inteira para cada peça só é possível quando são dezenas, não milhares.
  */
-
-/** Quebra a frase em palavras para cada uma acender na sua vez. */
-function FraseQueAcende({ texto, className }: { texto: string; className?: string }) {
-  return (
-    <p className={className}>
-      {texto.split(" ").map((palavra, i) => (
-        <span
-          key={`${palavra}-${i}`}
-          className="palavra inline-block"
-          // A posição da palavra desloca a faixa de rolagem em que ela acende.
-          style={{ "--i": i } as React.CSSProperties}
-        >
-          {palavra}
-          {i < texto.split(" ").length - 1 ? " " : ""}
-        </span>
-      ))}
-    </p>
-  );
-}
 
 /**
  * O que a marca promete, logo depois da capa.
@@ -131,15 +111,6 @@ export default async function Home() {
             </span>
           </span>
         </h1>
-
-      </section>
-
-      {/* ============ 2. a frase, acendendo ============ */}
-      <section className="mx-auto max-w-3xl px-6 py-[22vh]">
-        <FraseQueAcende
-          texto="Biquínis que realçam sua beleza natural e te acompanham nos seus melhores dias de sol."
-          className="text-center font-serif text-[clamp(1.6rem,5.5vw,2.9rem)] leading-[1.25] tracking-[-0.01em]"
-        />
       </section>
 
       <OQuePrometemos />

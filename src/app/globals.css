@@ -241,19 +241,6 @@ html.lenis body {
       animation-range: entry 8% cover 34%;
     }
 
-    /*
-      Cada palavra acende na sua vez, conforme a frase sobe.
-
-      O `--i` é a posição da palavra, vindo da tela. Ele desloca a faixa de
-      rolagem em que aquela palavra acende — a primeira acende cedo, a última
-      acende depois. Sem isso, todas acenderiam juntas.
-    */
-    .palavra {
-      animation: acender linear both;
-      animation-timeline: view();
-      animation-range: entry calc(18% + var(--i, 0) * 3.5%)
-        entry calc(52% + var(--i, 0) * 3.5%);
-    }
   }
 }
 
@@ -265,17 +252,6 @@ html.lenis body {
   to {
     clip-path: inset(0 0 0 0);
     transform: scale(1);
-  }
-}
-
-@keyframes acender {
-  from {
-    opacity: 0.14;
-    filter: blur(2px);
-  }
-  to {
-    opacity: 1;
-    filter: blur(0);
   }
 }
 
