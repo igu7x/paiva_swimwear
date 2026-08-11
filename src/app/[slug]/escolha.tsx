@@ -54,7 +54,17 @@ export function Escolha({
           {galeria.map((foto) => (
             <div
               key={foto.id}
-              className="relative aspect-[3/4] w-[78%] shrink-0 snap-center overflow-hidden rounded-2xl bg-[var(--color-creme)] sm:w-[46%]"
+              /*
+                Cada foto ocupa 78% da largura para a seguinte aparecer pela
+                borda — é assim que a cliente descobre que dá para arrastar.
+
+                Com UMA foto só isso não é dica, é buraco: sobra um vazio à
+                direita que parece defeito de layout. Nesse caso ela ocupa a
+                largura inteira.
+              */
+              className={`relative aspect-[3/4] shrink-0 snap-center overflow-hidden rounded-2xl bg-[var(--color-creme)] ${
+                galeria.length === 1 ? "w-full sm:w-[62%]" : "w-[78%] sm:w-[46%]"
+              }`}
             >
               <Image
                 src={enderecoDaFoto(foto.caminho)}

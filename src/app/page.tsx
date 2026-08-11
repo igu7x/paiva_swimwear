@@ -153,9 +153,24 @@ export default async function Home() {
             const espelhada = indice % 2 === 1;
 
             return (
+              /*
+                NO CELULAR A CENA É UMA SÓ, NÃO DOIS BLOCOS.
+
+                Medido em 390px de largura: cada peça ocupava 925px de altura,
+                com 118px de vazio em cima e outros 118 embaixo. A foto e a
+                placa ficavam soltas uma da outra, e o olho lia duas coisas
+                separadas em vez de uma composição.
+
+                Agora a placa SOBE POR CIMA da foto e fica recuada nas
+                laterais. As duas viram uma peça só, e a cena cabe na tela sem
+                a pessoa precisar rolar no meio dela.
+
+                No desktop nada disso vale: lá elas ficam lado a lado, e o
+                recuo e a sobreposição são zerados.
+              */
               <section
                 key={peca.id}
-                className="mx-auto flex max-w-5xl flex-col items-center gap-8 px-6 py-[14vh] sm:flex-row sm:gap-16"
+                className="mx-auto flex max-w-5xl flex-col items-center gap-0 px-4 py-14 sm:flex-row sm:gap-16 sm:px-6 sm:py-[14vh]"
               >
                 <div
                   className={`w-full sm:w-1/2 ${espelhada ? "sm:order-2" : ""}`}
@@ -197,33 +212,35 @@ export default async function Home() {
                   está atrás continua aparecendo desfocado.
                 */}
                 <div
-                  className={`w-full sm:w-1/2 ${espelhada ? "sm:order-1" : ""}`}
+                  className={`-mt-10 w-full px-3 sm:mt-0 sm:w-1/2 sm:px-0 ${
+                    espelhada ? "sm:order-1" : ""
+                  }`}
                 >
                   <div
                     data-revelar
-                    className={`rounded-[1.5rem] border border-white/40 bg-[var(--color-areia)]/80 p-7 shadow-[0_24px_60px_-32px_rgba(58,40,26,0.6)] backdrop-blur-md sm:p-8 ${
+                    className={`rounded-[1.25rem] border border-white/40 bg-[var(--color-areia)]/85 p-5 shadow-[0_24px_60px_-28px_rgba(58,40,26,0.7)] backdrop-blur-md sm:rounded-[1.5rem] sm:p-8 ${
                       espelhada ? "sm:text-right" : ""
                     }`}
                   >
-                    <p className="text-[0.58rem] uppercase tracking-[0.3em] text-[var(--color-dourado)]">
+                    <p className="text-[0.56rem] uppercase tracking-[0.28em] text-[var(--color-dourado)]">
                       {esgotada
                         ? "esgotado"
                         : `${cores} ${cores === 1 ? "cor" : "cores"}`}
                     </p>
 
-                    <h2 className="mt-3 font-serif text-[clamp(2.1rem,6vw,3.4rem)] leading-[1.02] tracking-[-0.02em] text-[var(--color-tinta)]">
+                    <h2 className="mt-2 font-serif text-[clamp(1.6rem,5.5vw,3.4rem)] leading-[1.05] tracking-[-0.02em] text-[var(--color-tinta)]">
                       {peca.nome}
                     </h2>
 
                     {/* Preço na cor do texto, não na apagada: é a segunda
                         informação que a cliente procura, depois do nome. */}
-                    <p className="mt-3 text-2xl text-[var(--color-tinta)]">
+                    <p className="mt-1.5 text-xl text-[var(--color-tinta)] sm:mt-3 sm:text-2xl">
                       {formatarReais(peca.precoCentavos)}
                     </p>
 
                     <Link
                       href={`/${peca.slug}`}
-                      className="mt-7 inline-flex touch-manipulation items-center gap-3 rounded-full bg-[var(--color-tinta)] px-6 py-3 text-[0.62rem] uppercase tracking-[0.24em] text-white transition-[transform,gap] duration-300 hover:gap-5 active:scale-[0.97]"
+                      className="mt-5 inline-flex touch-manipulation items-center gap-3 rounded-full bg-[var(--color-tinta)] px-5 py-2.5 text-[0.6rem] uppercase tracking-[0.22em] text-white transition-[transform,gap] duration-300 hover:gap-5 active:scale-[0.97] sm:mt-7 sm:px-6 sm:py-3"
                     >
                       Ver a peça
                       <span aria-hidden className="text-[var(--color-dourado)]">
