@@ -5,7 +5,8 @@ import { listarProdutos, somarEstoque } from "@/lib/db/produtos";
 import { formatarReais } from "@/lib/formato";
 import { obterUsuarioLogado } from "@/lib/supabase/servidor";
 
-import { cartao, legenda, pagina, titulo } from "./ui";
+import { PistaDoLink } from "./movimento";
+import { cartao, cartaoClicavel, legenda, pagina, titulo } from "./ui";
 
 /**
  * Painel da vendedora.
@@ -42,11 +43,11 @@ export default async function PainelPage() {
         </div>
       ) : null}
 
-      <Link
-        href="/admin/produtos"
-        className={`${cartao} mt-4 block transition-colors active:border-[var(--color-tinta)]`}
-      >
-        <span className="font-medium">Peças</span>
+      <Link href="/admin/produtos" className={`${cartaoClicavel} mt-4`}>
+        <span className="font-medium">
+          Peças
+          <PistaDoLink />
+        </span>
         <span className="mt-0.5 block text-sm text-[var(--color-suave)]">
           {produtos.length === 0
             ? "Cadastrar a primeira"

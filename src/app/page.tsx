@@ -40,7 +40,7 @@ export default async function Home() {
   });
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center px-6 py-16 text-center">
+    <main className="mx-auto flex min-h-dvh max-w-sm animate-entrada flex-col justify-center px-6 py-16 text-center">
       {/*
         A logo é a marca inteira, então ela É o título da página — por isso está
         dentro do h1, com o nome da loja no `alt`. Quem enxerga vê o desenho;

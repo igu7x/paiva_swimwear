@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 
 import { salvarProduto, type EstadoProduto } from "./acoes";
+import { Girando } from "../movimento";
 import { botaoPrincipal, campo } from "../ui";
 
 const estadoInicial: EstadoProduto = { erro: null };
@@ -97,8 +98,9 @@ export function FormularioProduto({ produto }: { produto?: Produto }) {
       ) : null}
 
       <button type="submit" disabled={enviando} className={botaoPrincipal}>
+        {enviando ? <Girando /> : null}
         {enviando
-          ? "Salvando..."
+          ? "Salvando"
           : produto
             ? "Salvar alterações"
             : "Cadastrar peça"}

@@ -30,11 +30,57 @@
   /* A serifada dos títulos vem do next/font, em src/app/layout.tsx. */
   --font-serif: var(--fonte-titulo), ui-serif, Georgia, serif;
   --font-sans: var(--fonte-texto), ui-sans-serif, system-ui, sans-serif;
+
+  /*
+    MOVIMENTO.
+
+    Interface sem movimento parece travada mesmo quando é rápida: o toque não
+    tem retorno, a tela nova aparece de corte seco, e a pessoa não sabe se o
+    clique funcionou. As três animações abaixo cobrem isso.
+
+    A curva do "entrada" desacelera no fim (começa rápido, chega devagar). É o
+    que faz o conteúdo parecer que POUSOU em vez de ter piscado.
+
+    Duração curta de propósito: 280ms é percebido como resposta; acima de 400ms
+    já vira espera.
+  */
+  --animate-entrada: entrada 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-girar: girar 700ms linear infinite;
+  --animate-pulsar: pulsar 1.2s ease-in-out infinite;
+}
+
+@keyframes entrada {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulsar {
+  50% {
+    opacity: 0.3;
+  }
 }
 
 html {
   /* Evita o zoom automático do iPhone ao tocar num campo de formulário. */
   -webkit-text-size-adjust: 100%;
+  /*
+    Desliga o retângulo cinza que o Android desenha sobre o que foi tocado.
+    Ele é feio e chega atrasado; no lugar dele, cada botão encolhe um pouco ao
+    ser pressionado — retorno mais rápido e que combina com o resto.
+  */
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -52,4 +98,21 @@ body {
 .font-serif {
   font-family: var(--font-serif);
   letter-spacing: -0.01em;
+}
+
+/*
+  Nem todo mundo quer animação. Quem liga "reduzir movimento" no sistema tem
+  motivo — enjoo, enxaqueca, sensibilidade vestibular — e o site tem que
+  respeitar. As animações não somem: elas ficam instantâneas, então nada de
+  conteúdo aparecendo pela metade.
+*/
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

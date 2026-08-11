@@ -1,3 +1,5 @@
+import { pagina } from "./ui";
+
 /**
  * O que aparece enquanto uma tela do painel busca os dados.
  *
@@ -10,13 +12,21 @@
  */
 export default function CarregandoPainel() {
   return (
-    <main className="mx-auto max-w-md animate-pulse px-6 py-12">
-      <div className="h-8 w-32 rounded-lg bg-[var(--color-linha)]" />
+    <main className={pagina} aria-busy>
+      <div className="h-8 w-32 rounded-lg bg-[var(--color-linha)] animate-pulsar" />
+      <div className="mt-2 h-4 w-44 rounded bg-[var(--color-linha)] animate-pulsar" />
 
-      <div className="mt-10 flex flex-col gap-3">
-        <div className="h-24 rounded-2xl bg-[var(--color-linha)]" />
-        <div className="h-24 rounded-2xl bg-[var(--color-linha)]" />
-        <div className="h-24 rounded-2xl bg-[var(--color-linha)]" />
+      <div className="mt-8 flex flex-col gap-3">
+        {[0, 1, 2].map((i) => (
+          <div
+            key={i}
+            className="h-[4.5rem] rounded-2xl border border-[var(--color-linha)] bg-[var(--color-creme)]"
+            // Os blocos pulsam levemente fora de compasso, um após o outro.
+            // Pulsar tudo junto parece uma tela piscando; em cascata parece
+            // carregamento.
+            style={{ animation: `pulsar 1.4s ${i * 160}ms ease-in-out infinite` }}
+          />
+        ))}
       </div>
 
       <span className="sr-only">Carregando</span>

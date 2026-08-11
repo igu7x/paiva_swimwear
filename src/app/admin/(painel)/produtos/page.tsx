@@ -3,7 +3,8 @@ import Link from "next/link";
 import { listarProdutos, somarEstoque } from "@/lib/db/produtos";
 import { formatarReais } from "@/lib/formato";
 
-import { botaoPrincipal, cartao, legenda, pagina, titulo } from "../ui";
+import { PistaDoLink } from "../movimento";
+import { botaoPrincipal, cartaoClicavel, legenda, pagina, titulo } from "../ui";
 
 /**
  * A lista de peças do painel.
@@ -25,6 +26,7 @@ export default async function ProdutosPage() {
 
       <Link href="/admin/produtos/nova" className={`${botaoPrincipal} mt-6`}>
         Cadastrar peça
+        <PistaDoLink />
       </Link>
 
       {produtos.length === 0 ? (
@@ -40,10 +42,13 @@ export default async function ProdutosPage() {
               <li key={produto.id}>
                 <Link
                   href={`/admin/produtos/${produto.id}`}
-                  className={`${cartao} block transition-colors active:border-[var(--color-tinta)]`}
+                  className={cartaoClicavel}
                 >
                   <div className="flex items-baseline justify-between gap-3">
-                    <span className="font-medium">{produto.nome}</span>
+                    <span className="font-medium">
+                      {produto.nome}
+                      <PistaDoLink />
+                    </span>
                     <span className="shrink-0 text-sm tabular-nums">
                       {formatarReais(produto.precoCentavos)}
                     </span>
