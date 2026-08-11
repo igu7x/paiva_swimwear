@@ -367,6 +367,80 @@ html.lenis body {
   }
 }
 
+/* ---------------------------------------------------------------------------
+   A ÁGUA
+
+   Depois da capa, o fundo deixa a areia e entra na água. Não é foto: são
+   camadas de degradê. Isso pesa zero, acompanha qualquer tamanho de tela e não
+   depende de a loja ter foto de piscina — que ela não tem.
+
+   O verde é dessaturado de propósito. Verde-piscina saturado brigaria com o
+   dourado da marca e roubaria a peça; assim ele fica atrás, como ambiente.
+   Também conversa com o fundo mentolado das fotos que ela tira das peças.
+
+   As manchas de luz imitam o desenho que o sol faz no fundo da piscina. Elas
+   se movem devagar — 26 segundos por volta — porque água parada parece
+   papel de parede, e água em movimento rápido embrulha.
+   ------------------------------------------------------------------------- */
+
+.fundo-agua {
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    var(--color-areia) 0%,
+    #eef2ee 14%,
+    #e3ede9 55%,
+    #dae8e4 100%
+  );
+}
+
+/*
+  O conteúdo sobe uma camada. Sem isto, as manchas de luz — que são posicionadas
+  — ficariam POR CIMA das peças, porque elemento posicionado pinta acima de
+  elemento comum, mesmo vindo antes no código.
+*/
+.fundo-agua > * {
+  position: relative;
+  z-index: 1;
+}
+
+.fundo-agua::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      42% 26% at 18% 22%,
+      color-mix(in oklab, #7cb8ab 26%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      38% 24% at 82% 48%,
+      color-mix(in oklab, #8cc6b8 22%, transparent),
+      transparent 72%
+    ),
+    radial-gradient(
+      46% 22% at 45% 82%,
+      color-mix(in oklab, #a8d2c4 24%, transparent),
+      transparent 74%
+    );
+  animation: agua 26s ease-in-out infinite alternate;
+}
+
+@keyframes agua {
+  to {
+    transform: translate3d(0, -2.5%, 0) scale(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fundo-agua::before {
+    animation: none;
+  }
+}
+
 /*
   O brilho de sol atrás do topo. Dois círculos suaves em vez de imagem: pesa
   zero e acompanha qualquer tamanho de tela.

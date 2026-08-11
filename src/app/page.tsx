@@ -119,7 +119,9 @@ export default async function Home() {
       <OQuePrometemos />
 
       {/* ============ 3. uma cena por peça ============ */}
-      <main>
+      {/* Daqui para baixo o fundo entra na água. Ver .fundo-agua no
+          globals.css para o porquê de ser degradê e não foto. */}
+      <main className="fundo-agua">
         {pecas.length === 0 ? (
           <p className="mx-auto max-w-xs px-6 py-32 text-center text-[var(--color-suave)]">
             O catálogo está sendo montado. Em breve você vê todas as peças por
