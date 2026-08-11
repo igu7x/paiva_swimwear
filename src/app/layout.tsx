@@ -53,6 +53,18 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="pt-BR"
       className={`${fonteTitulo.variable} ${fonteTexto.variable}`}
+      /*
+        O script logo abaixo acrescenta classes a este elemento ANTES de o
+        React assumir a página. O React então compara o que veio do servidor
+        com o que está na tela, encontra as classes a mais e reclama.
+
+        Este aviso diz ao React para não comparar os atributos DESTE elemento —
+        e só dele, não dos filhos. É a solução usada por qualquer site que
+        precisa decidir tema ou animação antes da primeira pintura: sem isso, a
+        alternativa seria esperar o React montar, e aí a abertura aconteceria
+        fora da vista, que foi o problema que este script veio resolver.
+      */
+      suppressHydrationWarning
     >
       <body>
         {/*
