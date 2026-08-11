@@ -173,7 +173,7 @@ export default async function Home() {
                 className="mx-auto flex max-w-5xl flex-col items-center gap-0 px-4 py-14 sm:flex-row sm:gap-16 sm:px-6 sm:py-[14vh]"
               >
                 <div
-                  className={`w-[56%] sm:w-1/2 ${
+                  className={`w-[48%] max-w-[195px] sm:w-1/2 sm:max-w-none ${
                     espelhada
                       ? "self-end sm:order-2 sm:self-auto"
                       : "self-start sm:self-auto"
@@ -220,13 +220,13 @@ export default async function Home() {
 
                   A foto sozinha, ocupando a largura toda, tapava a praia — e
                   aí o fundo que a gente escolheu com tanto cuidado deixava de
-                  existir. Com as duas ocupando 56% e 64%, cada uma de um lado,
+                  existir. Com um teto de largura, o tamanho fica igual em qualquer celular:
                   sobra praia em volta e a cena ganha diagonal.
 
                   No desktop tudo isso é desligado: lá elas ficam lado a lado.
                 */}
                 <div
-                  className={`-mt-12 w-[64%] sm:mt-0 sm:w-1/2 ${
+                  className={`-mt-10 w-[58%] max-w-[240px] sm:mt-0 sm:w-1/2 sm:max-w-none ${
                     espelhada
                       ? "self-start sm:order-1 sm:self-auto"
                       : "self-end sm:self-auto"
