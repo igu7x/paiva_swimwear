@@ -385,60 +385,28 @@ html.lenis body {
 
 .fundo-agua {
   position: relative;
-  background: linear-gradient(
-    180deg,
-    var(--color-areia) 0%,
-    #eef2ee 14%,
-    #e3ede9 55%,
-    #dae8e4 100%
-  );
+  background-color: var(--color-areia);
 }
 
 /*
-  O conteúdo sobe uma camada. Sem isto, as manchas de luz — que são posicionadas
-  — ficariam POR CIMA das peças, porque elemento posicionado pinta acima de
-  elemento comum, mesmo vindo antes no código.
+  A camada de luz sobre a água.
+
+  A foto é uma piscina de azul forte. Solta, ela dominaria a página e brigaria
+  com o dourado da marca — e as peças, que são o assunto, virariam detalhe.
+  Esta camada clareia a água até ela virar ambiente.
+
+  O véu é mais fechado nas pontas: em cima porque a areia precisa entrar na
+  água sem emenda, embaixo porque logo depois vem o rodapé escuro e um corte
+  seco ali chamaria mais atenção que o conteúdo.
 */
-.fundo-agua > * {
-  position: relative;
-  z-index: 1;
-}
-
-.fundo-agua::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(
-      42% 26% at 18% 22%,
-      color-mix(in oklab, #7cb8ab 26%, transparent),
-      transparent 70%
-    ),
-    radial-gradient(
-      38% 24% at 82% 48%,
-      color-mix(in oklab, #8cc6b8 22%, transparent),
-      transparent 72%
-    ),
-    radial-gradient(
-      46% 22% at 45% 82%,
-      color-mix(in oklab, #a8d2c4 24%, transparent),
-      transparent 74%
-    );
-  animation: agua 26s ease-in-out infinite alternate;
-}
-
-@keyframes agua {
-  to {
-    transform: translate3d(0, -2.5%, 0) scale(1.06);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .fundo-agua::before {
-    animation: none;
-  }
+.veu-agua {
+  background: linear-gradient(
+    180deg,
+    var(--color-areia) 0%,
+    color-mix(in oklab, var(--color-areia) 62%, transparent) 16%,
+    color-mix(in oklab, var(--color-areia) 48%, transparent) 55%,
+    color-mix(in oklab, var(--color-areia) 78%, transparent) 100%
+  );
 }
 
 /*
