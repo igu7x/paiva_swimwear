@@ -1,0 +1,117 @@
+/*
+  Sistema do protótipo, isolado do resto do site pela classe .prototipo.
+
+  A REGRA QUE MANDA: a fotografia é a cor do site. A paleta existe para
+  emoldurar a foto, não para preencher a tela. Tela 80% areia está errada.
+*/
+
+.prototipo {
+  --areia: #efe9df; /* base clara — é MOLDURA, não protagonista */
+  --casca: #1c1714; /* seções escuras de ponta a ponta */
+  --sol: #e0a11b; /* dourado da marca — ACENTO. Nunca campo grande */
+  --tinta: #2a211a; /* texto sobre claro */
+  --leite: #fbfaf8; /* texto sobre escuro */
+
+  background: var(--areia);
+  color: var(--tinta);
+  font-family: var(--fonte-corpo), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------------------------------------------------------------------------
+   TIPOGRAFIA
+
+   O ajuste importa tanto quanto a escolha da fonte: display no padrão de
+   fábrica (espaçamento 0, entrelinha 1.2) é o que faz serifada parecer
+   antiquada. Apertar o espaçamento e fechar a entrelinha é o que a moderniza.
+   ------------------------------------------------------------------------- */
+
+.prototipo .display {
+  font-family: var(--fonte-display), Georgia, serif;
+  font-size: clamp(2.75rem, 9vw, 8rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  font-weight: 400;
+}
+
+.prototipo .sobrancelha {
+  font-size: 0.6875rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.prototipo .corpo {
+  font-size: clamp(1rem, 1.1vw, 1.125rem);
+  line-height: 1.5;
+  max-width: 58ch;
+}
+
+/* ---------------------------------------------------------------------------
+   GRADE
+
+   Doze colunas, margem que cresce com a tela. Nada centralizado por padrão:
+   título à esquerda, texto deslocado. Composição simétrica é o que faz uma
+   página parecer gerada.
+   ------------------------------------------------------------------------- */
+
+.prototipo .grade {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1.5rem;
+  padding-inline: clamp(1.25rem, 4vw, 5rem);
+}
+
+/* ---------------------------------------------------------------------------
+   REVELAÇÃO LETRA A LETRA
+
+   Cada letra fica dentro de uma máscara e desliza de baixo. O estado inicial
+   só existe depois que o JavaScript marca a página — sem isso, um erro de
+   script deixaria o título invisível para sempre.
+   ------------------------------------------------------------------------- */
+
+.prototipo.animado .revelar-letras {
+  visibility: hidden;
+}
+
+/* ---------------------------------------------------------------------------
+   SEÇÃO PRESA COM TROCA DE CONTEÚDO
+
+   Sem JavaScript os blocos ficam empilhados e legíveis, um embaixo do outro.
+   Com JavaScript eles se sobrepõem no mesmo lugar e trocam conforme a rolagem.
+   ------------------------------------------------------------------------- */
+
+.prototipo .blocos > * + * {
+  margin-top: 2.5rem;
+}
+
+.prototipo.animado .blocos {
+  position: relative;
+  min-height: 11rem;
+}
+
+.prototipo.animado .blocos > * {
+  position: absolute;
+  inset: 0;
+  margin-top: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prototipo.animado .revelar-letras {
+    visibility: visible;
+  }
+
+  .prototipo.animado .blocos {
+    position: static;
+    min-height: 0;
+  }
+
+  .prototipo.animado .blocos > * {
+    position: static;
+  }
+
+  .prototipo.animado .blocos > * + * {
+    margin-top: 2.5rem;
+  }
+}

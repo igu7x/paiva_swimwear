@@ -1,28 +1,37 @@
 import type { Metadata, Viewport } from "next";
-import { Jost, Playfair_Display } from "next/font/google";
+import localFont from "next/font/local";
 
 import "./globals.css";
 
 /**
- * As duas fontes da marca.
+ * As duas fontes do site.
  *
- * A Playfair Display é serifada de contraste alto, o desenho mais próximo do
- * "PAIVA" da logo. A Jost é geométrica e aceita bem o espaçamento largo do
- * "SWIMWEAR".
+ * A Playfair Display saiu daqui de propósito. Ela é tecnicamente boa, mas
+ * virou a serifada padrão que toda ferramenta de IA escolhe quando o pedido é
+ * "elegante" — e é justamente por isso que uma página com ela parece template
+ * mesmo bem executada. A Zodiak tem contraste alto igual, com desenho próprio.
  *
- * O next/font baixa as duas na hora de compilar e serve do nosso próprio
- * endereço. Isso importa por dois motivos: a página não fica esperando um
- * servidor de fora para desenhar o texto, e nenhum dado da cliente é enviado
- * para o Google quando ela abre a loja.
+ * A Satoshi substitui a Jost nos textos: grotesca neutra, bem desenhada, sem a
+ * geometria datada da Jost em texto corrido.
+ *
+ * As duas são servidas do nosso próprio endereço. A página não espera servidor
+ * de fora para desenhar o texto, e nada da cliente vai para terceiros.
  */
-const fonteTitulo = Playfair_Display({
-  subsets: ["latin"],
+const fonteTitulo = localFont({
+  src: [
+    { path: "../fontes/zodiak-400.woff2", weight: "400", style: "normal" },
+    { path: "../fontes/zodiak-700.woff2", weight: "700", style: "normal" },
+  ],
   variable: "--fonte-titulo",
   display: "swap",
 });
 
-const fonteTexto = Jost({
-  subsets: ["latin"],
+const fonteTexto = localFont({
+  src: [
+    { path: "../fontes/satoshi-400.woff2", weight: "400", style: "normal" },
+    { path: "../fontes/satoshi-500.woff2", weight: "500", style: "normal" },
+    { path: "../fontes/satoshi-700.woff2", weight: "700", style: "normal" },
+  ],
   variable: "--fonte-texto",
   display: "swap",
 });
