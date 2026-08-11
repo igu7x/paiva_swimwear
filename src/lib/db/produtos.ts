@@ -51,6 +51,43 @@ export async function listarProdutos() {
   });
 }
 
+/**
+ * O que a vitrine mostra: só as peças que ela deixou visíveis.
+ *
+ * Peça sem estoque continua aparecendo, de propósito. Sumir do nada é pior:
+ * a cliente que recebeu o link no WhatsApp cairia numa página inexistente. Ela
+ * aparece marcada como esgotada, e a conversa continua possível.
+ */
+export async function listarVitrine() {
+  return obterDb().query.produtos.findMany({
+    where: eq(produtos.ativo, true),
+    orderBy: [asc(produtos.nome)],
+    with: {
+      fotos: { orderBy: [asc(fotos.posicao), asc(fotos.id)] },
+      variacoes: {
+        orderBy: [asc(variacoes.posicao), asc(variacoes.id)],
+        with: { estoque: true },
+      },
+    },
+  });
+}
+
+type ComFotos = {
+  fotos: { caminho: string; variacaoId: number | null }[];
+};
+
+/**
+ * A foto que representa a peça na vitrine.
+ *
+ * Primeiro a foto da peça (a capa, a arte com modelo). Se não houver, a
+ * primeira foto de cor que existir — melhor mostrar a estampa errada do que
+ * um quadrado vazio.
+ */
+export function capaDoProduto(produto: ComFotos): string | null {
+  const daPeca = produto.fotos.find((f) => f.variacaoId === null);
+  return (daPeca ?? produto.fotos[0])?.caminho ?? null;
+}
+
 /** Quantas unidades existem no total, somando todas as cores e tamanhos. */
 export function somarEstoque(produto: {
   variacoes: { estoque: { quantidade: number }[] }[];

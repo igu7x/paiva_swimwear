@@ -5,6 +5,47 @@
 
 ---
 
+## Sessão 7 — 10/08/2026 — Vitrine e página da peça
+
+### ⚠️ MUDANÇA DE RUMO: o WhatsApp saiu do site
+
+O Igor definiu que **o site é completo, para a cliente e para a vendedora, e o
+WhatsApp não entra nele**. Isso contraria o `CLAUDE.md`, que descreve o
+WhatsApp como rede de segurança do negócio ("ela sempre tem que conseguir
+combinar por WhatsApp como faz hoje") e define a Etapa 2 como "mandar o link de
+um produto no WhatsApp em vez de foto solta".
+
+Decisão dele, registrada aqui para não ser desfeita por engano.
+
+**Consequência:** enquanto a Etapa 3 não existir, a cliente escolhe cor e
+tamanho e o caminho termina ali — não há como comprar. A página mostra o que
+ela escolheu e avisa que o pedido vem em breve. Nenhum botão falso.
+
+O campo `whatsapp` continua na configuração da loja: é o contato do negócio e
+serve para a tela de entregas mais adiante.
+
+### O que ficou pronto
+
+**Vitrine em `/`** — grade de duas colunas no celular, foto ocupando quase tudo,
+nome e preço pequenos embaixo. Peça sem estoque aparece marcada como esgotada
+em vez de sumir: quem recebeu o link não pode cair numa página inexistente.
+
+**Página da peça em `/<slug>`** — galeria que troca conforme a cor escolhida,
+tamanhos com o que acabou riscado, tabela de medidas embutida e a descrição
+virando lista (uma linha por característica, como ela escreve nas artes).
+
+**Prévia do link** — `generateMetadata` com título, preço e a foto de capa.
+É o que faz o link chegar com imagem quando colado em qualquer lugar.
+
+**Se a cor escolhida não tem foto própria**, a galeria mostra as fotos da peça.
+Melhor a foto genérica do que espaço vazio.
+
+### O que falta na Etapa 2
+
+Nada. A Etapa 2 está fechada assim que as peças reais forem cadastradas.
+
+---
+
 ## Sessão 6 — 10/08/2026 — Fotos das peças
 
 ### PRIMEIRO PASSO, MANUAL E UMA VEZ SÓ
