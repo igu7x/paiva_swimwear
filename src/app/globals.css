@@ -365,18 +365,29 @@ html.lenis body {
 }
 
 /* ---------------------------------------------------------------------------
-   A PARTITURA VALE SÓ NA PRIMEIRA CARGA
+   DUAS PARTITURAS: A DE ABRIR E A DE VOLTAR
 
-   Os atrasos longos existem para encenar a abertura: o sol, depois a logo,
-   depois as linhas. Mas eles ficavam valendo TAMBÉM quando a pessoa rolava
-   para baixo e voltava — e aí quase um segundo de espera não é encenação, é
-   travamento.
+   São ritmos diferentes para momentos diferentes.
 
-   A classe `abrindo` entra antes da primeira pintura e sai quando a abertura
-   termina. Depois disso as revelações são imediatas, que é o certo para quem
-   já viu a página uma vez.
+   ABRIR (primeira carga): tempos largos. A pessoa acabou de chegar, não está
+   esperando nada, e a marca tem espaço para se apresentar.
+
+   VOLTAR (rolou para baixo e subiu): tempos curtos, mas NÃO zerados. Zerado
+   faz as duas linhas subirem juntas, e o resultado fica sem graça — foi o que
+   aconteceu quando tentei tirar a espera. O que dá vida é a cascata: uma linha
+   atrás da outra, rápido o suficiente para não virar espera.
    ------------------------------------------------------------------------- */
 
+/* voltar — o padrão, porque é o que mais acontece */
+.js-pronto [data-linha]:nth-of-type(1) > span {
+  transition-delay: 120ms;
+}
+
+.js-pronto [data-linha]:nth-of-type(2) > span {
+  transition-delay: 260ms;
+}
+
+/* abrir — vale só enquanto a marca `abrindo` estiver no documento */
 .abrindo [data-abertura] {
   transition-delay: 260ms;
 }
