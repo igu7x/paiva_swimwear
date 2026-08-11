@@ -116,7 +116,7 @@ export default async function Home() {
           width={1024}
           height={622}
           priority
-          className="animate-entrada h-auto w-44 sm:w-56"
+          className="animate-entrada h-auto w-64 sm:w-[26rem]"
         />
 
         <h1 className="mt-12 font-serif text-[clamp(2.6rem,11vw,5.5rem)] leading-[0.92] tracking-[-0.025em]">
@@ -131,9 +131,6 @@ export default async function Home() {
           </span>
         </h1>
 
-        <span className="animate-entrada mt-16 text-[0.58rem] uppercase tracking-[0.35em] text-[var(--color-suave)]">
-          role
-        </span>
       </section>
 
       {/* ============ 2. a frase, acendendo ============ */}

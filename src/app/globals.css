@@ -311,6 +311,19 @@ html.lenis body {
 .linha-corte {
   display: block;
   overflow: hidden;
+
+  /*
+    O corte precisa de folga embaixo.
+
+    O `overflow: hidden` é o que faz a linha surgir de trás de uma borda — mas
+    ele corta na altura exata do texto, e o que desce abaixo da linha de base
+    (o pé do "p", a cedilha do "ç") fica decepado.
+
+    A folga abre espaço para esses traços, e a margem negativa devolve a altura
+    ao layout, para as duas linhas não se afastarem.
+  */
+  padding-bottom: 0.16em;
+  margin-bottom: -0.16em;
 }
 
 .linha-corte > span {
