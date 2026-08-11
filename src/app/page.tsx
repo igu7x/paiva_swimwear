@@ -30,6 +30,24 @@ export const revalidate = 60;
  */
 const COLUNA = "mx-auto w-full max-w-[44rem] px-4";
 
+/**
+ * As cores que ocupam a moldura enquanto a foto não existe.
+ *
+ * São tons reais do catálogo dela — amarelo escuro, terracota, verde bandeira,
+ * vinho. Um quadro quase branco sobre fundo quase branco lê como buraco na
+ * página; um bloco de cor cheio lê como escolha, e a vitrine já se sustenta
+ * antes de existir foto.
+ *
+ * A cor sai do id da peça, não de sorteio: a mesma peça mostra sempre o mesmo
+ * tom, então a página não muda de cara a cada visita.
+ */
+const TONS_DE_ESPERA = [
+  "from-[#e8ab22] to-[#c98a12]",
+  "from-[#c4653a] to-[#a04a26]",
+  "from-[#33735a] to-[#245442]",
+  "from-[#7a2b42] to-[#5b1c2e]",
+] as const;
+
 /** A faixa que corre sem parar, como no rodapé da arte da loja. */
 function FaixaCorrendo() {
   const frases = [
@@ -148,14 +166,15 @@ export default async function Home() {
                           className="aproximar object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.05]"
                         />
                       ) : (
-                        /*
-                          O lugar da foto que ainda não existe. Retângulo em
-                          branco faz a loja parecer quebrada; com o sol da marca
-                          o vazio vira escolha.
-                        */
-                        <span className="absolute inset-0 flex flex-col items-center justify-center gap-2.5 bg-[radial-gradient(120%_90%_at_50%_20%,var(--color-areia-funda),var(--color-creme))] px-4 text-center">
-                          <Sol className="h-7 w-7 text-[var(--color-dourado)] opacity-55" />
-                          <span className="text-[0.54rem] uppercase tracking-[0.2em] text-[var(--color-suave)] opacity-70">
+                        /* O lugar da foto que ainda não existe: um bloco de
+                           cor cheio, não um quadro vazio. */
+                        <span
+                          className={`absolute inset-0 flex flex-col items-center justify-center gap-2.5 bg-gradient-to-br px-4 text-center text-white/90 ${
+                            TONS_DE_ESPERA[peca.id % TONS_DE_ESPERA.length]
+                          }`}
+                        >
+                          <Sol className="h-7 w-7 opacity-80" />
+                          <span className="text-[0.54rem] uppercase tracking-[0.2em] opacity-80">
                             foto em breve
                           </span>
                         </span>
