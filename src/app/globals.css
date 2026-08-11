@@ -106,6 +106,87 @@ body {
   respeitar. As animações não somem: elas ficam instantâneas, então nada de
   conteúdo aparecendo pela metade.
 */
+/* ---------------------------------------------------------------------------
+   TROCA DE TELA.
+
+   Sem isto, mudar de tela é um corte seco: uma some, outra aparece, e nada
+   liga as duas. O olho perde a referência e a navegação parece dura.
+
+   A convenção é a mesma do cinema: entrar mais fundo desliza para a esquerda,
+   voltar desliza para a direita. Quem decide o que é ida e o que é volta é
+   cada link, pelo `transitionTypes` — não é automático.
+
+   A assimetria dos tempos é de propósito. O que sai vai rápido (150ms) para
+   não disputar atenção; o que entra chega mais devagar e só começa a aparecer
+   quando o outro já saiu.
+   ------------------------------------------------------------------------- */
+
+/* Enquanto a troca acontece, a camada da animação engoliria os cliques. */
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-old(.ida) {
+  --deslocamento: -40px;
+  animation:
+    150ms ease-in both esmaecer reverse,
+    320ms ease-in-out both deslizar reverse;
+}
+::view-transition-new(.ida) {
+  --deslocamento: 40px;
+  animation:
+    200ms ease-out 130ms both esmaecer,
+    320ms ease-in-out both deslizar;
+}
+
+::view-transition-old(.volta) {
+  --deslocamento: 40px;
+  animation:
+    150ms ease-in both esmaecer reverse,
+    320ms ease-in-out both deslizar reverse;
+}
+::view-transition-new(.volta) {
+  --deslocamento: -40px;
+  animation:
+    200ms ease-out 130ms both esmaecer,
+    320ms ease-in-out both deslizar;
+}
+
+@keyframes esmaecer {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes deslizar {
+  from {
+    translate: var(--deslocamento);
+  }
+  to {
+    translate: 0;
+  }
+}
+
+/*
+  A faixa do topo fica parada durante a troca. Ela é o ponto de referência: se
+  ela deslizar junto, a impressão é de que a tela inteira se mexeu, e a pessoa
+  perde o lugar. O `display: none` no antigo evita as duas aparecerem juntas
+  por um instante.
+*/
+::view-transition-group(cabecalho-painel) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(cabecalho-painel) {
+  display: none;
+}
+::view-transition-new(cabecalho-painel) {
+  animation: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -114,5 +195,14 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  /* Deslizar a tela inteira é o que mais incomoda quem tem sensibilidade a
+     movimento. Aqui a troca vira instantânea, como era antes. */
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
   }
 }

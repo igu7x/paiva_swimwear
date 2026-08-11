@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { FormularioProduto } from "../formulario-produto";
+import { Transicao } from "../../transicao";
 import { legenda, pagina, titulo } from "../../ui";
 
 /**
@@ -12,22 +13,25 @@ import { legenda, pagina, titulo } from "../../ui";
  */
 export default function NovaPecaPage() {
   return (
-    <main className={pagina}>
-      <Link
-        href="/admin/produtos"
-        className="text-sm text-[var(--color-suave)]"
-      >
-        ← Peças
-      </Link>
+    <Transicao>
+      <main className={pagina}>
+        <Link
+          href="/admin/produtos"
+          transitionTypes={["volta"]}
+          className="text-sm text-[var(--color-suave)]"
+        >
+          ← Peças
+        </Link>
 
-      <h1 className={`${titulo} mt-3`}>Nova peça</h1>
-      <p className={`${legenda} mt-1`}>
-        Depois de salvar você cadastra as cores e as quantidades.
-      </p>
+        <h1 className={`${titulo} mt-3`}>Nova peça</h1>
+        <p className={`${legenda} mt-1`}>
+          Depois de salvar você cadastra as cores e as quantidades.
+        </p>
 
-      <div className="mt-8">
-        <FormularioProduto />
-      </div>
-    </main>
+        <div className="mt-8">
+          <FormularioProduto />
+        </div>
+      </main>
+    </Transicao>
   );
 }

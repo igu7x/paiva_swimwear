@@ -6,6 +6,7 @@ import { obterProduto } from "@/lib/db/produtos";
 import { removerProduto } from "../acoes";
 import { CoresEEstoque } from "../cores-e-estoque";
 import { FormularioProduto } from "../formulario-produto";
+import { Transicao } from "../../transicao";
 import { botaoTexto, legenda, pagina, titulo } from "../../ui";
 
 /**
@@ -24,9 +25,11 @@ export default async function PecaPage({
   if (!produto) notFound();
 
   return (
-    <main className={pagina}>
+    <Transicao>
+      <main className={pagina}>
       <Link
         href="/admin/produtos"
+        transitionTypes={["volta"]}
         className="text-sm text-[var(--color-suave)]"
       >
         ← Peças
@@ -55,6 +58,7 @@ export default async function PecaPage({
           desmarque &ldquo;Aparecer na loja&rdquo; ali em cima.
         </p>
       </section>
-    </main>
+      </main>
+    </Transicao>
   );
 }

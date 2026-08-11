@@ -6,6 +6,7 @@ import { formatarReais } from "@/lib/formato";
 import { obterUsuarioLogado } from "@/lib/supabase/servidor";
 
 import { PistaDoLink } from "./movimento";
+import { Transicao } from "./transicao";
 import { cartao, cartaoClicavel, legenda, pagina, titulo } from "./ui";
 
 /**
@@ -25,7 +26,8 @@ export default async function PainelPage() {
   const semEstoque = produtos.filter((p) => somarEstoque(p) === 0);
 
   return (
-    <main className={pagina}>
+    <Transicao>
+      <main className={pagina}>
       <h1 className={titulo}>Painel</h1>
       <p className={`${legenda} mt-1`}>{usuario?.email}</p>
 
@@ -43,7 +45,11 @@ export default async function PainelPage() {
         </div>
       ) : null}
 
-      <Link href="/admin/produtos" className={`${cartaoClicavel} mt-4`}>
+      <Link
+        href="/admin/produtos"
+        transitionTypes={["ida"]}
+        className={`${cartaoClicavel} mt-4`}
+      >
         <span className="font-medium">
           Peças
           <PistaDoLink />
@@ -87,6 +93,7 @@ export default async function PainelPage() {
           A tela para você editar estes valores entra junto com os pedidos.
         </p>
       </section>
-    </main>
+      </main>
+    </Transicao>
   );
 }

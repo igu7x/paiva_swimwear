@@ -13,9 +13,18 @@ import { sair } from "./acoes";
  */
 export function Cabecalho() {
   return (
-    <header className="border-b border-[var(--color-linha)]">
+    <header
+      className="border-b border-[var(--color-linha)]"
+      // Marca a faixa para ela ficar parada durante a troca de tela — é o
+      // ponto de referência de quem está navegando. Ver globals.css.
+      style={{ viewTransitionName: "cabecalho-painel" }}
+    >
       <div className="mx-auto flex w-full max-w-md items-center justify-between gap-4 px-5 py-3">
-        <Link href="/admin" aria-label="Início do painel">
+        <Link
+          href="/admin"
+          aria-label="Início do painel"
+          transitionTypes={["volta"]}
+        >
           <Image
             src="/logo.png"
             alt="Paiva Swimwear"

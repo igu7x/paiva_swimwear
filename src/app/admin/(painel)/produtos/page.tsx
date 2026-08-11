@@ -4,6 +4,7 @@ import { listarProdutos, somarEstoque } from "@/lib/db/produtos";
 import { formatarReais } from "@/lib/formato";
 
 import { PistaDoLink } from "../movimento";
+import { Transicao } from "../transicao";
 import { botaoPrincipal, cartaoClicavel, legenda, pagina, titulo } from "../ui";
 
 /**
@@ -16,7 +17,8 @@ export default async function ProdutosPage() {
   const produtos = await listarProdutos();
 
   return (
-    <main className={pagina}>
+    <Transicao>
+      <main className={pagina}>
       <h1 className={titulo}>Peças</h1>
       <p className={`${legenda} mt-1`}>
         {produtos.length === 0
@@ -24,7 +26,11 @@ export default async function ProdutosPage() {
           : `${produtos.length} ${produtos.length === 1 ? "peça" : "peças"} no catálogo`}
       </p>
 
-      <Link href="/admin/produtos/nova" className={`${botaoPrincipal} mt-6`}>
+      <Link
+        href="/admin/produtos/nova"
+        transitionTypes={["ida"]}
+        className={`${botaoPrincipal} mt-6`}
+      >
         Cadastrar peça
         <PistaDoLink />
       </Link>
@@ -42,6 +48,7 @@ export default async function ProdutosPage() {
               <li key={produto.id}>
                 <Link
                   href={`/admin/produtos/${produto.id}`}
+                  transitionTypes={["ida"]}
                   className={cartaoClicavel}
                 >
                   <div className="flex items-baseline justify-between gap-3">
@@ -72,6 +79,7 @@ export default async function ProdutosPage() {
           })}
         </ul>
       )}
-    </main>
+      </main>
+    </Transicao>
   );
 }

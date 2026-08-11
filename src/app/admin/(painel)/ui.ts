@@ -27,9 +27,14 @@
 const toque =
   "touch-manipulation transition-[transform,opacity,border-color,background-color] duration-150 ease-out active:scale-[0.98]";
 
-/** A coluna de conteúdo. Mesma largura e mesma margem em todas as telas. */
-export const pagina =
-  "mx-auto w-full max-w-md px-5 pb-20 pt-8 animate-entrada";
+/**
+ * A coluna de conteúdo. Mesma largura e mesma margem em todas as telas.
+ *
+ * Sem animação de entrada aqui de propósito: quem anima a troca de tela é o
+ * `Transicao`, em transicao.tsx. As duas juntas dariam movimento em cima de
+ * movimento.
+ */
+export const pagina = "mx-auto w-full max-w-md px-5 pb-20 pt-8";
 
 /** Bloco branco com borda de um fio. */
 export const cartao =
