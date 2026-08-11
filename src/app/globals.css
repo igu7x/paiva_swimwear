@@ -418,52 +418,15 @@ html.lenis body {
   transparente antes de chegar ao limite.
 */
 /* ---------------------------------------------------------------------------
-   A CAPA É A PRAIA
+   A CAPA FICA LIMPA
 
-   Duas tentativas de pôr alguma coisa atrás da logo foram rejeitadas: primeiro
-   uma mancha desfocada, depois raios desenhados. As duas erravam pelo mesmo
-   motivo — eram enfeite ocupando espaço, sem dizer nada.
+   A praia é só da metade de baixo da página. Aqui em cima a marca fica sozinha
+   sobre o areia, com o brilho suave do `luz-do-sol` no alto e nada mais.
 
-   A resposta é trocar a pergunta. Em vez de "o que colocar atrás da marca?", a
-   capa passa a ser a própria praia, que é o assunto da loja e é foto dela.
-
-   O véu por cima resolve dois problemas ao mesmo tempo: dá superfície clara
-   para a marca dourada e o texto marrom aparecerem, e emenda o fim da capa com
-   o areia da faixa seguinte, sem corte.
+   Três tentativas de pôr algo atrás da logo foram descartadas: mancha
+   desfocada, raios desenhados e a própria foto de praia. As três erravam pelo
+   mesmo motivo — a marca não precisa de companhia, precisa de espaço.
    ------------------------------------------------------------------------- */
-
-.capa-praia {
-  background-color: var(--color-areia);
-  background-image: url("/praia.webp");
-  background-size: cover;
-  /* Enquadra a parte de baixo: areia e mar, longe do sol e das palmeiras.
-     É a região calma da foto, onde a marca tem onde pousar. */
-  background-position: 50% 78%;
-}
-
-/*
-  O véu clareia a praia até a marca aparecer, mas SEM apagá-la.
-
-  A primeira tentativa usava 62% a 88% de areia por cima, e o resultado foi a
-  foto desaparecer: a capa virou o mesmo creme de antes, e trocar a capa não
-  serviu de nada. Agora ele é forte só onde precisa — atrás do texto, no meio —
-  e abre nas pontas, onde a praia pode aparecer.
-
-  Embaixo ele fecha em areia sólida para emendar com a faixa seguinte sem corte.
-*/
-.veu-capa {
-  background: linear-gradient(
-    180deg,
-    color-mix(in oklab, var(--color-areia) 26%, transparent) 0%,
-    color-mix(in oklab, var(--color-areia) 52%, transparent) 22%,
-    /* faixa da marca: mais fechada, para o dourado não cair na montanha */
-      color-mix(in oklab, var(--color-areia) 80%, transparent) 38%,
-    color-mix(in oklab, var(--color-areia) 78%, transparent) 56%,
-    color-mix(in oklab, var(--color-areia) 62%, transparent) 74%,
-    color-mix(in oklab, var(--color-areia) 90%, transparent) 92%,
-    var(--color-areia) 100%
-  );
-}
 
 /* O fio dourado que se estende sozinho ao entrar na tela. */
 .js-pronto [data-fio] {
@@ -588,13 +551,30 @@ html.lenis body {
   água sem emenda, embaixo porque logo depois vem o rodapé escuro e um corte
   seco ali chamaria mais atenção que o conteúdo.
 */
+/*
+  O VÉU VIROU EMENDA, NÃO CAMADA.
+
+  Antes ele clareava a seção inteira — 48% a 78% de areia por cima da foto do
+  começo ao fim. Isso lavava a praia: a água turquesa virava um cinza pálido, e
+  a foto boa deixava de valer a pena.
+
+  Ele existia para nome e preço serem legíveis sobre a foto. Esse trabalho hoje
+  é da placa clara atrás do texto — e duas soluções para o mesmo problema, uma
+  em cima da outra, é uma a mais.
+
+  Agora ele só emenda as bordas: alguns por cento no alto, para a areia da
+  faixa anterior entrar na água sem corte, e um fecho embaixo antes do rodapé
+  escuro. No meio, onde ficam as peças, a foto aparece inteira.
+*/
 .veu-agua {
   background: linear-gradient(
     180deg,
     var(--color-areia) 0%,
-    color-mix(in oklab, var(--color-areia) 62%, transparent) 16%,
-    color-mix(in oklab, var(--color-areia) 48%, transparent) 55%,
-    color-mix(in oklab, var(--color-areia) 78%, transparent) 100%
+    color-mix(in oklab, var(--color-areia) 55%, transparent) 6%,
+    transparent 16%,
+    transparent 84%,
+    color-mix(in oklab, var(--color-areia) 45%, transparent) 96%,
+    color-mix(in oklab, var(--color-areia) 80%, transparent) 100%
   );
 }
 

@@ -95,14 +95,7 @@ export default async function Home() {
         A ABERTURA, em três tempos: o sol abre, a logo chega, as linhas sobem
         uma depois da outra. Os atrasos abaixo são a partitura disso.
       */}
-      <section className="capa-praia capa-recua relative flex min-h-[92svh] flex-col items-center justify-center overflow-hidden px-6 text-center">
-        {/* O véu clareia a praia o suficiente para a marca aparecer, e fecha
-            em areia embaixo para emendar com a faixa seguinte sem corte. */}
-        <div
-          aria-hidden
-          className="veu-capa pointer-events-none absolute inset-0"
-        />
-
+      <section className="luz-do-sol capa-recua relative flex min-h-[92svh] flex-col items-center justify-center overflow-hidden px-6 text-center">
         <Image
           src="/logo.png"
           alt={config?.nomeLoja ?? "Paiva Swimwear"}
