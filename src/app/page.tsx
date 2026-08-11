@@ -173,7 +173,11 @@ export default async function Home() {
                 className="mx-auto flex max-w-5xl flex-col items-center gap-0 px-4 py-14 sm:flex-row sm:gap-16 sm:px-6 sm:py-[14vh]"
               >
                 <div
-                  className={`w-full sm:w-1/2 ${espelhada ? "sm:order-2" : ""}`}
+                  className={`w-[70%] sm:w-1/2 ${
+                    espelhada
+                      ? "self-end sm:order-2 sm:self-auto"
+                      : "self-start sm:self-auto"
+                  }`}
                 >
                   <Link href={`/${peca.slug}`} className="group block">
                     {/* A sombra tira a peça do fundo. Sem ela, a foto encosta
@@ -211,9 +215,21 @@ export default async function Home() {
                   uma superfície de leitura sem esconder a praia, porque o que
                   está atrás continua aparecendo desfocado.
                 */}
+                {/*
+                  A placa vem do lado OPOSTO ao da foto, e sobe por cima dela.
+
+                  A foto sozinha, ocupando a largura toda, tapava a praia — e
+                  aí o fundo que a gente escolheu com tanto cuidado deixava de
+                  existir. Com as duas ocupando 70% e 78%, cada uma de um lado,
+                  sobra praia em volta e a cena ganha diagonal.
+
+                  No desktop tudo isso é desligado: lá elas ficam lado a lado.
+                */}
                 <div
-                  className={`-mt-10 w-full px-3 sm:mt-0 sm:w-1/2 sm:px-0 ${
-                    espelhada ? "sm:order-1" : ""
+                  className={`-mt-14 w-[78%] sm:mt-0 sm:w-1/2 ${
+                    espelhada
+                      ? "self-start sm:order-1 sm:self-auto"
+                      : "self-end sm:self-auto"
                   }`}
                 >
                   <div
