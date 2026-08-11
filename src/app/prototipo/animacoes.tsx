@@ -57,7 +57,14 @@ export function Animacoes() {
       const contexto = gsap.context(() => {
         /* ---- letra a letra, mascarada ---- */
         for (const alvo of gsap.utils.toArray<HTMLElement>(".revelar-letras")) {
-          const partido = new SplitText(alvo, { type: "chars", mask: "chars" });
+          // "words,chars" e não só "chars": partindo apenas em letras, cada
+          // letra vira um bloco solto e o navegador passa a quebrar a linha no
+          // meio da palavra ("é p / eça de vitrine"). Envolver as palavras
+          // mantém a quebra onde ela deve acontecer.
+          const partido = new SplitText(alvo, {
+            type: "words,chars",
+            mask: "chars",
+          });
           gsap.set(alvo, { visibility: "visible" });
 
           gsap.from(partido.chars, {
@@ -78,28 +85,46 @@ export function Animacoes() {
         const blocos = gsap.utils.toArray<HTMLElement>("[data-presa] .blocos > *");
 
         if (presa && blocos.length > 1) {
+          const total = blocos.length;
           gsap.set(blocos.slice(1), { autoAlpha: 0, yPercent: 14 });
 
-          const linha = gsap.timeline({
-            scrollTrigger: {
-              trigger: presa,
-              start: "top top",
-              end: "bottom bottom",
-              scrub: 1,
-            },
-          });
+          /*
+            A troca é calculada, não encadeada.
 
-          blocos.forEach((bloco, i) => {
-            if (i > 0) {
-              linha.to(bloco, { autoAlpha: 1, yPercent: 0, ease: "none" }, i);
-            }
-            if (i < blocos.length - 1) {
-              linha.to(
-                bloco,
-                { autoAlpha: 0, yPercent: -14, ease: "none" },
-                i + 0.72,
-              );
-            }
+            A primeira versão empilhava tweens numa linha do tempo com posições
+            arbitrárias, e existiam faixas em que dois blocos ficavam quase
+            opacos ao mesmo tempo — na tela, "Modelagem" e "Tecido" impressos um
+            por cima do outro, ilegíveis.
+
+            Aqui cada bloco tem uma faixa exclusiva do percurso, e a opacidade
+            sai da distância até o centro dessa faixa. Dois blocos nunca podem
+            estar cheios ao mesmo tempo, porque a conta não permite.
+          */
+          ScrollTrigger.create({
+            trigger: presa,
+            start: "top top",
+            end: "bottom bottom",
+            scrub: 1,
+            onUpdate: (self) => {
+              const p = self.progress;
+
+              blocos.forEach((bloco, i) => {
+                const meio = (i + 0.5) / total;
+                const meiaFaixa = 0.5 / total;
+                let d = (p - meio) / meiaFaixa;
+
+                // O primeiro fica firme antes de começar, e o último depois de
+                // terminar: sem isto a cena abre e fecha em branco.
+                if (i === 0 && d < 0) d = 0;
+                if (i === total - 1 && d > 0) d = 0;
+
+                const visivel = Math.min(1, Math.max(0, (1 - Math.abs(d)) * 2.4));
+                gsap.set(bloco, {
+                  autoAlpha: visivel,
+                  yPercent: d * -12,
+                });
+              });
+            },
           });
 
           /* ---- a foto respira dentro da moldura ---- */

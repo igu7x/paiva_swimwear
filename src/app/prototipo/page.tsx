@@ -76,7 +76,7 @@ export default async function Prototipo() {
             {/* A foto sangra até a borda esquerda, sem canto arredondado.
                 Canto arredondado em foto de produto é linguagem de aplicativo,
                 não de editorial. */}
-            <div className="col-span-12 h-[38svh] lg:col-span-6 lg:h-[78svh]">
+            <div className="col-span-12 h-[52svh] lg:col-span-6 lg:h-[80svh]">
               <div className="relative h-full w-full overflow-hidden bg-[var(--casca)]">
                 {capa ? (
                   <div data-foto className="absolute inset-[-8%]">
