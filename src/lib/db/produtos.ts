@@ -5,7 +5,7 @@ import { and, asc, eq, sql } from "drizzle-orm";
 import { gerarSlug } from "@/lib/slug";
 
 import { obterDb } from "./index";
-import { estoque, produtos, variacoes } from "./schema";
+import { estoque, fotos, produtos, variacoes } from "./schema";
 
 /**
  * Tudo que o painel precisa saber sobre os produtos.
@@ -20,6 +20,7 @@ export async function obterProduto(id: number) {
   return obterDb().query.produtos.findFirst({
     where: eq(produtos.id, id),
     with: {
+      fotos: { orderBy: [asc(fotos.posicao), asc(fotos.id)] },
       variacoes: {
         orderBy: [asc(variacoes.posicao), asc(variacoes.id)],
         with: { estoque: true },
@@ -33,6 +34,7 @@ export async function obterProdutoPorSlug(slug: string) {
   return obterDb().query.produtos.findFirst({
     where: eq(produtos.slug, slug),
     with: {
+      fotos: { orderBy: [asc(fotos.posicao), asc(fotos.id)] },
       variacoes: {
         orderBy: [asc(variacoes.posicao), asc(variacoes.id)],
         with: { estoque: true },
@@ -171,6 +173,48 @@ export async function apagarVariacao(produtoId: number, variacaoId: number) {
     .where(
       and(eq(variacoes.id, variacaoId), eq(variacoes.produtoId, produtoId)),
     );
+}
+
+/**
+ * Registra uma foto já enviada para o Storage.
+ *
+ * `variacaoId` vazio significa foto do produto (a capa, a arte com modelo).
+ * A trava no banco garante que a cor informada pertence a este produto.
+ */
+export async function registrarFoto(
+  produtoId: number,
+  variacaoId: number | null,
+  caminho: string,
+) {
+  const db = obterDb();
+
+  const [ultima] = await db
+    .select({ maior: sql<number>`coalesce(max(${fotos.posicao}), -1)` })
+    .from(fotos)
+    .where(eq(fotos.produtoId, produtoId));
+
+  const [criada] = await db
+    .insert(fotos)
+    .values({ produtoId, variacaoId, caminho, posicao: ultima.maior + 1 })
+    .returning({ id: fotos.id });
+
+  return criada.id;
+}
+
+/**
+ * Apaga o registro da foto e devolve o caminho dela, para quem chamou remover
+ * o arquivo do Storage também.
+ *
+ * Confere o produto junto com o id da foto: sem isso, um id trocado na
+ * requisição apagaria a foto de outra peça.
+ */
+export async function apagarFoto(produtoId: number, fotoId: number) {
+  const [apagada] = await obterDb()
+    .delete(fotos)
+    .where(and(eq(fotos.id, fotoId), eq(fotos.produtoId, produtoId)))
+    .returning({ caminho: fotos.caminho });
+
+  return apagada?.caminho ?? null;
 }
 
 /** Grava as quantidades de uma cor, um tamanho por vez. */

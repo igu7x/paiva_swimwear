@@ -5,6 +5,7 @@ import { useOptimistic, useRef, useState } from "react";
 import { TAMANHOS } from "@/lib/tamanhos";
 
 import { adicionarCor, gravarEstoque, removerCor } from "./acoes";
+import { Fotos } from "./fotos";
 import { botaoContorno, botaoTexto, campo, cartao } from "../ui";
 
 /**
@@ -27,6 +28,7 @@ import { botaoContorno, botaoTexto, campo, cartao } from "../ui";
 
 type Estoque = { tamanho: string; quantidade: number };
 type Variacao = { id: number; nome: string; estoque: Estoque[] };
+type Foto = { id: number; caminho: string; variacaoId: number | null };
 
 type Mudanca =
   | { tipo: "acrescentar"; nome: string }
@@ -35,9 +37,11 @@ type Mudanca =
 export function CoresEEstoque({
   produtoId,
   variacoes,
+  fotos,
 }: {
   produtoId: number;
   variacoes: Variacao[];
+  fotos: Foto[];
 }) {
   const [lista, aplicar] = useOptimistic(
     variacoes,
@@ -79,6 +83,7 @@ export function CoresEEstoque({
               <BlocoDaCor
                 produtoId={produtoId}
                 variacao={variacao}
+                fotos={fotos.filter((f) => f.variacaoId === variacao.id)}
                 aoRemover={() => aplicar({ tipo: "remover", id: variacao.id })}
               />
             </li>
@@ -122,10 +127,12 @@ export function CoresEEstoque({
 function BlocoDaCor({
   produtoId,
   variacao,
+  fotos,
   aoRemover,
 }: {
   produtoId: number;
   variacao: Variacao;
+  fotos: Foto[];
   aoRemover: () => void;
 }) {
   const [salvo, setSalvo] = useState(false);
@@ -175,6 +182,18 @@ function BlocoDaCor({
           {salvo ? "Salvo" : "Salvar estoque"}
         </button>
       </form>
+
+      <div className="mt-4 border-t border-[var(--color-linha)] pt-4">
+        <p className="mb-2 text-xs text-[var(--color-suave)]">
+          Fotos desta cor
+        </p>
+        <Fotos
+          produtoId={produtoId}
+          variacaoId={variacao.id}
+          fotos={fotos}
+          vazio={`Sem foto de ${variacao.nome}. A cliente vai ver a foto da peça.`}
+        />
+      </div>
 
       <form
         action={async (dados) => {

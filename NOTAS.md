@@ -5,6 +5,47 @@
 
 ---
 
+## Sessão 6 — 10/08/2026 — Fotos das peças
+
+### PRIMEIRO PASSO, MANUAL E UMA VEZ SÓ
+
+Rodar `supabase/storage.sql` no painel do Supabase (_SQL Editor > New query >
+colar > Run_). Ele cria o balde `produtos` e as regras de permissão. **Nada de
+foto funciona antes disso.**
+
+Não está junto das migrações de propósito: elas rodam também no Postgres da
+máquina, onde o Storage do Supabase não existe, e quebrariam.
+
+### Decisões
+
+**Quem autoriza o envio é a sessão da vendedora**, não uma chave mestra. As
+regras ficam no Storage: quem está logado grava, qualquer um lê. Isso dispensou
+a chave `service_role` — aquela que ignora todas as travas do banco. Uma chave
+secreta a menos circulando, e quem confere a permissão passa a ser o Supabase.
+
+**As fotos de teste vão para a pasta `dev/`.** O Storage é um só, e separar por
+pasta resolve sem custar um projeto inteiro a mais. `VERCEL_ENV` decide: só o
+site publicado de verdade grava fora de `dev/`.
+
+**O nome do arquivo termina com um trecho aleatório.** Duas fotos "IMG_0042.jpg"
+não se atropelam, e trocar a foto gera endereço novo — então o navegador da
+cliente mostra a nova em vez da antiga que ele guardou.
+
+### Como ficou para ela
+
+Escolher os arquivos já envia, sem botão de confirmar depois. Cada peça tem
+fotos próprias (capa, arte com modelo) e cada cor tem as suas. A primeira foto
+da peça é marcada como capa, porque é a que vai para a vitrine e para a prévia
+do link no WhatsApp.
+
+### O que falta na Etapa 2
+
+1. Vitrine e página da peça, com o visual aprovado
+2. Tela "qual é o meu tamanho", com as medidas que já estão em
+   `src/lib/tamanhos.ts`
+
+---
+
 ## Sessão 5 — 10/08/2026 — Desempenho e movimento
 
 ### A lição: medir antes de consertar
