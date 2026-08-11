@@ -98,6 +98,27 @@ export default async function Home() {
     return temA - temB || a.nome.localeCompare(b.nome, "pt-BR");
   });
 
+  /**
+   * A grade se ajusta ao tamanho do catálogo.
+   *
+   * Uma peça sozinha numa grade de três colunas encosta na esquerda e deixa
+   * dois terços da tela vazios — parece defeito, não escolha. Com poucas peças
+   * a grade encolhe e centraliza, então a peça ocupa o lugar dela.
+   *
+   * Isso importa agora e vai importar de novo: no começo da temporada, ou
+   * quando quase tudo estiver esgotado, a vitrine volta a ter poucas peças.
+   */
+  const grade =
+    pecas.length === 1
+      ? "grid-cols-1 mx-auto max-w-[20rem]"
+      : pecas.length === 2
+        ? "grid-cols-2 mx-auto max-w-[32rem]"
+        : "grid-cols-2 sm:grid-cols-3";
+
+  // O desencontro precisa de vizinha ao lado para ser lido como ritmo. Com uma
+  // peça só, ele viraria só um empurrão para baixo sem motivo.
+  const desencontrar = pecas.length > 1;
+
   return (
     <div className="pb-4">
       <MovimentoDaLoja />
@@ -139,7 +160,7 @@ export default async function Home() {
             aqui, com os tamanhos disponíveis.
           </p>
         ) : (
-          <ul className="grid grid-cols-2 gap-x-3.5 gap-y-5 sm:grid-cols-3">
+          <ul className={`grid gap-x-3.5 gap-y-5 ${grade}`}>
             {pecas.map((peca, indice) => {
               const capa = capaDoProduto(peca);
               const esgotada = somarEstoque(peca) === 0;
@@ -152,7 +173,7 @@ export default async function Home() {
                   // Uma sobe, a seguinte desce. É o desencontro que tira a cara
                   // de planilha e dá a de editorial — e só é visível porque as
                   // peças estão próximas.
-                  className={indice % 2 === 1 ? "mt-11" : ""}
+                  className={desencontrar && indice % 2 === 1 ? "mt-11" : ""}
                   style={{ transitionDelay: `${(indice % 3) * 90}ms` }}
                 >
                   <Link href={`/${peca.slug}`} className="group block">
