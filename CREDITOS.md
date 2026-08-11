@@ -2,12 +2,12 @@
 
 ## `public/praia.webp` — fundo da vitrine
 
-**Foto da própria loja.** Original em `assets/originais/fotopraia.jpg`.
+**Foto da própria loja.** Original em `assets/originais/fotopraia.png`.
 
 | | |
 | --- | --- |
-| Original | 5353×3000 JPEG, 15,3 MB |
-| No site | 2400×1345 WebP, 544 KB |
+| Original | 1672×941 PNG, 2,3 MB |
+| No site | 1672×941 WebP, 204 KB |
 
 Sendo foto da loja, não há licença de terceiro envolvida e não existe crédito a
 prestar. É o cenário certo: nenhum banco de imagem mostra o produto no contexto
@@ -23,12 +23,11 @@ Coloque a nova foto em `assets/originais/`, gere a versão do site e substitua
 `public/praia.webp`. O comando que gerou a atual:
 
 ```
-sharp('assets/originais/fotopraia.jpg')
-  .resize({ width: 2400 })
-  .webp({ quality: 72 })
+sharp('assets/originais/fotopraia.png')
+  .webp({ quality: 82 })
 ```
 
-544 KB é, de longe, o maior arquivo do site. A resolução alta foi pedida: em tela grande, versões menores apareciam borradas. O custo é real no 4G, e vale rever se algum dia a loja reclamar de lentidão no celular.
+204 KB. A imagem entra no tamanho original, sem redimensionar: ela ja chega em 1672px, que basta para um fundo, e como aparece desfocada no site nao precisa de mais. A qualidade 82 e alta de proposito — o desfoque e efeito do navegador, entao o arquivo precisa continuar nitido.
 
 ## `public/logo.png`
 
