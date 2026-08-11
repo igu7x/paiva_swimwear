@@ -383,9 +383,38 @@ html.lenis body {
    papel de parede, e água em movimento rápido embrulha.
    ------------------------------------------------------------------------- */
 
+/*
+  A PRAIA COMO FUNDO DA SEÇÃO.
+
+  Duas tentativas anteriores usaram uma camada presa no topo (`sticky`) com a
+  foto dentro. As duas cobriram o rodapé: a camada tem altura menor que a foto,
+  a foto transborda, e o que transborda pinta por cima do que vem depois na
+  página. O rodapé sumia sem deixar rastro no layout — ele estava lá, embaixo
+  da praia.
+
+  Fundo de CSS não tem esse problema: ele é recortado pela caixa do próprio
+  elemento. Não existe como invadir o rodapé.
+
+  `fixed` faz a foto ficar parada enquanto o conteúdo passa. No iPhone essa
+  palavra é ignorada há anos e a foto rola junto — que é degradação aceitável:
+  perde-se o efeito, não a legibilidade.
+*/
 .fundo-agua {
   position: relative;
   background-color: var(--color-areia);
+  background-image: url("/praia.webp");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+@media (max-width: 640px) {
+  /* No celular a tela é estreita e alta: `cover` com foto deitada cortaria
+     quase tudo. Rolando junto, a foto inteira aparece ao longo da seção. */
+  .fundo-agua {
+    background-attachment: scroll;
+    background-size: cover;
+  }
 }
 
 /*

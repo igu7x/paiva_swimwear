@@ -4,22 +4,32 @@ Toda imagem que não é da loja fica registrada aqui, com a licença e a origem.
 Isso não é formalidade: licença de imagem é a diferença entre um site que vende
 tranquilo e uma notificação de cobrança meses depois.
 
-## `public/agua.webp` — fundo de piscina
+## `public/praia.webp` — fundo de praia
 
 | | |
 | --- | --- |
-| Autor | Shixart1985 |
-| Licença | [CC BY 2.0](https://creativecommons.org/licenses/by/2.0) |
-| Origem | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Water_flowing_steadily_into_a_vibrant_blue_swimming_pool_during_a_sunny_day.jpg) |
-| Original | 6016×4016 JPEG |
-| No site | 1800×1201 WebP, 53 KB |
+| Licença | **CC0 / domínio público** |
+| Origem | StockSnap, via [Openverse](https://openverse.org) |
+| Identificação | `GBUFTJIRSS` |
+| No site | 960×719 WebP, 43 KB |
 
-A CC BY permite uso comercial e alteração, **e exige crédito**. Por isso o nome
-do autor e o link da licença aparecem no rodapé do site. Se esta imagem for
-trocada, o crédito sai junto.
+CC0 é renúncia de direitos: uso comercial livre, alteração livre, **e sem
+exigência de crédito**. Por isso não existe linha de crédito no rodapé para
+esta foto. O registro fica aqui de qualquer forma, para quem mexer depois saber
+de onde ela veio.
+
+### Por que esta e não outra
+
+Foi escolhida entre oito candidatas, olhando uma a uma. As de mar turquesa
+saturado disputavam atenção com a peça e brigavam com o dourado da marca. Esta
+tem luz dourada e areia quente — conversa com "Feito para o sol" em vez de
+competir com ele.
+
+Resolução baixa de propósito: ela fica atrás das peças, sob uma camada clara.
+Fundo não precisa de nitidez de cartaz, e 43 KB é o que a cliente baixa no 4G.
 
 ### Quando substituir
 
 Esta foto é um empréstimo até a loja ter as próprias. Foto da vendedora numa
-piscina de Goiânia, com as peças dela, vale mais do que qualquer banco de
-imagem — e resolve a licença de vez.
+praia ou piscina de Goiânia, com as peças dela, vale mais do que qualquer banco
+de imagem — e é a única que mostra o produto no contexto real.

@@ -120,28 +120,12 @@ export default async function Home() {
 
       {/* ============ 3. uma cena por peça ============ */}
       <main className="fundo-agua">
-        {/*
-          A água fica PRESA no lugar enquanto as peças passam por cima.
-
-          É `sticky` e não `fixed` de propósito: fundo fixo é quebrado no
-          iPhone há anos, e o público desta loja é celular. A margem negativa
-          logo abaixo desconta a altura desta camada, senão ela empurraria as
-          peças uma tela inteira para baixo.
-        */}
+        {/* A camada de luz sobre a praia. Fica presa às bordas da seção, então
+            nunca alcança o rodapé — ver .fundo-agua no globals.css. */}
         <div
           aria-hidden
-          className="pointer-events-none sticky top-0 z-0 -mb-[100svh] h-svh overflow-hidden"
-        >
-          <Image
-            src="/agua.webp"
-            alt=""
-            fill
-            priority={false}
-            sizes="100vw"
-            className="object-cover"
-          />
-          <div className="veu-agua absolute inset-0" />
-        </div>
+          className="veu-agua pointer-events-none absolute inset-0 z-0"
+        />
 
         <div className="relative z-10">
         {pecas.length === 0 ? (
@@ -309,31 +293,7 @@ export default async function Home() {
 
           <div className="mt-14 flex flex-col gap-3 border-t border-[var(--color-areia)]/15 pt-6 text-[0.58rem] uppercase tracking-[0.2em] text-[var(--color-areia)]/40 sm:flex-row sm:justify-between">
             <span>{config?.nomeLoja ?? "Paiva Swimwear"}</span>
-            {/*
-              Crédito obrigatório da foto de fundo. A licença CC BY permite uso
-              comercial, e exige o nome do autor e o link da licença. Se a foto
-              for trocada, esta linha sai junto — ver CREDITOS.md.
-            */}
-            <span className="normal-case tracking-normal">
-              Foto de piscina:{" "}
-              <a
-                href="https://commons.wikimedia.org/wiki/File:Water_flowing_steadily_into_a_vibrant_blue_swimming_pool_during_a_sunny_day.jpg"
-                rel="noopener noreferrer"
-                target="_blank"
-                className="underline underline-offset-2 transition-colors hover:text-[var(--color-areia)]/70"
-              >
-                Shixart1985
-              </a>
-              ,{" "}
-              <a
-                href="https://creativecommons.org/licenses/by/2.0"
-                rel="license noopener noreferrer"
-                target="_blank"
-                className="underline underline-offset-2 transition-colors hover:text-[var(--color-areia)]/70"
-              >
-                CC BY 2.0
-              </a>
-            </span>
+            <span>Feito para o sol</span>
           </div>
         </div>
       </footer>
