@@ -91,25 +91,35 @@ export default async function Home() {
       </div>
 
       {/* ============ 1. a marca ============ */}
-      <section className="luz-do-sol capa-recua flex min-h-[92svh] flex-col items-center justify-center px-6 text-center">
+      {/*
+        A ABERTURA, em três tempos: o sol abre, a logo chega, as linhas sobem
+        uma depois da outra. Os atrasos abaixo são a partitura disso.
+      */}
+      <section className="luz-do-sol capa-recua relative flex min-h-[92svh] flex-col items-center justify-center overflow-hidden px-6 text-center">
+        <div
+          aria-hidden
+          className="brilho-abertura pointer-events-none absolute inset-0"
+        />
+
         <Image
           src="/logo.png"
           alt={config?.nomeLoja ?? "Paiva Swimwear"}
           width={1024}
           height={622}
           priority
-          data-revelar
-          className="h-auto w-64 sm:w-[26rem]"
+          data-abertura
+          style={{ transitionDelay: "260ms" }}
+          className="relative h-auto w-64 sm:w-[26rem]"
         />
 
-        <h1 className="mt-12 font-serif text-[clamp(2.05rem,8vw,4.25rem)] leading-[0.98] tracking-[-0.02em]">
+        <h1 className="relative mt-12 font-serif text-[clamp(2.05rem,8vw,4.25rem)] leading-[0.98] tracking-[-0.02em]">
           {/* Cada linha é observada por conta própria: elas sobem em cascata ao
               entrar e descem ao sair, toda vez — não só na primeira visita. */}
           <span className="linha-corte" data-linha>
-            <span style={{ transitionDelay: "120ms" }}>Feito para o sol.</span>
+            <span style={{ transitionDelay: "700ms" }}>Feito para o sol.</span>
           </span>
           <span className="linha-corte" data-linha>
-            <span style={{ transitionDelay: "260ms" }}>
+            <span style={{ transitionDelay: "880ms" }}>
               Feito para{" "}
               <em className="italic text-[var(--color-dourado)]">você</em>.
             </span>

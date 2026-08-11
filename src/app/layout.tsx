@@ -54,7 +54,31 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="pt-BR"
       className={`${fonteTitulo.variable} ${fonteTexto.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        {/*
+          Marca o documento ANTES da primeira pintura.
+
+          O estado escondido das animações depende da classe `js-pronto`. Se ela
+          só chegasse depois que o React monta, o navegador já teria pintado o
+          conteúdo inteiro — e a abertura aconteceria fora da vista, ou nem
+          aconteceria. Era exatamente o que estava ocorrendo.
+
+          Este script roda antes de o corpo da página ser desenhado, então a
+          página já nasce no estado inicial da animação.
+
+          As duas condições que ele respeita, iguais às do resto:
+          - sem JavaScript, a classe nunca entra e nada fica escondido
+          - com "reduzir movimento" ligado, idem — porque nesse caso o
+            observador não roda, e sem ele o que fosse escondido ficaria assim
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('js-pronto')}catch(e){}",
+          }}
+        />
+        {children}
+      </body>
     </html>
   );
 }

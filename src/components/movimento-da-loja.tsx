@@ -85,7 +85,7 @@ export function MovimentoDaLoja() {
       { threshold: 0.12, rootMargin: "0px 0px -6% 0px" },
     );
 
-    for (const alvo of document.querySelectorAll("[data-revelar], [data-fio], [data-linha]")) {
+    for (const alvo of document.querySelectorAll("[data-revelar], [data-fio], [data-linha], [data-abertura]")) {
       observador.observe(alvo);
     }
 

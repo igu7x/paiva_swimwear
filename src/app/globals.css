@@ -326,11 +326,75 @@ html.lenis body {
 */
 .js-pronto [data-linha] > span {
   transform: translateY(105%);
-  transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 1.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .js-pronto [data-linha].dentro > span {
   transform: none;
+}
+
+/* ---------------------------------------------------------------------------
+   A ABERTURA
+
+   O que acontece ao abrir a página, ou ao dar F5. Antes existia uma revelação,
+   mas rápida demais para ser percebida: tudo chegava quase junto e o resultado
+   parecia estático.
+
+   Agora é encenado, em três tempos: o sol abre, a logo chega, as duas linhas
+   sobem uma depois da outra. Os atrasos estão na tela (page.tsx), porque cada
+   elemento precisa do seu.
+
+   O desfoque na entrada é o que separa "apareceu" de "chegou": o olho lê a
+   passagem de borrado para nítido como aproximação.
+   ------------------------------------------------------------------------- */
+
+.js-pronto [data-abertura] {
+  opacity: 0;
+  transform: translateY(26px) scale(0.965);
+  filter: blur(10px);
+  transition:
+    opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1.4s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.js-pronto [data-abertura].dentro {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+}
+
+/*
+  O sol abrindo por trás da marca. Começa pequeno e concentrado, cresce até o
+  tamanho de repouso. É a primeira coisa que se move na página.
+*/
+.brilho-abertura {
+  background: radial-gradient(
+    52% 40% at 50% 12%,
+    color-mix(in oklab, var(--color-dourado) 34%, transparent) 0%,
+    transparent 72%
+  );
+}
+
+.js-pronto .brilho-abertura {
+  animation: abrir-sol 2.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes abrir-sol {
+  from {
+    opacity: 0;
+    transform: scale(0.55) translateY(6%);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js-pronto .brilho-abertura {
+    animation: none;
+  }
 }
 
 /* O fio dourado que se estende sozinho ao entrar na tela. */
