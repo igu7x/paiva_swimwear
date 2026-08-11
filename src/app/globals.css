@@ -417,16 +417,27 @@ html.lenis body {
   para aparecer: fora do desenho é transparente, e o degradê termina em
   transparente antes de chegar ao limite.
 */
+/*
+  O BRILHO FICA ACIMA DA LOGO, NÃO ATRÁS DELA.
+
+  A logo é dourada e o brilho também era. Dourado sobre dourado tira o
+  contraste: a marca sumia dentro da própria luz. Agora o miolo forte do sol
+  fica no alto da tela, e a logo pousa na parte limpa embaixo dele — o sol
+  continua nascendo, mas por trás e acima, como no desenho da marca.
+
+  A intensidade também caiu: o que dá presença à logo é o entorno claro, não
+  mais cor em volta.
+*/
 .brilho-abertura {
   background-image: radial-gradient(
     closest-side,
-    color-mix(in oklab, var(--color-dourado) 30%, transparent) 0%,
-    color-mix(in oklab, var(--color-dourado) 12%, transparent) 45%,
+    color-mix(in oklab, var(--color-dourado) 22%, transparent) 0%,
+    color-mix(in oklab, var(--color-dourado) 7%, transparent) 48%,
     transparent 100%
   );
   background-repeat: no-repeat;
-  background-position: 50% -8%;
-  background-size: 130% 95%;
+  background-position: 50% -34%;
+  background-size: 125% 88%;
 }
 
 .js-pronto .brilho-abertura {
@@ -436,11 +447,11 @@ html.lenis body {
 @keyframes abrir-sol {
   from {
     opacity: 0;
-    background-size: 46% 34%;
+    background-size: 42% 30%;
   }
   to {
     opacity: 1;
-    background-size: 130% 95%;
+    background-size: 125% 88%;
   }
 }
 
