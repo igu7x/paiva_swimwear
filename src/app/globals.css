@@ -500,15 +500,16 @@ html.lenis body {
   background-image: url("/praia.webp");
   background-size: cover;
   background-position: center;
+  /* Presa à tela: enquadra a foto do tamanho da janela, e não esticada pela
+     altura inteira da seção — que ampliaria tanto a ponto de sobrar só água. */
   background-attachment: fixed;
 }
 
 @media (max-width: 640px) {
-  /* No celular a tela é estreita e alta: `cover` com foto deitada cortaria
-     quase tudo. Rolando junto, a foto inteira aparece ao longo da seção. */
+  /* No iPhone `fixed` é ignorado há anos. Rolando junto, a foto inteira
+     aparece ao longo da seção. */
   .fundo-agua {
     background-attachment: scroll;
-    background-size: cover;
   }
 }
 
@@ -566,7 +567,24 @@ html.lenis body {
   faixa anterior entrar na água sem corte, e um fecho embaixo antes do rodapé
   escuro. No meio, onde ficam as peças, a foto aparece inteira.
 */
+/*
+  O DESFOQUE É EFEITO, NÃO ARQUIVO.
+
+  A primeira tentativa gravou o desfoque na imagem. Ficou leve — 42 KB contra
+  544 KB — mas a foto passou a SER borrada, e foto borrada de origem parece
+  foto ruim: não existe detalhe nenhum por baixo.
+
+  A segunda desfocou uma camada com a foto dentro. Funcionou, mas essa camada
+  precisa cobrir a seção inteira, que é bem mais alta que a tela — e a foto
+  ampliava tanto que sobrava só água, sem as palmeiras.
+
+  Esta desfoca O QUE ESTÁ ATRÁS do véu (`backdrop-filter`). O arquivo continua
+  nítido, o enquadramento continua o da janela, e as peças — que são pintadas
+  depois, por cima — não são afetadas.
+*/
 .veu-agua {
+  -webkit-backdrop-filter: blur(7px);
+  backdrop-filter: blur(7px);
   background: linear-gradient(
     180deg,
     var(--color-areia) 0%,

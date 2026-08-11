@@ -125,8 +125,7 @@ export default async function Home() {
 
       {/* ============ 3. uma cena por peça ============ */}
       <main className="fundo-agua">
-        {/* A camada de luz sobre a praia. Fica presa às bordas da seção, então
-            nunca alcança o rodapé — ver .fundo-agua no globals.css. */}
+        {/* O véu desfoca a praia atrás e emenda as bordas da seção. */}
         <div
           aria-hidden
           className="veu-agua pointer-events-none absolute inset-0 z-0"
