@@ -108,7 +108,6 @@ export default async function Home() {
           height={622}
           priority
           data-abertura
-          style={{ transitionDelay: "260ms" }}
           className="relative h-auto w-64 sm:w-[26rem]"
         />
 
@@ -116,10 +115,10 @@ export default async function Home() {
           {/* Cada linha é observada por conta própria: elas sobem em cascata ao
               entrar e descem ao sair, toda vez — não só na primeira visita. */}
           <span className="linha-corte" data-linha>
-            <span style={{ transitionDelay: "700ms" }}>Feito para o sol.</span>
+            <span>Feito para o sol.</span>
           </span>
           <span className="linha-corte" data-linha>
-            <span style={{ transitionDelay: "880ms" }}>
+            <span>
               Feito para{" "}
               <em className="italic text-[var(--color-dourado)]">você</em>.
             </span>

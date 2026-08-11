@@ -364,6 +364,31 @@ html.lenis body {
   filter: blur(0);
 }
 
+/* ---------------------------------------------------------------------------
+   A PARTITURA VALE SÓ NA PRIMEIRA CARGA
+
+   Os atrasos longos existem para encenar a abertura: o sol, depois a logo,
+   depois as linhas. Mas eles ficavam valendo TAMBÉM quando a pessoa rolava
+   para baixo e voltava — e aí quase um segundo de espera não é encenação, é
+   travamento.
+
+   A classe `abrindo` entra antes da primeira pintura e sai quando a abertura
+   termina. Depois disso as revelações são imediatas, que é o certo para quem
+   já viu a página uma vez.
+   ------------------------------------------------------------------------- */
+
+.abrindo [data-abertura] {
+  transition-delay: 260ms;
+}
+
+.abrindo [data-linha]:nth-of-type(1) > span {
+  transition-delay: 700ms;
+}
+
+.abrindo [data-linha]:nth-of-type(2) > span {
+  transition-delay: 880ms;
+}
+
 /*
   O sol abrindo por trás da marca. Começa pequeno e concentrado, cresce até o
   tamanho de repouso. É a primeira coisa que se move na página.

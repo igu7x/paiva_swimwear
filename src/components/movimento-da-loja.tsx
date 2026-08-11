@@ -34,6 +34,21 @@ export function MovimentoDaLoja() {
 
     raiz.classList.add("js-pronto");
 
+    /*
+      A abertura é encenada uma vez só.
+
+      A classe `abrindo` entra antes da primeira pintura (ver o script no
+      layout) e carrega os atrasos longos da partitura. Se ela ficasse, quem
+      rolasse para baixo e voltasse ao topo esperaria quase um segundo pelo
+      título — deixa de ser encenação e vira travamento, que foi exatamente a
+      queixa.
+
+      2,2s cobre a última linha (880ms de atraso + 1,15s de percurso).
+    */
+    const fimDaAbertura = setTimeout(() => {
+      raiz.classList.remove("abrindo");
+    }, 2200);
+
     const lenis = new Lenis({
       // Quanto a rolagem "escorrega" depois do gesto. Acima de 0.12 fica
       // escorregadio a ponto de a pessoa perder o controle do que está lendo.
@@ -90,10 +105,11 @@ export function MovimentoDaLoja() {
     }
 
     return () => {
+      clearTimeout(fimDaAbertura);
       cancelAnimationFrame(quadro);
       observador.disconnect();
       lenis.destroy();
-      raiz.classList.remove("js-pronto");
+      raiz.classList.remove("js-pronto", "abrindo");
     };
   }, []);
 
