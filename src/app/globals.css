@@ -200,6 +200,85 @@ html.lenis body {
   }
 }
 
+/* ---------------------------------------------------------------------------
+   ANIMAÇÕES COMANDADAS PELA ROLAGEM
+
+   Estas não tocam sozinhas: elas AVANÇAM E VOLTAM conforme o dedo. É a
+   diferença entre um efeito que acontece com você e um efeito que acontece
+   perto de você.
+
+   Todas dentro de @supports. Onde o navegador não entende, o conteúdo aparece
+   normal e nada quebra.
+   ------------------------------------------------------------------------- */
+
+/* Fio de progresso no topo, do tamanho do quanto já foi lido. */
+@supports (animation-timeline: scroll()) {
+  .progresso {
+    animation: progresso linear both;
+    animation-timeline: scroll(root);
+    transform-origin: left;
+  }
+}
+
+@keyframes progresso {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /*
+      A foto é revelada por uma cortina que sobe, e não por um fade. Cortina
+      tem direção; fade não tem nada. É o que dá peso ao aparecimento.
+    */
+    .cortina {
+      animation: cortina linear both;
+      animation-timeline: view();
+      animation-range: entry 8% cover 34%;
+    }
+
+    /*
+      Cada palavra acende na sua vez, conforme a frase sobe.
+
+      O `--i` é a posição da palavra, vindo da tela. Ele desloca a faixa de
+      rolagem em que aquela palavra acende — a primeira acende cedo, a última
+      acende depois. Sem isso, todas acenderiam juntas.
+    */
+    .palavra {
+      animation: acender linear both;
+      animation-timeline: view();
+      animation-range: entry calc(18% + var(--i, 0) * 3.5%)
+        entry calc(52% + var(--i, 0) * 3.5%);
+    }
+  }
+}
+
+@keyframes cortina {
+  from {
+    clip-path: inset(0 0 100% 0);
+    transform: scale(1.12);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    transform: scale(1);
+  }
+}
+
+@keyframes acender {
+  from {
+    opacity: 0.14;
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
 /*
   A capa recua enquanto sai de cena, em vez de simplesmente subir junto com a
   página. Dá a impressão de que o conteúdo passa POR CIMA dela — profundidade
