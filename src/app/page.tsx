@@ -157,29 +157,28 @@ export default async function Home() {
 
             return (
               /*
-                NO CELULAR A CENA É UMA SÓ, NÃO DOIS BLOCOS.
+                LADO A LADO EM QUALQUER TELA.
 
-                Medido em 390px de largura: cada peça ocupava 925px de altura,
-                com 118px de vazio em cima e outros 118 embaixo. A foto e a
-                placa ficavam soltas uma da outra, e o olho lia duas coisas
-                separadas em vez de uma composição.
+                O celular usa o mesmo desenho do desktop: foto de um lado,
+                dados do outro, alternando a cada peça. O que muda são só as
+                proporções — 44% e 56% na tela estreita, metade a metade na
+                larga.
 
-                Agora as duas ficam CENTRALIZADAS e a placa sobe por cima do pé
-                da foto. A praia sobra igual dos dois lados, e a cena cabe em
-                meia tela.
+                Antes elas ficavam empilhadas, e cada peça ocupava mais de uma
+                tela. Duas tentativas intermediárias (empilhado deslocado e
+                empilhado centralizado) foram descartadas: o que ele queria era
+                o desenho do desktop, encolhido.
 
-                Uma versão anterior deslocava cada uma para um lado, criando
-                diagonal. Foi descartada: o tamanho estava certo, o arranjo não.
-
-                No desktop nada disso vale: lá elas ficam lado a lado, sem
-                sobreposição.
+                O texto precisa encolher junto. Numa coluna de 180px, o título
+                no tamanho anterior quebrava em três linhas e a peça virava um
+                bloco de texto com uma foto do lado.
               */
               <section
                 key={peca.id}
-                className="mx-auto flex max-w-5xl flex-col items-center gap-0 px-4 py-14 sm:flex-row sm:gap-16 sm:px-6 sm:py-[14vh]"
+                className="mx-auto flex max-w-5xl flex-row items-center gap-3 px-4 py-10 sm:gap-16 sm:px-6 sm:py-[14vh]"
               >
                 <div
-                  className={`w-[48%] max-w-[195px] sm:w-1/2 sm:max-w-none ${espelhada ? "sm:order-2" : ""}`}
+                  className={`w-[44%] shrink-0 sm:w-1/2 ${espelhada ? "order-2" : ""}`}
                 >
                   <Link href={`/${peca.slug}`} className="group block">
                     {/* A sombra tira a peça do fundo. Sem ela, a foto encosta
@@ -228,11 +227,11 @@ export default async function Home() {
                   No desktop tudo isso é desligado: lá elas ficam lado a lado.
                 */}
                 <div
-                  className={`-mt-10 w-[72%] max-w-[290px] sm:mt-0 sm:w-1/2 sm:max-w-none ${espelhada ? "sm:order-1" : ""}`}
+                  className={`w-[56%] sm:w-1/2 ${espelhada ? "order-1" : ""}`}
                 >
                   <div
                     data-revelar
-                    className={`rounded-[1.25rem] border border-white/40 bg-[var(--color-areia)]/85 p-5 shadow-[0_24px_60px_-28px_rgba(58,40,26,0.7)] backdrop-blur-md sm:rounded-[1.5rem] sm:p-8 ${
+                    className={`rounded-[1.25rem] border border-white/40 bg-[var(--color-areia)]/85 p-4 shadow-[0_24px_60px_-28px_rgba(58,40,26,0.7)] backdrop-blur-md sm:rounded-[1.5rem] sm:p-8 ${
                       espelhada ? "sm:text-right" : ""
                     }`}
                   >
@@ -242,19 +241,19 @@ export default async function Home() {
                         : `${cores} ${cores === 1 ? "cor" : "cores"}`}
                     </p>
 
-                    <h2 className="mt-2 font-serif text-[clamp(1.6rem,5.5vw,3.4rem)] leading-[1.05] tracking-[-0.02em] text-[var(--color-tinta)]">
+                    <h2 className="mt-2 font-serif text-[clamp(1.05rem,4.2vw,3.4rem)] leading-[1.05] tracking-[-0.02em] text-[var(--color-tinta)]">
                       {peca.nome}
                     </h2>
 
                     {/* Preço na cor do texto, não na apagada: é a segunda
                         informação que a cliente procura, depois do nome. */}
-                    <p className="mt-1.5 text-xl text-[var(--color-tinta)] sm:mt-3 sm:text-2xl">
+                    <p className="mt-1 text-base text-[var(--color-tinta)] sm:mt-3 sm:text-2xl">
                       {formatarReais(peca.precoCentavos)}
                     </p>
 
                     <Link
                       href={`/${peca.slug}`}
-                      className="mt-5 inline-flex touch-manipulation items-center gap-3 rounded-full bg-[var(--color-tinta)] px-5 py-2.5 text-[0.6rem] uppercase tracking-[0.22em] text-white transition-[transform,gap] duration-300 hover:gap-5 active:scale-[0.97] sm:mt-7 sm:px-6 sm:py-3"
+                      className="mt-4 inline-flex touch-manipulation items-center gap-2 rounded-full bg-[var(--color-tinta)] px-4 py-2 text-[0.55rem] uppercase tracking-[0.22em] text-white transition-[transform,gap] duration-300 hover:gap-5 active:scale-[0.97] sm:mt-7 sm:px-6 sm:py-3"
                     >
                       Ver a peça
                       <span aria-hidden className="text-[var(--color-dourado)]">
