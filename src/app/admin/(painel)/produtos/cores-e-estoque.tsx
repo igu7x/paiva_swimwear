@@ -2,6 +2,7 @@
 
 import { useOptimistic, useRef, useState } from "react";
 
+import { fundoDaCor, tomDaCor } from "@/lib/cores";
 import { TAMANHOS } from "@/lib/tamanhos";
 
 import { adicionarCor, gravarEstoque, removerCor } from "./acoes";
@@ -124,6 +125,28 @@ export function CoresEEstoque({
   );
 }
 
+/** A cor que a loja vai desenhar a partir do nome — ou o aviso de que não achou. */
+function AmostraDaCor({ nome }: { nome: string }) {
+  const tom = tomDaCor(nome);
+
+  return (
+    <span
+      aria-hidden
+      title={
+        tom
+          ? "A loja vai pintar o botão desta cor"
+          : "A loja vai usar a foto desta cor como amostra"
+      }
+      className={`block h-5 w-5 shrink-0 rounded-full border ${
+        tom
+          ? "border-black/15"
+          : "border-dashed border-[var(--color-suave)] bg-transparent"
+      }`}
+      style={tom ? { background: fundoDaCor(tom) } : undefined}
+    />
+  );
+}
+
 function BlocoDaCor({
   produtoId,
   variacao,
@@ -152,7 +175,17 @@ function BlocoDaCor({
         <input type="hidden" name="produtoId" value={produtoId} />
         <input type="hidden" name="variacaoId" value={variacao.id} />
 
-        <span className="font-medium">{variacao.nome}</span>
+        {/*
+          A bolinha mostra a cor que a LOJA vai desenhar a partir do nome que
+          ela escreveu. É a conferência na hora: se ela digita "Marrom" e a
+          bolinha fica marrom, o botão na loja vai ficar marrom também. Se o
+          nome não é uma cor conhecida ("Estampa Folhas"), a bolinha fica
+          vazada — e a loja usa a foto daquela cor no lugar.
+        */}
+        <span className="flex items-center gap-2.5">
+          <AmostraDaCor nome={variacao.nome} />
+          <span className="font-medium">{variacao.nome}</span>
+        </span>
 
         <div className="mt-3 grid grid-cols-4 gap-2">
           {TAMANHOS.map((tamanho) => (
