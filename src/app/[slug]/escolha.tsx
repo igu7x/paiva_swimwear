@@ -153,51 +153,61 @@ export function Escolha({
     */
     <div className="sm:grid sm:grid-cols-[1.08fr_1fr] sm:items-start sm:gap-12">
       <div className="sm:sticky sm:top-[4.6rem]">
-      {/* ---------------- a foto ---------------- */}
-      {galeria.length > 0 ? (
-        <section>
-          <div className="relative">
-            {/*
+        {/* ---------------- a foto ---------------- */}
+        {galeria.length > 0 ? (
+          <section>
+            <div className="relative">
+              {/*
               Sangra até as bordas da tela no celular. Uma foto com margem dos
               dois lados vira "imagem dentro de um documento"; sem margem, ela
               vira a tela. É a diferença entre olhar uma foto e estar diante da
               peça.
 
-              O `pb-7` NÃO É ESPAÇO DECORATIVO, é o que faz a sombra caber.
-              `overflow-x: auto` corta também na vertical — não existe rolar de
-              lado e deixar transbordar para baixo. Sem folga aqui, a sombra
-              era cortada no meio e virava uma faixa cinza de canto reto logo
-              abaixo da foto.
-            */}
-            <div
-              ref={carrossel}
-              className="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-7 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden"
-            >
-              {galeria.map((foto, indice) => (
-                <button
-                  key={foto.id}
-                  type="button"
-                  onClick={() => setAmpliada(indice)}
-                  aria-label="Ver a foto maior"
-                  className="relative aspect-[4/5] w-full shrink-0 snap-center touch-manipulation overflow-hidden rounded-[1.5rem] bg-[var(--color-creme)] shadow-[0_18px_45px_-26px_rgba(58,40,26,0.65)]"
-                >
-                  <Image
-                    src={enderecoDaFoto(foto.caminho)}
-                    alt={
-                      foto.variacaoId && cor
-                        ? `${nome} na cor ${cor.nome}`
-                        : nome
-                    }
-                    fill
-                    sizes="(max-width: 640px) 100vw, 460px"
-                    className="object-cover"
-                    priority={indice === 0}
-                  />
-                </button>
-              ))}
-            </div>
+              SEM SOMBRA embaixo da foto. Ela existiu e saiu.
 
-            {/*
+              Na vitrine a sombra tem função: lá a foto flutua sobre a praia, e
+              sem ela as duas viram a mesma superfície. Aqui o fundo é liso, e
+              sobre fundo liso a sombra não vira profundidade — vira uma mancha
+              cinza de canto quase reto colada embaixo da foto. O canto
+              arredondado sozinho já separa a foto da página.
+            */}
+              <div
+                ref={carrossel}
+                className="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden"
+              >
+                {galeria.map((foto, indice) => (
+                  <button
+                    key={foto.id}
+                    type="button"
+                    onClick={() => setAmpliada(indice)}
+                    aria-label="Ver a foto maior"
+                    /*
+                      `cursor-zoom-in` diz o que este clique faz antes de a
+                      pessoa clicar: a foto abre em tela cheia. Uma mãozinha
+                      comum diria só "dá para clicar", e ela clicaria sem saber
+                      no que estava se metendo.
+                    */
+                    className="group relative aspect-[4/5] w-full shrink-0 cursor-zoom-in snap-center touch-manipulation overflow-hidden rounded-[1.5rem] bg-[var(--color-creme)]"
+                  >
+                    <Image
+                      src={enderecoDaFoto(foto.caminho)}
+                      alt={
+                        foto.variacaoId && cor
+                          ? `${nome} na cor ${cor.nome}`
+                          : nome
+                      }
+                      fill
+                      sizes="(max-width: 640px) 100vw, 460px"
+                      // A foto se aproxima devagar sob o mouse. É o retorno de
+                      // "isto responde" sem pôr nenhuma moldura por cima dela.
+                      className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.03]"
+                      priority={indice === 0}
+                    />
+                  </button>
+                ))}
+              </div>
+
+              {/*
               As setas.
 
               No celular arrastar já funciona, mas nem todo mundo descobre isso
@@ -208,168 +218,174 @@ export function Escolha({
               Nas pontas elas apagam em vez de sumir. Botão que desaparece muda
               o lugar do outro, e a mão vai no lugar errado no toque seguinte.
             */}
-            {galeria.length > 1 ? (
-              <>
-                <SetaDaGaleria
-                  lado="esquerda"
-                  desligada={ativa === 0}
-                  aoTocar={() => irPara(ativa - 1)}
-                />
-                <SetaDaGaleria
-                  lado="direita"
-                  desligada={ativa >= galeria.length - 1}
-                  aoTocar={() => irPara(ativa + 1)}
-                />
-              </>
-            ) : null}
-          </div>
+              {galeria.length > 1 ? (
+                <>
+                  <SetaDaGaleria
+                    lado="esquerda"
+                    desligada={ativa === 0}
+                    aoTocar={() => irPara(ativa - 1)}
+                  />
+                  <SetaDaGaleria
+                    lado="direita"
+                    desligada={ativa >= galeria.length - 1}
+                    aoTocar={() => irPara(ativa + 1)}
+                  />
+                </>
+              ) : null}
+            </div>
 
-          {/*
+            {/*
             Os traços embaixo. Um risco por foto, o da vez em dourado: diz
             quantas existem e onde ela está, e serve de atalho para pular
             direto. Ponto redondo some numa tela clara; traço não.
           */}
-          {galeria.length > 1 ? (
-            <div className="flex items-center justify-center gap-1.5">
-              {galeria.map((foto, indice) => (
-                <button
-                  key={foto.id}
-                  type="button"
-                  onClick={() => irPara(indice)}
-                  aria-label={`Foto ${indice + 1} de ${galeria.length}`}
-                  className="h-4 touch-manipulation px-0.5"
-                >
-                  <span
-                    className={`block h-[2px] rounded-full transition-all duration-300 ${
-                      indice === ativa
-                        ? "w-7 bg-[var(--color-dourado)]"
-                        : "w-3.5 bg-[var(--color-linha)]"
-                    }`}
-                  />
-                </button>
-              ))}
-            </div>
-          ) : null}
-        </section>
-      ) : (
-        <div className="grid aspect-[4/5] w-full place-items-center rounded-[1.5rem] bg-[var(--color-creme)] text-sm text-[var(--color-suave)]">
-          Fotos em breve
-        </div>
-      )}
+            {galeria.length > 1 ? (
+              <div className="mt-4 flex items-center justify-center gap-1.5">
+                {galeria.map((foto, indice) => (
+                  <button
+                    key={foto.id}
+                    type="button"
+                    onClick={() => irPara(indice)}
+                    aria-label={`Foto ${indice + 1} de ${galeria.length}`}
+                    className="h-4 touch-manipulation px-0.5"
+                  >
+                    <span
+                      className={`block h-[2px] rounded-full transition-all duration-300 ${
+                        indice === ativa
+                          ? "w-7 bg-[var(--color-dourado)]"
+                          : "w-3.5 bg-[var(--color-linha)]"
+                      }`}
+                    />
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </section>
+        ) : (
+          <div className="grid aspect-[4/5] w-full place-items-center rounded-[1.5rem] bg-[var(--color-creme)] text-sm text-[var(--color-suave)]">
+            Fotos em breve
+          </div>
+        )}
       </div>
 
       <div>
-      {/* ---------------- nome e preço ---------------- */}
-      <h1 className="mt-7 font-serif text-[2.1rem] leading-[1.05] sm:mt-0 sm:text-[2.6rem]">
-        {nome}
-      </h1>
-      <p className="mt-1.5 text-lg text-[var(--color-suave)]">
-        {formatarReais(precoCentavos)}
-      </p>
+        {/* ---------------- nome e preço ---------------- */}
+        <h1 className="mt-7 font-serif text-[2.1rem] leading-[1.05] sm:mt-0 sm:text-[2.6rem]">
+          {nome}
+        </h1>
+        <p className="mt-1.5 text-lg text-[var(--color-suave)]">
+          {formatarReais(precoCentavos)}
+        </p>
 
-      {sobreAPeca}
+        {sobreAPeca}
 
-      {/* ---------------- cor ---------------- */}
-      {variacoes.length > 0 ? (
-        <section className="mt-8">
-          <h2 className="text-xs uppercase tracking-[0.2em] text-[var(--color-suave)]">
-            Cor
-            {cor ? (
-              <span className="normal-case tracking-normal"> · {cor.nome}</span>
-            ) : null}
-          </h2>
-
-          <ul className="mt-3 flex flex-wrap gap-2.5">
-            {variacoes.map((v) => (
-              <li key={v.id}>
-                <BotaoDeCor
-                  nome={v.nome}
-                  escolhida={v.id === corId}
-                  esgotada={v.estoque.every((e) => e.quantidade === 0)}
-                  foto={fotos.find((f) => f.variacaoId === v.id)?.caminho}
-                  aoEscolher={() => escolherCor(v.id)}
-                />
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
-
-      {/* ---------------- tamanho ---------------- */}
-      {cor ? (
-        <section className="mt-7">
-          <div className="flex items-baseline justify-between gap-3">
+        {/* ---------------- cor ---------------- */}
+        {variacoes.length > 0 ? (
+          <section className="mt-8">
             <h2 className="text-xs uppercase tracking-[0.2em] text-[var(--color-suave)]">
-              Tamanho
+              Cor
+              {cor ? (
+                <span className="normal-case tracking-normal">
+                  {" "}
+                  · {cor.nome}
+                </span>
+              ) : null}
             </h2>
-            <button
-              type="button"
-              onClick={() => setVerMedidas((v) => !v)}
-              className="touch-manipulation text-xs text-[var(--color-suave)] underline underline-offset-4 active:opacity-60"
-            >
-              {verMedidas ? "fechar medidas" : "qual é o meu?"}
-            </button>
-          </div>
 
-          {verMedidas ? (
-            <table className="mt-3 w-full text-left text-sm">
-              <thead className="text-xs uppercase tracking-wider text-[var(--color-suave)]">
-                <tr>
-                  <th className="py-1.5 font-normal">Tam.</th>
-                  <th className="py-1.5 font-normal">Quadril</th>
-                  <th className="py-1.5 font-normal">Busto</th>
-                </tr>
-              </thead>
-              <tbody>
-                {TAMANHOS.map((t) => (
-                  <tr key={t} className="border-t border-[var(--color-linha)]">
-                    <td className="py-1.5">{t}</td>
-                    <td className="py-1.5">{MEDIDAS[t].quadril}</td>
-                    <td className="py-1.5">{MEDIDAS[t].busto}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : null}
-
-          <ul className="mt-3 flex flex-wrap gap-2">
-            {TAMANHOS.map((t) => {
-              const temNoEstoque = quantidadeDe(t) > 0;
-              const escolhido = tamanho === t;
-
-              return (
-                <li key={t}>
-                  <button
-                    type="button"
-                    disabled={!temNoEstoque}
-                    onClick={() => setTamanho(t)}
-                    className={`min-w-12 touch-manipulation rounded-full border px-4 py-2.5 text-sm transition-[transform,border-color,background-color] duration-150 active:scale-[0.97] ${
-                      escolhido
-                        ? "border-[var(--color-tinta)] bg-[var(--color-tinta)] text-white"
-                        : "border-[var(--color-linha)] bg-[var(--color-creme)]"
-                    } ${!temNoEstoque ? "cursor-not-allowed text-[var(--color-suave)] line-through opacity-60" : ""}`}
-                  >
-                    {t}
-                  </button>
+            <ul className="mt-3 flex flex-wrap gap-2.5">
+              {variacoes.map((v) => (
+                <li key={v.id}>
+                  <BotaoDeCor
+                    nome={v.nome}
+                    escolhida={v.id === corId}
+                    esgotada={v.estoque.every((e) => e.quantidade === 0)}
+                    foto={fotos.find((f) => f.variacaoId === v.id)?.caminho}
+                    aoEscolher={() => escolherCor(v.id)}
+                  />
                 </li>
-              );
-            })}
-          </ul>
+              ))}
+            </ul>
+          </section>
+        ) : null}
 
-          {corEsgotada ? (
-            <p className="mt-3 text-sm text-[var(--color-suave)]">
-              {cor.nome} está esgotada no momento.
+        {/* ---------------- tamanho ---------------- */}
+        {cor ? (
+          <section className="mt-7">
+            <div className="flex items-baseline justify-between gap-3">
+              <h2 className="text-xs uppercase tracking-[0.2em] text-[var(--color-suave)]">
+                Tamanho
+              </h2>
+              <button
+                type="button"
+                onClick={() => setVerMedidas((v) => !v)}
+                className="touch-manipulation text-xs text-[var(--color-suave)] underline underline-offset-4 hover:text-[var(--color-tinta)] active:opacity-60"
+              >
+                {verMedidas ? "fechar medidas" : "qual é o meu?"}
+              </button>
+            </div>
+
+            {verMedidas ? (
+              <table className="mt-3 w-full text-left text-sm">
+                <thead className="text-xs uppercase tracking-wider text-[var(--color-suave)]">
+                  <tr>
+                    <th className="py-1.5 font-normal">Tam.</th>
+                    <th className="py-1.5 font-normal">Quadril</th>
+                    <th className="py-1.5 font-normal">Busto</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {TAMANHOS.map((t) => (
+                    <tr
+                      key={t}
+                      className="border-t border-[var(--color-linha)]"
+                    >
+                      <td className="py-1.5">{t}</td>
+                      <td className="py-1.5">{MEDIDAS[t].quadril}</td>
+                      <td className="py-1.5">{MEDIDAS[t].busto}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : null}
+
+            <ul className="mt-3 flex flex-wrap gap-2">
+              {TAMANHOS.map((t) => {
+                const temNoEstoque = quantidadeDe(t) > 0;
+                const escolhido = tamanho === t;
+
+                return (
+                  <li key={t}>
+                    <button
+                      type="button"
+                      disabled={!temNoEstoque}
+                      onClick={() => setTamanho(t)}
+                      className={`min-w-12 touch-manipulation rounded-full border px-4 py-2.5 text-sm transition-[transform,border-color,background-color] duration-150 hover:border-[var(--color-tinta)] active:scale-[0.97] ${
+                        escolhido
+                          ? "border-[var(--color-tinta)] bg-[var(--color-tinta)] text-white"
+                          : "border-[var(--color-linha)] bg-[var(--color-creme)]"
+                      } ${!temNoEstoque ? "cursor-not-allowed text-[var(--color-suave)] line-through opacity-60" : ""}`}
+                    >
+                      {t}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+
+            {corEsgotada ? (
+              <p className="mt-3 text-sm text-[var(--color-suave)]">
+                {cor.nome} está esgotada no momento.
+              </p>
+            ) : null}
+
+            <p className="mt-2 text-xs text-[var(--color-suave)]">
+              O conjunto sai todo no mesmo tamanho.
             </p>
-          ) : null}
+          </section>
+        ) : null}
 
-          <p className="mt-2 text-xs text-[var(--color-suave)]">
-            O conjunto sai todo no mesmo tamanho.
-          </p>
-        </section>
-      ) : null}
-
-      {/* ---------------- guardar na sacola ---------------- */}
-      {/*
+        {/* ---------------- guardar na sacola ---------------- */}
+        {/*
         A barra fica colada no pé da tela.
 
         No celular, o botão de comprar no meio da página some assim que a
@@ -377,42 +393,42 @@ export function Escolha({
         motivo de ela estar aqui. Colado embaixo, ele está sempre a um toque,
         sem tirar espaço da foto.
       */}
-      {variacoes.length > 0 ? (
-        <div className="sticky bottom-0 z-20 -mx-5 mt-10 border-t border-[var(--color-linha)] bg-[var(--color-areia)]/92 px-5 pb-[max(0.85rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-md sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:px-0 sm:pb-0 sm:backdrop-blur-none">
-          {guardado ? (
-            <div className="mb-2.5 flex items-center justify-between gap-3 rounded-full border border-[var(--color-dourado)] bg-[var(--color-creme)] py-2 pl-4 pr-2 text-sm">
-              <span>Guardado na sacola.</span>
-              <Link
-                href="/carrinho"
-                className="touch-manipulation rounded-full bg-[var(--color-tinta)] px-4 py-2 text-[0.6rem] uppercase tracking-[0.16em] text-white"
-              >
-                Ver sacola
-              </Link>
-            </div>
-          ) : null}
-
-          <button
-            type="button"
-            onClick={guardarNaSacola}
-            disabled={!cor || !tamanho || !disponivel}
-            className="flex w-full touch-manipulation items-center justify-center gap-3 rounded-full bg-[var(--color-tinta)] px-6 py-4 text-[0.66rem] uppercase tracking-[0.2em] text-white transition-transform duration-200 active:scale-[0.98] disabled:bg-[var(--color-creme)] disabled:text-[var(--color-suave)]"
-          >
-            {!cor
-              ? "Indisponível"
-              : corEsgotada
-                ? "Esgotado nesta cor"
-                : !tamanho
-                  ? "Escolha o tamanho"
-                  : "Adicionar à sacola"}
-
-            {cor && tamanho && disponivel ? (
-              <span aria-hidden className="text-[var(--color-dourado)]">
-                {formatarReais(precoCentavos)}
-              </span>
+        {variacoes.length > 0 ? (
+          <div className="sticky bottom-0 z-20 -mx-5 mt-10 border-t border-[var(--color-linha)] bg-[var(--color-areia)]/92 px-5 pb-[max(0.85rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-md sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:px-0 sm:pb-0 sm:backdrop-blur-none">
+            {guardado ? (
+              <div className="mb-2.5 flex items-center justify-between gap-3 rounded-full border border-[var(--color-dourado)] bg-[var(--color-creme)] py-2 pl-4 pr-2 text-sm">
+                <span>Guardado na sacola.</span>
+                <Link
+                  href="/carrinho"
+                  className="touch-manipulation rounded-full bg-[var(--color-tinta)] px-4 py-2 text-[0.6rem] uppercase tracking-[0.16em] text-white transition-colors duration-200 hover:bg-[var(--color-tinta-viva)]"
+                >
+                  Ver sacola
+                </Link>
+              </div>
             ) : null}
-          </button>
-        </div>
-      ) : null}
+
+            <button
+              type="button"
+              onClick={guardarNaSacola}
+              disabled={!cor || !tamanho || !disponivel}
+              className="flex w-full touch-manipulation items-center justify-center gap-3 rounded-full bg-[var(--color-tinta)] px-6 py-4 text-[0.66rem] uppercase tracking-[0.2em] text-white transition-[transform,background-color] duration-200 hover:bg-[var(--color-tinta-viva)] active:scale-[0.98] disabled:bg-[var(--color-creme)] disabled:text-[var(--color-suave)]"
+            >
+              {!cor
+                ? "Indisponível"
+                : corEsgotada
+                  ? "Esgotado nesta cor"
+                  : !tamanho
+                    ? "Escolha o tamanho"
+                    : "Adicionar à sacola"}
+
+              {cor && tamanho && disponivel ? (
+                <span aria-hidden className="text-[var(--color-dourado)]">
+                  {formatarReais(precoCentavos)}
+                </span>
+              ) : null}
+            </button>
+          </div>
+        ) : null}
       </div>
 
       {/* ---------------- a foto em tela cheia ---------------- */}
@@ -451,7 +467,7 @@ function SetaDaGaleria({
       onClick={aoTocar}
       disabled={desligada}
       aria-label={lado === "esquerda" ? "Foto anterior" : "Próxima foto"}
-      className={`absolute top-[calc(50%-0.875rem)] grid h-10 w-10 -translate-y-1/2 touch-manipulation place-items-center rounded-full border border-[var(--color-linha)] bg-[var(--color-areia)]/80 text-[var(--color-tinta)] backdrop-blur-sm transition-[opacity,transform] duration-200 active:scale-[0.92] disabled:opacity-35 ${
+      className={`absolute top-1/2 grid h-10 w-10 -translate-y-1/2 touch-manipulation place-items-center rounded-full border border-[var(--color-linha)] bg-[var(--color-areia)]/80 text-[var(--color-tinta)] backdrop-blur-sm transition-[opacity,transform,border-color] duration-200 hover:border-[var(--color-tinta)] active:scale-[0.92] disabled:opacity-35 ${
         lado === "esquerda" ? "left-2 sm:left-3" : "right-2 sm:right-3"
       }`}
     >
@@ -492,7 +508,7 @@ function BotaoDeCor({
       type="button"
       onClick={aoEscolher}
       aria-pressed={escolhida}
-      className={`flex touch-manipulation items-center gap-2.5 rounded-full border py-1.5 pl-1.5 pr-4 text-sm transition-[transform,box-shadow,border-color] duration-200 active:scale-[0.97] ${
+      className={`flex touch-manipulation items-center gap-2.5 rounded-full border py-1.5 pl-1.5 pr-4 text-sm transition-[transform,box-shadow,border-color] duration-200 hover:border-[var(--color-tinta)] active:scale-[0.97] ${
         escolhida
           ? "border-[var(--color-tinta)] shadow-[0_0_0_3px_var(--color-areia),0_0_0_4px_var(--color-tinta)]"
           : "border-[var(--color-linha)]"
@@ -578,7 +594,7 @@ function FotoAmpliada({
           type="button"
           onClick={aoFechar}
           aria-label="Fechar"
-          className="grid h-11 w-11 touch-manipulation place-items-center rounded-full border border-white/25 text-lg text-white/90"
+          className="grid h-11 w-11 touch-manipulation place-items-center rounded-full border border-white/25 transition-colors duration-200 hover:border-white/70 text-lg text-white/90"
         >
           ×
         </button>
@@ -604,7 +620,7 @@ function FotoAmpliada({
             type="button"
             onClick={() => aoTrocar((indice - 1 + fotos.length) % fotos.length)}
             aria-label="Foto anterior"
-            className="grid h-11 w-11 touch-manipulation place-items-center rounded-full border border-white/25 text-white/90"
+            className="grid h-11 w-11 touch-manipulation place-items-center rounded-full border border-white/25 transition-colors duration-200 hover:border-white/70 text-white/90"
           >
             ←
           </button>
@@ -617,7 +633,7 @@ function FotoAmpliada({
             type="button"
             onClick={() => aoTrocar((indice + 1) % fotos.length)}
             aria-label="Próxima foto"
-            className="grid h-11 w-11 touch-manipulation place-items-center rounded-full border border-white/25 text-white/90"
+            className="grid h-11 w-11 touch-manipulation place-items-center rounded-full border border-white/25 transition-colors duration-200 hover:border-white/70 text-white/90"
           >
             →
           </button>

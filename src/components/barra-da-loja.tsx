@@ -15,11 +15,15 @@ import { useCarrinho } from "@/components/usar-carrinho";
  * poucas peças e a vitrine é uma sequência que se percorre rolando, então um
  * menu com categorias seria mobília para uma casa que não existe.
  *
- * Na capa ela começa invisível e só ganha fundo depois que a página desce. A
- * abertura da marca ocupa a tela inteira; uma faixa opaca por cima dela desde o
- * primeiro instante estragaria a única tela que é só da loja.
+ * NÃO EXISTE FAIXA ATRÁS DELES. Os botões flutuam soltos sobre a página.
  *
- * Nas outras páginas ela já nasce sólida, com o caminho de volta à esquerda.
+ * Aqui existia uma faixa clara que aparecia ao rolar. Ela era redundante: cada
+ * botão já tem fundo creme e borda próprios, então já se destaca de qualquer
+ * coisa por baixo. A faixa só acrescentava um retângulo atravessado no alto da
+ * tela, cortando a foto que estava passando atrás.
+ *
+ * Com ela fora, sumiu junto a lógica de "ficar sólida depois de descer" — um
+ * ouvinte de rolagem a menos rodando o tempo todo.
  */
 
 type Sessao = { entrou: boolean; nome: string | null; vendedora: boolean };
@@ -33,7 +37,6 @@ export function BarraDaLoja({
   const caminho = usePathname();
   const { total, pronto } = useCarrinho();
   const [sessao, setSessao] = useState<Sessao | null>(null);
-  const [desceu, setDesceu] = useState(false);
 
   /*
     Pergunta quem está logado depois que a tela existe — ver o comentário em
@@ -58,37 +61,24 @@ export function BarraDaLoja({
     };
   }, [caminho]);
 
-  useEffect(() => {
-    if (variante !== "capa") return;
-
-    const aoRolar = () => setDesceu(window.scrollY > 40);
-    aoRolar();
-
-    window.addEventListener("scroll", aoRolar, { passive: true });
-    return () => window.removeEventListener("scroll", aoRolar);
-  }, [variante]);
-
-  const solida = variante === "pagina" || desceu;
-
   const destinoDaConta = sessao?.entrou
     ? "/conta"
     : `/entrar?voltar=${encodeURIComponent(caminho)}`;
 
   return (
-    <header
-      className={`fixed inset-x-0 top-0 z-40 transition-[background-color,border-color,backdrop-filter] duration-500 ${
-        solida
-          ? "border-b border-[var(--color-linha)] bg-[var(--color-areia)]/85 backdrop-blur-md"
-          : "border-b border-transparent bg-transparent"
-      }`}
-    >
-      <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 px-3 py-2 sm:px-5 sm:py-2.5">
+    <header className="pointer-events-none fixed inset-x-0 top-0 z-40">
+      {/*
+        A faixa não recebe cliques; só os botões dentro dela recebem. Sem isto,
+        um retângulo invisível atravessaria o alto da página inteira e comeria
+        o toque de qualquer coisa que passasse por baixo.
+      */}
+      <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 px-3 py-2.5 [&_a]:pointer-events-auto [&_button]:pointer-events-auto sm:px-5">
         <div className="flex min-w-0 items-center gap-2">
           {variante === "pagina" ? (
             <>
               <Link
                 href="/"
-                className="group flex touch-manipulation items-center gap-2 rounded-full border border-[var(--color-linha)] bg-[var(--color-creme)] py-2 pl-3 pr-4 text-[0.6rem] uppercase tracking-[0.18em] transition-[transform,border-color] duration-200 active:scale-[0.97] active:border-[var(--color-tinta)]"
+                className="group flex touch-manipulation items-center gap-2 rounded-full border border-[var(--color-linha)] bg-[var(--color-creme)] py-2 pl-3 pr-4 text-[0.6rem] uppercase tracking-[0.18em] transition-[transform,border-color] duration-200 active:scale-[0.97] hover:border-[var(--color-tinta)] active:border-[var(--color-tinta)]"
               >
                 <span
                   aria-hidden
@@ -131,7 +121,7 @@ export function BarraDaLoja({
           <Link
             href={destinoDaConta}
             aria-label={sessao?.entrou ? "Minha conta" : "Entrar"}
-            className="relative grid h-10 w-10 touch-manipulation place-items-center rounded-full border border-[var(--color-linha)] bg-[var(--color-creme)] transition-[transform,border-color] duration-200 active:scale-[0.94] active:border-[var(--color-tinta)]"
+            className="relative grid h-10 w-10 touch-manipulation place-items-center rounded-full border border-[var(--color-linha)] bg-[var(--color-creme)] transition-[transform,border-color] duration-200 active:scale-[0.94] hover:border-[var(--color-tinta)] active:border-[var(--color-tinta)]"
           >
             <Pessoa className="h-[1.15rem] w-[1.15rem] text-[var(--color-tinta)]" />
 
@@ -150,7 +140,7 @@ export function BarraDaLoja({
             aria-label={
               pronto && total > 0 ? `Sacola com ${total} peças` : "Sacola"
             }
-            className="relative grid h-10 w-10 touch-manipulation place-items-center rounded-full border border-[var(--color-linha)] bg-[var(--color-creme)] transition-[transform,border-color] duration-200 active:scale-[0.94] active:border-[var(--color-tinta)]"
+            className="relative grid h-10 w-10 touch-manipulation place-items-center rounded-full border border-[var(--color-linha)] bg-[var(--color-creme)] transition-[transform,border-color] duration-200 active:scale-[0.94] hover:border-[var(--color-tinta)] active:border-[var(--color-tinta)]"
           >
             <Sacola className="h-[1.15rem] w-[1.15rem] text-[var(--color-tinta)]" />
 
