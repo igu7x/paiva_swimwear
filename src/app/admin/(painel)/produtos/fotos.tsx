@@ -5,7 +5,12 @@ import { useActionState, useRef } from "react";
 
 import { enderecoDaFoto } from "@/lib/supabase/armazenamento";
 
-import { enviarFotos, removerFoto, type EstadoFotos } from "./acoes-fotos";
+import {
+  enviarFotos,
+  removerFoto,
+  usarNaVitrine,
+  type EstadoFotos,
+} from "./acoes-fotos";
 import { Girando } from "../movimento";
 
 const inicial: EstadoFotos = { erro: null, enviadas: 0 };
@@ -61,6 +66,25 @@ export function Fotos({
                   </span>
                 ) : null}
               </div>
+
+              {/*
+                "usar na vitrine" só aparece nas fotos da peça, e não na que já
+                é a capa. A ordem de envio quase nunca é a ordem que ela quer —
+                a foto boa aparece no meio das outras — e sem este botão a única
+                saída era apagar tudo e reenviar na ordem certa.
+              */}
+              {!variacaoId && indice > 0 ? (
+                <form action={usarNaVitrine} className="mt-1">
+                  <input type="hidden" name="produtoId" value={produtoId} />
+                  <input type="hidden" name="fotoId" value={foto.id} />
+                  <button
+                    type="submit"
+                    className="w-full touch-manipulation rounded-lg border border-[var(--color-linha)] py-1 text-[11px] transition-opacity active:opacity-60"
+                  >
+                    usar na vitrine
+                  </button>
+                </form>
+              ) : null}
 
               <form action={removerFoto} className="mt-1">
                 <input type="hidden" name="produtoId" value={produtoId} />

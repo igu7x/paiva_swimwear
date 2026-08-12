@@ -239,6 +239,30 @@ export async function registrarFoto(
 }
 
 /**
+ * Escolhe qual foto representa a peça na vitrine e no link do WhatsApp.
+ *
+ * Em vez de renumerar a lista inteira, a escolhida recebe uma posição MENOR que
+ * a menor que existe. O resultado é o mesmo — ela passa a ser a primeira — e
+ * gasta uma escrita só, em vez de uma por foto.
+ *
+ * Números negativos aqui não são problema: `posicao` só serve para ordenar, e
+ * -3 vem antes de 0 do mesmo jeito que 0 vem antes de 1.
+ */
+export async function definirCapa(produtoId: number, fotoId: number) {
+  const db = obterDb();
+
+  const [atual] = await db
+    .select({ menor: sql<number>`coalesce(min(${fotos.posicao}), 0)` })
+    .from(fotos)
+    .where(eq(fotos.produtoId, produtoId));
+
+  await db
+    .update(fotos)
+    .set({ posicao: atual.menor - 1 })
+    .where(and(eq(fotos.id, fotoId), eq(fotos.produtoId, produtoId)));
+}
+
+/**
  * Apaga o registro da foto e devolve o caminho dela, para quem chamou remover
  * o arquivo do Storage também.
  *
