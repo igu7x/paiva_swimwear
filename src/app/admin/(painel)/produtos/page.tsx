@@ -19,7 +19,22 @@ export default async function ProdutosPage() {
   return (
     <Transicao>
       <main className={pagina}>
-      <h1 className={titulo}>Peças</h1>
+      {/*
+        Antes quem subia um nível daqui era a logo do cabeçalho. Ela agora leva
+        para a loja, então o caminho de volta ao painel precisa estar escrito —
+        e no mesmo lugar do "← Peças" da tela de uma peça, para a subida ser
+        sempre no mesmo canto.
+      */}
+      <Link
+        href="/admin"
+        transitionTypes={["volta"]}
+        prefetch
+        className="text-sm text-[var(--color-suave)]"
+      >
+        ← Painel
+      </Link>
+
+      <h1 className={`${titulo} mt-3`}>Peças</h1>
       <p className={`${legenda} mt-1`}>
         {produtos.length === 0
           ? "Nenhuma peça cadastrada"
