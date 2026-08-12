@@ -46,6 +46,19 @@ export const viewport: Viewport = {
   // cliente pode dar zoom na foto da peça se quiser ver o detalhe do tecido.
   width: "device-width",
   initialScale: 1,
+
+  /*
+    O fundo entra embaixo da barra de status e da ilha do iPhone.
+
+    Sem isto, o iOS reserva essa faixa e pinta nela a cor do CORPO da página —
+    que é o areia liso. Como a capa tem um degradê, aparecia uma emenda reta
+    logo abaixo do relógio, com dois tons diferentes de creme.
+
+    Com a tela inteira liberada, a capa vai até o topo do aparelho. Nada de
+    conteúdo fica escondido: o miolo da capa é centralizado e sobra folga de
+    sobra em cima.
+  */
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

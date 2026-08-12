@@ -597,20 +597,29 @@ html.lenis body {
 }
 
 /*
-  O brilho de sol atrás do topo. Dois círculos suaves em vez de imagem: pesa
-  zero e acompanha qualquer tamanho de tela.
+  O brilho de sol atrás do topo.
+
+  A versão anterior empilhava dois círculos, e o de baixo terminava em 60% do
+  raio: isso desenhava um oval visível atravessando a tela — a "linha curva"
+  que apareceu no iPhone. Círculo com fim definido tem borda, por mais suave
+  que seja o degradê até lá.
+
+  Agora o clareado de fundo é uma faixa reta de cima para baixo, que não tem
+  como formar contorno, e só o brilho dourado continua circular — esse termina
+  bem antes da borda da tela, então some antes de virar linha.
 */
 .luz-do-sol {
   background:
     radial-gradient(
-      60% 42% at 50% 0%,
-      color-mix(in oklab, var(--color-dourado) 26%, transparent) 0%,
-      transparent 70%
+      130% 62% at 50% -12%,
+      color-mix(in oklab, var(--color-dourado) 24%, transparent) 0%,
+      color-mix(in oklab, var(--color-dourado) 8%, transparent) 38%,
+      transparent 72%
     ),
-    radial-gradient(
-      90% 60% at 50% 8%,
+    linear-gradient(
+      180deg,
       var(--color-areia-funda) 0%,
-      var(--color-areia) 60%
+      var(--color-areia) 58%
     );
 }
 
