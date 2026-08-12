@@ -178,7 +178,7 @@ export default async function Home() {
                 className="mx-auto flex max-w-5xl flex-row items-center justify-center gap-3 px-4 py-10 sm:justify-start sm:gap-16 sm:px-6 sm:py-[14vh]"
               >
                 <div
-                  className={`w-[34%] max-w-[155px] shrink-0 sm:w-1/2 sm:max-w-none ${espelhada ? "order-2" : ""}`}
+                  className={`w-[38%] max-w-[175px] shrink-0 sm:w-1/2 sm:max-w-none ${espelhada ? "order-2" : ""}`}
                 >
                   <Link href={`/${peca.slug}`} className="group block">
                     {/* A sombra tira a peça do fundo. Sem ela, a foto encosta
