@@ -618,8 +618,19 @@ html.lenis body {
     ),
     linear-gradient(
       180deg,
-      var(--color-areia-funda) 0%,
-      var(--color-areia) 58%
+      /*
+        Começa na MESMA cor do corpo da página.
+
+        Antes começava no areia-funda, mais quente que o fundo do documento. No
+        iPhone isso desenhava uma emenda reta logo abaixo do relógio: a faixa
+        da barra de status é pintada com a cor do corpo, e ali as duas se
+        encontravam com tons diferentes.
+
+        Igualando o topo, a emenda deixa de existir — e o tom quente continua,
+        só que começando um pouco mais abaixo, onde não há borda para revelar.
+      */ var(--color-areia) 0%,
+      var(--color-areia-funda) 22%,
+      var(--color-areia) 64%
     );
 }
 

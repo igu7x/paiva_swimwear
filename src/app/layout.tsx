@@ -59,6 +59,15 @@ export const viewport: Viewport = {
     sobra em cima.
   */
   viewportFit: "cover",
+
+  /*
+    A cor que o navegador do celular usa na faixa da barra de status.
+
+    É o mesmo areia do corpo da página, de propósito: assim aquela faixa deixa
+    de ser um retângulo de cor diferente por cima do site e passa a ser
+    continuação dele.
+  */
+  themeColor: "#faf4ea",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
