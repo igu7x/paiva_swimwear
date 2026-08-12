@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import { obterUsuarioLogado } from "@/lib/supabase/servidor";
+import { obterSessao } from "@/lib/autorizacao";
 
 import { Cabecalho } from "./cabecalho";
 
@@ -23,11 +23,19 @@ import { Cabecalho } from "./cabecalho";
 export const dynamic = "force-dynamic";
 
 export default async function PainelLayout({ children }: LayoutProps<"/admin">) {
-  const usuario = await obterUsuarioLogado();
+  const sessao = await obterSessao();
 
-  if (!usuario) {
-    redirect("/admin/login");
-  }
+  /*
+    Estar logada não basta mais: a cliente também tem login agora, e ela entra
+    pelo mesmo Supabase. Quem passa daqui é só quem está na lista de vendedoras
+    (ver src/lib/autorizacao.ts).
+
+    Cliente logada que digitar /admin volta para a loja, e não para a tela de
+    login: mandá-la para o login sugeriria que existe uma senha que resolve, e
+    não existe.
+  */
+  if (!sessao) redirect("/admin/login");
+  if (!sessao.vendedora) redirect("/");
 
   return (
     <>

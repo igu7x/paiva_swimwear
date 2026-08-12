@@ -2,14 +2,20 @@
 
 import { revalidatePath } from "next/cache";
 
-import { apagarFoto, obterProduto, registrarFoto } from "@/lib/db/produtos";
+import { ehVendedora } from "@/lib/autorizacao";
+import {
+  apagarFoto,
+  definirCapa,
+  obterProduto,
+  registrarFoto,
+} from "@/lib/db/produtos";
 import {
   BALDE,
   caminhoDaFoto,
   TAMANHO_MAXIMO,
   TIPOS_ACEITOS,
 } from "@/lib/supabase/armazenamento";
-import { criarClienteSupabase, obterUsuarioLogado } from "@/lib/supabase/servidor";
+import { criarClienteSupabase } from "@/lib/supabase/servidor";
 
 export type EstadoFotos = { erro: string | null; enviadas: number };
 
@@ -34,7 +40,7 @@ export async function enviarFotos(
 
   if (!produtoId) return { erro: "Peça não encontrada.", enviadas: 0 };
 
-  if (!(await obterUsuarioLogado())) {
+  if (!(await ehVendedora())) {
     return { erro: "Seu login expirou. Entre de novo.", enviadas: 0 };
   }
 
@@ -105,8 +111,34 @@ export async function enviarFotos(
 
   revalidatePath(`/admin/produtos/${produtoId}`);
   revalidatePath("/");
+  // A página da peça também mostra estas fotos. Sem esta linha ela continuava
+  // servindo a versão guardada, e a foto nova só aparecia lá no minuto seguinte.
+  revalidatePath(`/${produto.slug}`);
 
   return { erro: null, enviadas };
+}
+
+/**
+ * Marca uma foto como a capa da peça.
+ *
+ * Ela precisa disso porque a ordem de envio não é a ordem que ela quer: a foto
+ * boa costuma ser descoberta depois, no meio das outras. Sem este botão, a
+ * única saída era apagar tudo e reenviar na ordem certa.
+ */
+export async function usarNaVitrine(formData: FormData) {
+  const produtoId = Number(formData.get("produtoId"));
+  const fotoId = Number(formData.get("fotoId"));
+
+  if (!produtoId || !fotoId) return;
+  if (!(await ehVendedora())) return;
+
+  await definirCapa(produtoId, fotoId);
+
+  const produto = await obterProduto(produtoId);
+
+  revalidatePath(`/admin/produtos/${produtoId}`);
+  revalidatePath("/");
+  if (produto) revalidatePath(`/${produto.slug}`);
 }
 
 /** Remove a foto do banco e o arquivo do Storage. */
@@ -115,7 +147,7 @@ export async function removerFoto(formData: FormData) {
   const fotoId = Number(formData.get("fotoId"));
 
   if (!produtoId || !fotoId) return;
-  if (!(await obterUsuarioLogado())) return;
+  if (!(await ehVendedora())) return;
 
   const caminho = await apagarFoto(produtoId, fotoId);
   if (!caminho) return;
@@ -128,6 +160,9 @@ export async function removerFoto(formData: FormData) {
   // por isso isto só é anotado, e não devolvido como erro para ela.
   if (error) console.error("Arquivo não removido do Storage:", caminho, error);
 
+  const produto = await obterProduto(produtoId);
+
   revalidatePath(`/admin/produtos/${produtoId}`);
   revalidatePath("/");
+  if (produto) revalidatePath(`/${produto.slug}`);
 }
