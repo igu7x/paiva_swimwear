@@ -1,8 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import Link from "next/link";
+import { useCallback, useEffect, useRef, useState } from "react";
 
+import { useCarrinho } from "@/components/usar-carrinho";
+import { fundoDaCor, tomDaCor } from "@/lib/cores";
+import { formatarReais } from "@/lib/formato";
 import { enderecoDaFoto } from "@/lib/supabase/armazenamento";
 import { MEDIDAS, TAMANHOS, type Tamanho } from "@/lib/tamanhos";
 
@@ -14,43 +18,59 @@ type Variacao = {
 };
 
 /**
- * A escolha da cliente: cor e tamanho.
+ * A PÁGINA DA PEÇA.
  *
- * O botão de fechar o pedido entra na etapa seguinte, junto com o carrinho e o
- * formulário de entrega. Até lá esta tela mostra o que existe e o que acabou,
- * que já é o que a loja não tinha.
+ * A foto manda. Tudo aqui é organizado em volta disso: ela abre a página, ocupa
+ * a largura toda, e é a única coisa que dá para tocar e ver maior.
+ *
+ * AS FOTOS QUE APARECEM.
+ *
+ * Antes: se a cor tinha foto, a galeria virava só as fotos daquela cor, e a
+ * foto da vitrine — a arte com modelo, a que a loja usa para se apresentar —
+ * simplesmente sumia da página. Era o que parecia "a foto da vitrine está sendo
+ * substituída pela foto das cores".
+ *
+ * Agora a galeria é as duas coisas, nesta ordem:
+ *
+ *     [fotos da peça] + [fotos da cor escolhida]
+ *
+ * Trocar de cor não apaga nada: só troca a segunda metade e leva a galeria até
+ * a primeira foto daquela cor, para a cliente ver na hora o que ela escolheu.
  */
 export function Escolha({
+  produtoId,
   nome,
+  precoCentavos,
   fotos,
   variacoes,
   sobreAPeca,
 }: {
+  produtoId: number;
   nome: string;
+  precoCentavos: number;
   fotos: Foto[];
   variacoes: Variacao[];
   /*
-    O texto sobre a peça entra AQUI, logo depois da foto, e não no fim da
-    página. A ordem importa: quem chega pelo link olha a foto e a pergunta
-    seguinte é "como é essa peça?". Depois de responder isso é que faz sentido
-    escolher cor e tamanho.
-
-    Ele vem de fora porque é conteúdo do servidor — este componente é de tela,
-    e não deveria carregar texto que não muda.
+    O texto sobre a peça vem de fora porque é conteúdo do servidor — este
+    componente é de tela, e não deveria carregar texto que não muda.
   */
   sobreAPeca?: React.ReactNode;
 }) {
   const [corId, setCorId] = useState<number | null>(variacoes[0]?.id ?? null);
   const [tamanho, setTamanho] = useState<Tamanho | null>(null);
   const [verMedidas, setVerMedidas] = useState(false);
+  const [ampliada, setAmpliada] = useState<number | null>(null);
+  const [ativa, setAtiva] = useState(0);
+  const [guardado, setGuardado] = useState(false);
+
+  const carrossel = useRef<HTMLDivElement>(null);
+  const { acrescentar } = useCarrinho();
 
   const cor = variacoes.find((v) => v.id === corId) ?? null;
 
-  // Fotos da cor escolhida. Se aquela cor não tem foto própria, mostra as da
-  // peça — melhor a foto genérica do que um espaço vazio.
-  const daCor = fotos.filter((f) => f.variacaoId === corId);
   const daPeca = fotos.filter((f) => f.variacaoId === null);
-  const galeria = daCor.length > 0 ? daCor : daPeca;
+  const daCor = fotos.filter((f) => f.variacaoId === corId);
+  const galeria = [...daPeca, ...daCor];
 
   const quantidadeDe = (t: string) =>
     cor?.estoque.find((e) => e.tamanho === t)?.quantidade ?? 0;
@@ -58,81 +78,190 @@ export function Escolha({
   const corEsgotada =
     cor !== null && cor.estoque.every((e) => e.quantidade === 0);
 
-  return (
-    <>
-      {galeria.length > 0 ? (
-        <div className="-mx-4 flex snap-x snap-mandatory gap-2 overflow-x-auto px-4 pb-1">
-          {galeria.map((foto) => (
-            <div
-              key={foto.id}
-              /*
-                Cada foto ocupa 78% da largura para a seguinte aparecer pela
-                borda — é assim que a cliente descobre que dá para arrastar.
+  /** Leva a galeria até uma foto. */
+  const irPara = useCallback((indice: number, suave = true) => {
+    const trilho = carrossel.current;
+    if (!trilho) return;
 
-                Com UMA foto só isso não é dica, é buraco: sobra um vazio à
-                direita que parece defeito de layout. Nesse caso ela ocupa a
-                largura inteira.
-              */
-              className={`relative aspect-[4/5] shrink-0 snap-center overflow-hidden rounded-2xl bg-[var(--color-creme)] shadow-[0_24px_60px_-34px_rgba(58,40,26,0.6)] ${
-                galeria.length === 1
-                  ? "w-full max-w-[300px] sm:max-w-[360px]"
-                  : "w-[72%] max-w-[280px] sm:w-[42%] sm:max-w-none"
-              }`}
-            >
-              <Image
-                src={enderecoDaFoto(foto.caminho)}
-                alt={cor ? `${nome} na cor ${cor.nome}` : nome}
-                fill
-                sizes="(max-width: 640px) 78vw, 320px"
-                className="object-cover"
-                priority={foto === galeria[0]}
-              />
+    const alvo = trilho.children[indice] as HTMLElement | undefined;
+    if (!alvo) return;
+
+    trilho.scrollTo({
+      left: alvo.offsetLeft - trilho.offsetLeft,
+      behavior: suave ? "smooth" : "auto",
+    });
+  }, []);
+
+  // Qual foto está na frente agora — alimenta o contador embaixo da galeria.
+  useEffect(() => {
+    const trilho = carrossel.current;
+    if (!trilho) return;
+
+    const aoRolar = () => {
+      const largura = trilho.clientWidth;
+      if (largura === 0) return;
+      setAtiva(Math.round(trilho.scrollLeft / largura));
+    };
+
+    trilho.addEventListener("scroll", aoRolar, { passive: true });
+    return () => trilho.removeEventListener("scroll", aoRolar);
+  }, []);
+
+  function escolherCor(id: number) {
+    setCorId(id);
+    setTamanho(null);
+
+    // Mostra a cor escolhida na hora. Se ela não tem foto própria, a galeria
+    // fica onde está — voltar para o começo à toa seria movimento sem motivo.
+    const temFoto = fotos.some((f) => f.variacaoId === id);
+    if (temFoto) irPara(daPeca.length);
+  }
+
+  function guardarNaSacola() {
+    if (!cor || !tamanho) return;
+
+    acrescentar({
+      produtoId,
+      variacaoId: cor.id,
+      tamanho,
+      quantidade: 1,
+    });
+
+    setGuardado(true);
+  }
+
+  // O aviso de "guardado" some sozinho: ele é uma confirmação, não um estado.
+  useEffect(() => {
+    if (!guardado) return;
+    const relogio = setTimeout(() => setGuardado(false), 6000);
+    return () => clearTimeout(relogio);
+  }, [guardado]);
+
+  const disponivel = tamanho ? quantidadeDe(tamanho) > 0 : false;
+
+  return (
+    /*
+      DUAS COLUNAS NA TELA LARGA, uma no celular.
+
+      No celular a página é uma coluna e a foto vem primeiro — é o que a
+      cliente quer ver, e ela chegou aqui pelo celular.
+
+      Na tela larga isso ficaria absurdo: uma coluna de 450px no meio de um
+      monitor, com a foto pequena e metros de vazio dos dois lados. Então a
+      foto vai para a esquerda, ocupa mais da metade e FICA PARADA enquanto o
+      resto rola — a peça continua à vista enquanto ela escolhe cor e tamanho.
+    */
+    <div className="sm:grid sm:grid-cols-[1.08fr_1fr] sm:items-start sm:gap-12">
+      <div className="sm:sticky sm:top-[4.6rem]">
+      {/* ---------------- a foto ---------------- */}
+      {galeria.length > 0 ? (
+        <section>
+          {/*
+            Sangra até as bordas da tela no celular. Uma foto com margem dos
+            dois lados vira "imagem dentro de um documento"; sem margem, ela
+            vira a tela. É a diferença entre olhar uma foto e estar diante da
+            peça.
+          */}
+          <div
+            ref={carrossel}
+            className="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden"
+          >
+            {galeria.map((foto, indice) => (
+              <button
+                key={foto.id}
+                type="button"
+                onClick={() => setAmpliada(indice)}
+                aria-label="Ver a foto maior"
+                className="relative aspect-[4/5] w-full shrink-0 snap-center touch-manipulation overflow-hidden rounded-[1.5rem] bg-[var(--color-creme)] shadow-[0_30px_70px_-34px_rgba(58,40,26,0.7)]"
+              >
+                <Image
+                  src={enderecoDaFoto(foto.caminho)}
+                  alt={
+                    foto.variacaoId && cor
+                      ? `${nome} na cor ${cor.nome}`
+                      : nome
+                  }
+                  fill
+                  sizes="(max-width: 640px) 100vw, 460px"
+                  className="object-cover"
+                  priority={indice === 0}
+                />
+              </button>
+            ))}
+          </div>
+
+          {/*
+            Os traços embaixo. Um risco por foto, o da vez em dourado: diz
+            quantas existem e onde ela está, e serve de atalho para pular
+            direto. Ponto redondo some numa tela clara; traço não.
+          */}
+          {galeria.length > 1 ? (
+            <div className="mt-3 flex items-center justify-center gap-1.5">
+              {galeria.map((foto, indice) => (
+                <button
+                  key={foto.id}
+                  type="button"
+                  onClick={() => irPara(indice)}
+                  aria-label={`Foto ${indice + 1} de ${galeria.length}`}
+                  className="h-4 touch-manipulation px-0.5"
+                >
+                  <span
+                    className={`block h-[2px] rounded-full transition-all duration-300 ${
+                      indice === ativa
+                        ? "w-7 bg-[var(--color-dourado)]"
+                        : "w-3.5 bg-[var(--color-linha)]"
+                    }`}
+                  />
+                </button>
+              ))}
             </div>
-          ))}
-        </div>
+          ) : null}
+        </section>
       ) : (
-        <div className="grid aspect-[3/4] w-full place-items-center rounded-2xl bg-[var(--color-creme)] text-sm text-[var(--color-suave)]">
+        <div className="grid aspect-[4/5] w-full place-items-center rounded-[1.5rem] bg-[var(--color-creme)] text-sm text-[var(--color-suave)]">
           Fotos em breve
         </div>
       )}
+      </div>
+
+      <div>
+      {/* ---------------- nome e preço ---------------- */}
+      <h1 className="mt-7 font-serif text-[2.1rem] leading-[1.05] sm:mt-0 sm:text-[2.6rem]">
+        {nome}
+      </h1>
+      <p className="mt-1.5 text-lg text-[var(--color-suave)]">
+        {formatarReais(precoCentavos)}
+      </p>
 
       {sobreAPeca}
 
+      {/* ---------------- cor ---------------- */}
       {variacoes.length > 0 ? (
         <section className="mt-8">
           <h2 className="text-xs uppercase tracking-[0.2em] text-[var(--color-suave)]">
             Cor
-            {cor ? <span className="normal-case tracking-normal"> · {cor.nome}</span> : null}
+            {cor ? (
+              <span className="normal-case tracking-normal"> · {cor.nome}</span>
+            ) : null}
           </h2>
 
-          <ul className="mt-3 flex flex-wrap gap-2">
-            {variacoes.map((v) => {
-              const esgotada = v.estoque.every((e) => e.quantidade === 0);
-              const escolhida = v.id === corId;
-
-              return (
-                <li key={v.id}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setCorId(v.id);
-                      setTamanho(null);
-                    }}
-                    className={`touch-manipulation rounded-full border px-4 py-2 text-sm transition-[transform,border-color,background-color] duration-150 active:scale-[0.97] ${
-                      escolhida
-                        ? "border-[var(--color-tinta)] bg-[var(--color-tinta)] text-white"
-                        : "border-[var(--color-linha)] bg-[var(--color-creme)]"
-                    } ${esgotada && !escolhida ? "text-[var(--color-suave)] line-through" : ""}`}
-                  >
-                    {v.nome}
-                  </button>
-                </li>
-              );
-            })}
+          <ul className="mt-3 flex flex-wrap gap-2.5">
+            {variacoes.map((v) => (
+              <li key={v.id}>
+                <BotaoDeCor
+                  nome={v.nome}
+                  escolhida={v.id === corId}
+                  esgotada={v.estoque.every((e) => e.quantidade === 0)}
+                  foto={fotos.find((f) => f.variacaoId === v.id)?.caminho}
+                  aoEscolher={() => escolherCor(v.id)}
+                />
+              </li>
+            ))}
           </ul>
         </section>
       ) : null}
 
+      {/* ---------------- tamanho ---------------- */}
       {cor ? (
         <section className="mt-7">
           <div className="flex items-baseline justify-between gap-3">
@@ -171,20 +300,20 @@ export function Escolha({
 
           <ul className="mt-3 flex flex-wrap gap-2">
             {TAMANHOS.map((t) => {
-              const disponivel = quantidadeDe(t) > 0;
+              const temNoEstoque = quantidadeDe(t) > 0;
               const escolhido = tamanho === t;
 
               return (
                 <li key={t}>
                   <button
                     type="button"
-                    disabled={!disponivel}
+                    disabled={!temNoEstoque}
                     onClick={() => setTamanho(t)}
-                    className={`min-w-12 touch-manipulation rounded-full border px-4 py-2 text-sm transition-[transform,border-color,background-color] duration-150 active:scale-[0.97] ${
+                    className={`min-w-12 touch-manipulation rounded-full border px-4 py-2.5 text-sm transition-[transform,border-color,background-color] duration-150 active:scale-[0.97] ${
                       escolhido
                         ? "border-[var(--color-tinta)] bg-[var(--color-tinta)] text-white"
                         : "border-[var(--color-linha)] bg-[var(--color-creme)]"
-                    } ${!disponivel ? "cursor-not-allowed text-[var(--color-suave)] line-through opacity-60" : ""}`}
+                    } ${!temNoEstoque ? "cursor-not-allowed text-[var(--color-suave)] line-through opacity-60" : ""}`}
                   >
                     {t}
                   </button>
@@ -195,8 +324,7 @@ export function Escolha({
 
           {corEsgotada ? (
             <p className="mt-3 text-sm text-[var(--color-suave)]">
-              {cor.nome} está esgotada no momento. Fale com a gente que avisamos
-              quando voltar.
+              {cor.nome} está esgotada no momento.
             </p>
           ) : null}
 
@@ -206,19 +334,230 @@ export function Escolha({
         </section>
       ) : null}
 
+      {/* ---------------- guardar na sacola ---------------- */}
       {/*
-        Aqui entra o botão de fechar o pedido, na Etapa 3. Enquanto ele não
-        existe, a tela não finge que existe: mostrar um botão que não leva a
-        lugar nenhum é pior do que não ter botão.
+        A barra fica colada no pé da tela.
+
+        No celular, o botão de comprar no meio da página some assim que a
+        cliente rola para ver a foto de novo — e ela rola, porque a foto é o
+        motivo de ela estar aqui. Colado embaixo, ele está sempre a um toque,
+        sem tirar espaço da foto.
       */}
-      {tamanho && cor ? (
-        <p className="mt-9 rounded-2xl border border-[var(--color-linha)] bg-[var(--color-creme)] px-5 py-4 text-center text-sm">
-          {nome} · {cor.nome} · tamanho {tamanho}
-          <span className="mt-1 block text-xs text-[var(--color-suave)]">
-            Em breve você fecha o pedido por aqui.
-          </span>
-        </p>
+      {variacoes.length > 0 ? (
+        <div className="sticky bottom-0 z-20 -mx-5 mt-10 border-t border-[var(--color-linha)] bg-[var(--color-areia)]/92 px-5 pb-[max(0.85rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-md sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:px-0 sm:pb-0 sm:backdrop-blur-none">
+          {guardado ? (
+            <div className="mb-2.5 flex items-center justify-between gap-3 rounded-full border border-[var(--color-dourado)] bg-[var(--color-creme)] py-2 pl-4 pr-2 text-sm">
+              <span>Guardado na sacola.</span>
+              <Link
+                href="/carrinho"
+                className="touch-manipulation rounded-full bg-[var(--color-tinta)] px-4 py-2 text-[0.6rem] uppercase tracking-[0.16em] text-white"
+              >
+                Ver sacola
+              </Link>
+            </div>
+          ) : null}
+
+          <button
+            type="button"
+            onClick={guardarNaSacola}
+            disabled={!cor || !tamanho || !disponivel}
+            className="flex w-full touch-manipulation items-center justify-center gap-3 rounded-full bg-[var(--color-tinta)] px-6 py-4 text-[0.66rem] uppercase tracking-[0.2em] text-white transition-transform duration-200 active:scale-[0.98] disabled:bg-[var(--color-creme)] disabled:text-[var(--color-suave)]"
+          >
+            {!cor
+              ? "Indisponível"
+              : corEsgotada
+                ? "Esgotado nesta cor"
+                : !tamanho
+                  ? "Escolha o tamanho"
+                  : "Adicionar à sacola"}
+
+            {cor && tamanho && disponivel ? (
+              <span aria-hidden className="text-[var(--color-dourado)]">
+                {formatarReais(precoCentavos)}
+              </span>
+            ) : null}
+          </button>
+        </div>
       ) : null}
-    </>
+      </div>
+
+      {/* ---------------- a foto em tela cheia ---------------- */}
+      {ampliada !== null && galeria[ampliada] ? (
+        <FotoAmpliada
+          fotos={galeria}
+          indice={ampliada}
+          nome={nome}
+          aoTrocar={setAmpliada}
+          aoFechar={() => setAmpliada(null)}
+        />
+      ) : null}
+    </div>
+  );
+}
+
+/**
+ * O botão de uma cor, PINTADO DA COR.
+ *
+ * A vendedora escreve "Marrom" e o botão fica marrom; escreve "Estampa Folhas"
+ * e ele mostra a foto daquela cor como amostra. A tradução de nome para tom
+ * está em src/lib/cores.ts.
+ *
+ * Um detalhe que parece bobo e não é: o anel de escolhida fica FORA do botão,
+ * separado por uma folga da cor do fundo. Se ele encostasse na cor, um botão
+ * preto e um anel escuro virariam a mesma mancha e ninguém saberia qual está
+ * escolhido.
+ */
+function BotaoDeCor({
+  nome,
+  escolhida,
+  esgotada,
+  foto,
+  aoEscolher,
+}: {
+  nome: string;
+  escolhida: boolean;
+  esgotada: boolean;
+  foto?: string;
+  aoEscolher: () => void;
+}) {
+  const tom = tomDaCor(nome);
+
+  return (
+    <button
+      type="button"
+      onClick={aoEscolher}
+      aria-pressed={escolhida}
+      className={`flex touch-manipulation items-center gap-2.5 rounded-full border py-1.5 pl-1.5 pr-4 text-sm transition-[transform,box-shadow,border-color] duration-200 active:scale-[0.97] ${
+        escolhida
+          ? "border-[var(--color-tinta)] shadow-[0_0_0_3px_var(--color-areia),0_0_0_4px_var(--color-tinta)]"
+          : "border-[var(--color-linha)]"
+      } ${esgotada ? "opacity-55" : ""}`}
+      style={{ backgroundColor: "var(--color-creme)" }}
+    >
+      <span
+        aria-hidden
+        className="relative block h-7 w-7 shrink-0 overflow-hidden rounded-full border border-black/10"
+        style={tom ? { background: fundoDaCor(tom) } : undefined}
+      >
+        {/* Sem cor reconhecida, a foto da própria peça vira a amostra — é
+            sempre mais fiel do que qualquer aproximação que a gente chutasse. */}
+        {!tom && foto ? (
+          <Image
+            src={enderecoDaFoto(foto)}
+            alt=""
+            fill
+            sizes="28px"
+            className="object-cover"
+          />
+        ) : null}
+      </span>
+
+      <span className={esgotada ? "line-through" : ""}>{nome}</span>
+    </button>
+  );
+}
+
+/**
+ * A foto em tela cheia.
+ *
+ * `object-contain` e não `object-cover`: aqui a peça inteira precisa caber. Na
+ * galeria o corte é enquadramento; aqui ele seria esconder justamente o que a
+ * cliente abriu para ver.
+ */
+function FotoAmpliada({
+  fotos,
+  indice,
+  nome,
+  aoTrocar,
+  aoFechar,
+}: {
+  fotos: Foto[];
+  indice: number;
+  nome: string;
+  aoTrocar: (i: number) => void;
+  aoFechar: () => void;
+}) {
+  // Esc fecha, setas passam. É de graça para quem está no computador e não
+  // atrapalha ninguém no celular.
+  useEffect(() => {
+    function aoTeclar(evento: KeyboardEvent) {
+      if (evento.key === "Escape") aoFechar();
+      if (evento.key === "ArrowRight") aoTrocar((indice + 1) % fotos.length);
+      if (evento.key === "ArrowLeft")
+        aoTrocar((indice - 1 + fotos.length) % fotos.length);
+    }
+
+    window.addEventListener("keydown", aoTeclar);
+
+    // Trava a rolagem do fundo enquanto a foto está aberta: sem isso, arrastar
+    // na foto rola a página atrás dela.
+    const antes = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      window.removeEventListener("keydown", aoTeclar);
+      document.body.style.overflow = antes;
+    };
+  }, [indice, fotos.length, aoTrocar, aoFechar]);
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${nome} — foto ${indice + 1} de ${fotos.length}`}
+      onClick={aoFechar}
+      className="fixed inset-0 z-50 flex flex-col bg-[var(--color-tinta)]/95 backdrop-blur-sm"
+    >
+      <div className="flex justify-end p-3">
+        <button
+          type="button"
+          onClick={aoFechar}
+          aria-label="Fechar"
+          className="grid h-11 w-11 touch-manipulation place-items-center rounded-full border border-white/25 text-lg text-white/90"
+        >
+          ×
+        </button>
+      </div>
+
+      <div className="relative flex-1">
+        <Image
+          src={enderecoDaFoto(fotos[indice].caminho)}
+          alt={nome}
+          fill
+          sizes="100vw"
+          className="object-contain"
+        />
+      </div>
+
+      {fotos.length > 1 ? (
+        <div
+          // O clique nos botões não pode fechar a tela junto.
+          onClick={(evento) => evento.stopPropagation()}
+          className="flex items-center justify-center gap-6 p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]"
+        >
+          <button
+            type="button"
+            onClick={() => aoTrocar((indice - 1 + fotos.length) % fotos.length)}
+            aria-label="Foto anterior"
+            className="grid h-11 w-11 touch-manipulation place-items-center rounded-full border border-white/25 text-white/90"
+          >
+            ←
+          </button>
+
+          <span className="text-xs tracking-[0.2em] text-white/70">
+            {indice + 1} / {fotos.length}
+          </span>
+
+          <button
+            type="button"
+            onClick={() => aoTrocar((indice + 1) % fotos.length)}
+            aria-label="Próxima foto"
+            className="grid h-11 w-11 touch-manipulation place-items-center rounded-full border border-white/25 text-white/90"
+          >
+            →
+          </button>
+        </div>
+      ) : null}
+    </div>
   );
 }

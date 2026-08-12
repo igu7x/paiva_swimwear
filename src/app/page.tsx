@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { BarraDaLoja } from "@/components/barra-da-loja";
 import { MovimentoDaLoja } from "@/components/movimento-da-loja";
 import { Ondas } from "@/components/ondas";
 import { ATRIBUTOS, Sol } from "@/components/simbolos";
@@ -81,6 +82,13 @@ export default async function Home() {
   return (
     <div>
       <MovimentoDaLoja />
+
+      {/*
+        Na capa a barra começa invisível e só ganha fundo depois que a página
+        desce — a abertura da marca é a única tela que é só dela, e uma faixa
+        opaca por cima desde o primeiro instante estragaria isso.
+      */}
+      <BarraDaLoja variante="capa" />
 
       {/* Fio de progresso: mostra o quanto da loja já foi percorrido. */}
       <div

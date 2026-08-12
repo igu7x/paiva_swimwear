@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { BarraDaLoja } from "@/components/barra-da-loja";
 import { MovimentoDaLoja } from "@/components/movimento-da-loja";
 import { obterConfigLoja } from "@/lib/db/config-loja";
 import { capaDoProduto, obterProdutoPorSlug } from "@/lib/db/produtos";
@@ -77,49 +77,24 @@ export default async function PecaPage({ params }: PageProps<"/[slug]">) {
       <MovimentoDaLoja />
 
       {/*
-        O cabeçalho tem três trabalhos: dizer onde a pessoa está, deixar voltar,
-        e não sumir quando ela rola.
-
-        O botão de voltar é um BOTÃO, com moldura e seta, não um texto discreto
-        no canto. Numa página de produto ele é o caminho mais usado — a cliente
-        entra por um link, olha, e quer ver o resto. Texto pequeno sem moldura
-        não é percebido como algo em que se pode tocar.
+        A mesma barra da vitrine: voltar de um lado, conta e sacola do outro.
+        Era um cabeçalho próprio desta página; virou o de todas, porque a
+        sacola precisa estar a um toque em qualquer tela da loja.
       */}
-      <header className="sticky top-0 z-20 border-b border-[var(--color-linha)] bg-[var(--color-areia)]/90 backdrop-blur-md">
-        <div className="mx-auto flex w-full max-w-md items-center justify-between gap-3 px-4 py-2.5">
-          <Link
-            href="/"
-            className="group flex touch-manipulation items-center gap-2 rounded-full border border-[var(--color-linha)] bg-[var(--color-creme)] py-2 pl-3 pr-4 text-[0.62rem] uppercase tracking-[0.18em] transition-[transform,border-color] duration-200 active:scale-[0.97] active:border-[var(--color-tinta)]"
-          >
-            <span
-              aria-hidden
-              className="text-[var(--color-dourado)] transition-transform duration-300 group-hover:-translate-x-0.5"
-            >
-              ←
-            </span>
-            Voltar
-          </Link>
+      <BarraDaLoja />
 
-          <Link href="/" aria-label="Início">
-            <Image
-              src="/logo.png"
-              alt={config?.nomeLoja ?? "Paiva Swimwear"}
-              width={1024}
-              height={622}
-              className="h-9 w-auto sm:h-10"
-            />
-          </Link>
-        </div>
-      </header>
+      {/*
+        A foto começa logo abaixo da barra, sem título antes dela.
 
-      <main className="mx-auto w-full max-w-md px-4 pb-24 pt-7">
-        <h1 className="font-serif text-[2.1rem] leading-[1.1]">{peca.nome}</h1>
-        <p className="mt-2 mb-7 text-lg text-[var(--color-suave)]">
-          {formatarReais(peca.precoCentavos)}
-        </p>
-
+        Nome e preço passaram para DEPOIS da foto de propósito: quem chega por
+        um link já sabe o nome da peça, foi por ele que clicou. O que ela ainda
+        não viu é a peça.
+      */}
+      <main className="mx-auto w-full max-w-md px-5 pb-16 pt-[4.4rem] sm:max-w-4xl sm:px-8 sm:pt-24">
         <Escolha
+          produtoId={peca.id}
           nome={peca.nome}
+          precoCentavos={peca.precoCentavos}
           fotos={peca.fotos}
           variacoes={peca.variacoes}
           sobreAPeca={
