@@ -77,6 +77,7 @@ export function BarraDaLoja({
           {variante === "pagina" ? (
             <Link
               href="/"
+              scroll={false}
               className="group flex touch-manipulation items-center gap-2 rounded-full border border-[var(--color-linha)] bg-[var(--color-creme)] py-2 pl-3 pr-4 text-[0.6rem] uppercase tracking-[0.18em] transition-[transform,border-color] duration-200 hover:border-[var(--color-tinta)] active:scale-[0.97] active:border-[var(--color-tinta)]"
             >
               <span
@@ -103,6 +104,7 @@ export function BarraDaLoja({
         {variante === "pagina" ? (
           <Link
             href="/"
+            scroll={false}
             aria-label="Início"
             className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
           >

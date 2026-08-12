@@ -217,7 +217,7 @@ export default async function Home() {
                 <div
                   className={`w-[38%] max-w-[175px] shrink-0 sm:w-1/2 sm:max-w-none ${espelhada ? "order-2" : ""}`}
                 >
-                  <Link href={`/${peca.slug}`} className="group block">
+                  <Link href={`/${peca.slug}`} scroll={false} className="group block">
                     {/* A sombra tira a peça do fundo. Sem ela, a foto encosta
                         na praia e as duas viram a mesma superfície — foi a
                         queixa de que a peça se mistura com o fundo. */}
@@ -303,6 +303,7 @@ export default async function Home() {
 
                     <Link
                       href={`/${peca.slug}`}
+                      scroll={false}
                       className="mt-4 inline-flex touch-manipulation items-center gap-2 rounded-full bg-[var(--color-tinta)] px-4 py-2 text-[0.55rem] uppercase tracking-[0.22em] text-white transition-[transform,gap] duration-300 hover:gap-5 active:scale-[0.97] sm:mt-7 sm:px-6 sm:py-3"
                     >
                       Ver a peça

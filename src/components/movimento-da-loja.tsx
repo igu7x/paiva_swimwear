@@ -55,7 +55,14 @@ export function MovimentoDaLoja() {
 
     // Quem pediu menos movimento no sistema não recebe nada disto: nem a
     // rolagem com inércia, nem o estado escondido das revelações.
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      // Mas continua precisando começar no topo. Sem inércia não há como
+      // subir animado, então aqui é direto — que é justamente o que essa
+      // pessoa pediu ao ligar "reduzir movimento".
+      if (!voltouPeloNavegador) window.scrollTo(0, 0);
+      voltouPeloNavegador = false;
+      return;
+    }
 
     raiz.classList.add("js-pronto");
 
@@ -98,15 +105,29 @@ export function MovimentoDaLoja() {
     });
 
     /*
-      Chegou por um link: começa no topo, e a inércia é avisada disso.
+      Chegou por um link: a página começa no topo.
 
-      O `immediate` é o que importa: sem ele a página desceria deslizando até o
-      topo na frente da cliente, que é pior do que já estar lá. Com ele, a
-      inércia simplesmente passa a concordar que a página está no alto.
+      COMO ELA CHEGA LÁ DEPENDE DE ONDE ELA ESTAVA.
+
+      Os links da loja pedem ao Next para NÃO mexer na rolagem (`scroll={false}`),
+      e é por isso que este trecho existe. Sem aquilo, o Next zerava a rolagem
+      sozinho, de uma vez, antes mesmo deste código rodar — era esse o salto
+      seco, e não havia como animar o que já tinha acontecido.
+
+      Com a decisão nas nossas mãos, a página nova nasce onde a anterior
+      estava e SOBE até o topo: a curva desacelera no fim, então ela parece
+      assentar no alto em vez de ser arrancada até lá.
+
+      Meio segundo é o teto disso. Acima, a pessoa fica esperando uma viagem
+      que ela não pediu — ela clicou para ver uma peça, não para assistir a
+      página subir.
     */
-    if (!voltouPeloNavegador) {
-      window.scrollTo(0, 0);
-      lenis.scrollTo(0, { immediate: true, force: true });
+    if (!voltouPeloNavegador && window.scrollY > 0) {
+      lenis.scrollTo(0, {
+        duration: 0.5,
+        // easeOutCubic: sai rápido, chega devagar.
+        easing: (t: number) => 1 - Math.pow(1 - t, 3),
+      });
     }
 
     voltouPeloNavegador = false;
