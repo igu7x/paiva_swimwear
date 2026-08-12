@@ -5,6 +5,133 @@
 
 ---
 
+## Sessão 9 — 12/08/2026 — Conta, sacola e a página da peça de verdade
+
+### O buraco que apareceu no caminho
+
+Antes de escrever uma linha de login, uma checagem no que já existia encontrou
+o seguinte: **as ações do painel não conferiam quem estava chamando**.
+
+`salvarProduto`, `removerProduto`, `adicionarCor`, `gravarEstoque` — nenhuma
+delas pedia login. A trava do painel sempre esteve no `layout.tsx`, e layout
+decide o que é DESENHADO. Cada uma dessas funções é um endereço que aceita
+POST, e dá para chamá-lo sem nunca ter aberto a tela que o mostra. Na prática:
+apagar uma peça da loja publicada não exigia estar logado.
+
+Isso já era grave sozinho. Com cadastro de cliente virava fatal: qualquer
+pessoa que criasse conta na loja passaria pela mesma porta que a vendedora.
+
+**Como ficou:** um arquivo novo, `src/lib/autorizacao.ts`, com `ehVendedora()`.
+Toda ação do painel começa chamando isso. Quem separa a vendedora da cliente é
+a variável de ambiente `EMAILS_ADMIN` — uma lista de e-mails que só existe na
+configuração do servidor.
+
+Por que uma variável de ambiente e não uma coluna `admin` no banco: é a única
+forma de ninguém conseguir conceder o acesso a si mesmo pelo site. E lista
+vazia significa "ninguém é vendedora", nunca "todo mundo é" — configuração
+faltando tem que fechar a porta, não abrir.
+
+> **VOCÊ PRECISA CADASTRAR `EMAILS_ADMIN` NA VERCEL**, com o e-mail da
+> vendedora, senão o painel fica trancado para todo mundo no site publicado.
+> Localmente já está no `.env.local`.
+
+Conferido nos dois sentidos, rodando de verdade: com o e-mail dela na lista,
+`/admin` abre; com a lista apontando para outro e-mail, ela cai na vitrine e o
+`/api/sessao` responde `vendedora: false`.
+
+### Conta da cliente — e por que ela é opcional
+
+O `CLAUDE.md` diz "não existe cadastro nem login de cliente". Você pediu o
+contrário, então ela existe — mas **opcional**: dá para ver as peças, montar a
+sacola e (quando o fechamento existir) comprar sem criar nenhuma. A tela de
+entrar diz isso em voz alta, com um link para voltar às peças.
+
+- `/entrar` — entrar e criar conta na mesma tela, com um interruptor. Duas
+  páginas separadas obrigariam a cliente a saber, antes de digitar qualquer
+  coisa, se ela já tem conta aqui — e ela não sabe.
+- `/conta` — nome, e-mail, sair, e o atalho para o painel **só para ela**.
+- Ícone de pessoinha na barra, em cima, em todas as telas da loja.
+
+Um detalhe que valeu pensar: a vitrine e a página da peça são servidas prontas,
+iguais para todo mundo — é o que faz elas abrirem em milissegundos. Uma página
+assim **não pode saber quem está do outro lado**. Por isso a barra pergunta
+depois, sozinha, em `/api/sessao`. O custo é o ícone ficar neutro por um
+instante; o ganho é a loja inteira continuar instantânea.
+
+Se a confirmação por e-mail estiver ligada no Supabase, o cadastro é aceito mas
+a pessoa não entra na hora — a tela avisa. Se você quiser que ela entre direto,
+é desligar "Confirm email" em Authentication > Providers > Email.
+
+### A foto da vitrine que "sumia"
+
+Não era o cadastro: era a página da peça. O código antigo dizia "se a cor tem
+foto, mostre só as fotos da cor" — e a foto de capa, a arte com modelo,
+desaparecia da página inteira.
+
+Agora a galeria é `[fotos da peça] + [fotos da cor escolhida]`. Trocar de cor
+não apaga nada: troca a segunda metade e leva a galeria até a primeira foto
+daquela cor.
+
+Junto disso:
+
+- **"usar na vitrine"** em cada foto da peça no painel. A foto boa quase nunca
+  é a primeira que ela envia, e antes a única saída era apagar tudo e reenviar
+  na ordem certa.
+- A página da peça agora é revalidada quando ela mexe nas fotos. Antes só a
+  vitrine era, e a foto nova demorava um minuto para aparecer na peça.
+
+### Cores inteligentes
+
+`src/lib/cores.ts` traduz o nome que ela escreve para um tom de verdade:
+"Marrom" pinta o botão de marrom, "Preto e Branco" pinta meio a meio, "Onda
+Coral" acha o coral no meio do nome. Quando não reconhece — "Estampa Folhas" —
+**não chuta**: usa a foto daquela cor como amostra, que é sempre mais fiel.
+
+No painel, cada cor mostra uma bolinha com o tom que a loja vai usar. É a
+conferência na hora do cadastro, sem ela precisar abrir a loja para ver.
+
+### A sacola
+
+Ela mora no navegador da cliente, e guarda **só identificação**: peça, cor,
+tamanho, quantas. Nunca preço, nunca nome, nunca foto.
+
+Isso é a regra número um do projeto sendo respeitada — "preço é sempre decidido
+pelo servidor". Se o preço viesse junto do carrinho, bastaria editar o
+armazenamento do navegador para comprar um biquíni por um real. Tudo o mais é
+buscado no servidor toda vez que a sacola abre, e o efeito colateral é bom: um
+carrinho aberto ontem mostra o preço de hoje, e a peça que esgotou aparece
+marcada.
+
+Não existe botão de pagar na sacola, de propósito — o fechamento de pedido é a
+última coisa combinada, e botão que não leva a lugar nenhum faz a pessoa achar
+que o site quebrou.
+
+### A página da peça repaginada
+
+- A foto abre a página, sangrando até as bordas no celular, e dá para tocar
+  para ver em tela cheia.
+- Nome e preço vieram para DEPOIS da foto: quem chega por um link já sabe o
+  nome, foi por ele que clicou. O que ela não viu é a peça.
+- No desktop, duas colunas — a foto fica parada à esquerda enquanto o resto
+  rola.
+- Botão de guardar na sacola colado no pé da tela no celular.
+
+### Próximo passo concreto
+
+1. **Cadastrar `EMAILS_ADMIN` na Vercel** e republicar.
+2. Apagar a peça de teste `adasdasd` e cadastrar as 6 cores da Asa Delta com
+   foto — só assim dá para ver os botões coloridos e a troca de fotos por cor
+   funcionando de verdade.
+3. Depois disso: o fechamento de pedido (Etapa 3), que é a última peça que
+   falta para a loja fechar uma venda sozinha.
+
+### Continua em aberto
+
+- A senha do banco e a senha da conta da vendedora passaram pelo chat e nunca
+  foram trocadas.
+
+---
+
 ## Sessão 8 — 11/08/2026 — A vitrine que ele aprovou
 
 ### A lição, de novo: medir em vez de supor
