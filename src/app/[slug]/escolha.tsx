@@ -156,38 +156,72 @@ export function Escolha({
       {/* ---------------- a foto ---------------- */}
       {galeria.length > 0 ? (
         <section>
-          {/*
-            Sangra até as bordas da tela no celular. Uma foto com margem dos
-            dois lados vira "imagem dentro de um documento"; sem margem, ela
-            vira a tela. É a diferença entre olhar uma foto e estar diante da
-            peça.
-          */}
-          <div
-            ref={carrossel}
-            className="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden"
-          >
-            {galeria.map((foto, indice) => (
-              <button
-                key={foto.id}
-                type="button"
-                onClick={() => setAmpliada(indice)}
-                aria-label="Ver a foto maior"
-                className="relative aspect-[4/5] w-full shrink-0 snap-center touch-manipulation overflow-hidden rounded-[1.5rem] bg-[var(--color-creme)] shadow-[0_30px_70px_-34px_rgba(58,40,26,0.7)]"
-              >
-                <Image
-                  src={enderecoDaFoto(foto.caminho)}
-                  alt={
-                    foto.variacaoId && cor
-                      ? `${nome} na cor ${cor.nome}`
-                      : nome
-                  }
-                  fill
-                  sizes="(max-width: 640px) 100vw, 460px"
-                  className="object-cover"
-                  priority={indice === 0}
+          <div className="relative">
+            {/*
+              Sangra até as bordas da tela no celular. Uma foto com margem dos
+              dois lados vira "imagem dentro de um documento"; sem margem, ela
+              vira a tela. É a diferença entre olhar uma foto e estar diante da
+              peça.
+
+              O `pb-7` NÃO É ESPAÇO DECORATIVO, é o que faz a sombra caber.
+              `overflow-x: auto` corta também na vertical — não existe rolar de
+              lado e deixar transbordar para baixo. Sem folga aqui, a sombra
+              era cortada no meio e virava uma faixa cinza de canto reto logo
+              abaixo da foto.
+            */}
+            <div
+              ref={carrossel}
+              className="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-7 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden"
+            >
+              {galeria.map((foto, indice) => (
+                <button
+                  key={foto.id}
+                  type="button"
+                  onClick={() => setAmpliada(indice)}
+                  aria-label="Ver a foto maior"
+                  className="relative aspect-[4/5] w-full shrink-0 snap-center touch-manipulation overflow-hidden rounded-[1.5rem] bg-[var(--color-creme)] shadow-[0_18px_45px_-26px_rgba(58,40,26,0.65)]"
+                >
+                  <Image
+                    src={enderecoDaFoto(foto.caminho)}
+                    alt={
+                      foto.variacaoId && cor
+                        ? `${nome} na cor ${cor.nome}`
+                        : nome
+                    }
+                    fill
+                    sizes="(max-width: 640px) 100vw, 460px"
+                    className="object-cover"
+                    priority={indice === 0}
+                  />
+                </button>
+              ))}
+            </div>
+
+            {/*
+              As setas.
+
+              No celular arrastar já funciona, mas nem todo mundo descobre isso
+              sozinho — e no computador não existe arrastar. Elas ficam POR CIMA
+              das bordas da foto, e não fora dela: assim não roubam largura da
+              foto, que é a coisa mais importante desta página.
+
+              Nas pontas elas apagam em vez de sumir. Botão que desaparece muda
+              o lugar do outro, e a mão vai no lugar errado no toque seguinte.
+            */}
+            {galeria.length > 1 ? (
+              <>
+                <SetaDaGaleria
+                  lado="esquerda"
+                  desligada={ativa === 0}
+                  aoTocar={() => irPara(ativa - 1)}
                 />
-              </button>
-            ))}
+                <SetaDaGaleria
+                  lado="direita"
+                  desligada={ativa >= galeria.length - 1}
+                  aoTocar={() => irPara(ativa + 1)}
+                />
+              </>
+            ) : null}
           </div>
 
           {/*
@@ -196,7 +230,7 @@ export function Escolha({
             direto. Ponto redondo some numa tela clara; traço não.
           */}
           {galeria.length > 1 ? (
-            <div className="mt-3 flex items-center justify-center gap-1.5">
+            <div className="flex items-center justify-center gap-1.5">
               {galeria.map((foto, indice) => (
                 <button
                   key={foto.id}
@@ -392,6 +426,37 @@ export function Escolha({
         />
       ) : null}
     </div>
+  );
+}
+
+/**
+ * Uma seta da galeria.
+ *
+ * O fundo é claro com desfoque atrás em vez de sólido: a foto continua
+ * aparecendo por trás dela, e a seta não vira um adesivo colado por cima da
+ * peça. Numa foto clara ela ainda se destaca por causa da borda.
+ */
+function SetaDaGaleria({
+  lado,
+  desligada,
+  aoTocar,
+}: {
+  lado: "esquerda" | "direita";
+  desligada: boolean;
+  aoTocar: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={aoTocar}
+      disabled={desligada}
+      aria-label={lado === "esquerda" ? "Foto anterior" : "Próxima foto"}
+      className={`absolute top-[calc(50%-0.875rem)] grid h-10 w-10 -translate-y-1/2 touch-manipulation place-items-center rounded-full border border-[var(--color-linha)] bg-[var(--color-areia)]/80 text-[var(--color-tinta)] backdrop-blur-sm transition-[opacity,transform] duration-200 active:scale-[0.92] disabled:opacity-35 ${
+        lado === "esquerda" ? "left-2 sm:left-3" : "right-2 sm:right-3"
+      }`}
+    >
+      {lado === "esquerda" ? "←" : "→"}
+    </button>
   );
 }
 
