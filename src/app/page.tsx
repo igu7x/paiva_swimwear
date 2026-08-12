@@ -175,10 +175,10 @@ export default async function Home() {
               */
               <section
                 key={peca.id}
-                className="mx-auto flex max-w-5xl flex-row items-center gap-3 px-4 py-10 sm:gap-16 sm:px-6 sm:py-[14vh]"
+                className="mx-auto flex max-w-5xl flex-row items-center justify-center gap-3 px-4 py-10 sm:justify-start sm:gap-16 sm:px-6 sm:py-[14vh]"
               >
                 <div
-                  className={`w-[44%] shrink-0 sm:w-1/2 ${espelhada ? "order-2" : ""}`}
+                  className={`w-[34%] max-w-[155px] shrink-0 sm:w-1/2 sm:max-w-none ${espelhada ? "order-2" : ""}`}
                 >
                   <Link href={`/${peca.slug}`} className="group block">
                     {/* A sombra tira a peça do fundo. Sem ela, a foto encosta
@@ -227,7 +227,7 @@ export default async function Home() {
                   No desktop tudo isso é desligado: lá elas ficam lado a lado.
                 */}
                 <div
-                  className={`w-[56%] sm:w-1/2 ${espelhada ? "order-1" : ""}`}
+                  className={`w-[42%] max-w-[190px] sm:w-1/2 sm:max-w-none ${espelhada ? "order-1" : ""}`}
                 >
                   <div
                     data-revelar
