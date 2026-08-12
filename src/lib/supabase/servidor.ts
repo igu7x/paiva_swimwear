@@ -65,8 +65,16 @@ export const obterUsuarioLogado = cache(async () => {
 
   if (error || !data?.claims?.sub) return null;
 
+  // O nome vem do cadastro da cliente, guardado junto do login no Supabase.
+  // A vendedora não tem esse campo — a conta dela é anterior — então ele pode
+  // vir vazio e quem usa precisa ter um plano B.
+  const metadados = data.claims.user_metadata as
+    | Record<string, unknown>
+    | undefined;
+
   return {
     id: data.claims.sub,
     email: typeof data.claims.email === "string" ? data.claims.email : null,
+    nome: typeof metadados?.nome === "string" ? metadados.nome : null,
   };
 });

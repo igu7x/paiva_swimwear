@@ -63,6 +63,34 @@ export function Brilho({ className = "" }: { className?: string }) {
   );
 }
 
+/* ---------------------------------------------------------------------------
+   OS ÍCONES DE NAVEGAÇÃO
+
+   Mesmo traço fino dos símbolos da marca, de propósito: são os dois únicos
+   botões que ficam fixos por cima da loja inteira, e um ícone de biblioteca
+   pronta ao lado da arte dela denunciaria na hora que veio de outro lugar.
+   ------------------------------------------------------------------------- */
+
+/** Conta da cliente. */
+export function Pessoa({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden {...traco}>
+      <circle cx="12" cy="8.4" r="3.9" />
+      <path d="M4.6 20.2c.7-3.9 3.8-6.1 7.4-6.1s6.7 2.2 7.4 6.1" />
+    </svg>
+  );
+}
+
+/** Sacola de compras. */
+export function Sacola({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden {...traco}>
+      <path d="M5.1 8.4h13.8l-1 11.2a1.8 1.8 0 0 1-1.8 1.6H7.9a1.8 1.8 0 0 1-1.8-1.6Z" />
+      <path d="M8.9 10.4V6.9a3.1 3.1 0 0 1 6.2 0v3.5" />
+    </svg>
+  );
+}
+
 /** Os quatro atributos, do jeito que aparecem na arte da marca. */
 export const ATRIBUTOS = [
   { Icone: Sol, texto: "Feitos para tomar sol" },
