@@ -129,7 +129,7 @@ export default async function PecaPage({ params }: PageProps<"/[slug]">) {
 
           <Link
             href="/"
-            className="mt-5 inline-flex touch-manipulation items-center gap-3 rounded-full border border-[var(--color-linha)] bg-[var(--color-creme)] px-6 py-3 text-[0.62rem] uppercase tracking-[0.2em] transition-[transform,border-color] duration-200 active:scale-[0.97] active:border-[var(--color-tinta)]"
+            className="mt-5 inline-flex touch-manipulation items-center gap-3 rounded-full border border-[var(--color-linha)] bg-[var(--color-creme)] px-6 py-3 text-[0.62rem] uppercase tracking-[0.2em] transition-[transform,border-color] duration-200 active:scale-[0.97] hover:border-[var(--color-tinta)] active:border-[var(--color-tinta)]"
           >
             <span aria-hidden className="text-[var(--color-dourado)]">
               ←

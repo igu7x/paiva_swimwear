@@ -43,7 +43,7 @@ export default async function ContaPage() {
         {sessao.vendedora ? (
           <Link
             href="/admin"
-            className="mt-8 flex touch-manipulation items-center justify-between gap-4 rounded-2xl border border-[var(--color-dourado)] bg-[var(--color-creme)] p-5 transition-transform duration-200 active:scale-[0.99]"
+            className="mt-8 flex touch-manipulation items-center justify-between gap-4 rounded-2xl border border-[var(--color-dourado)] bg-[var(--color-creme)] p-5 transition-[transform,border-color] duration-200 hover:border-[var(--color-tinta)] active:scale-[0.99]"
           >
             <span>
               <span className="block font-medium">Painel da loja</span>
@@ -70,7 +70,7 @@ export default async function ContaPage() {
         <div className="mt-10 flex flex-col items-center gap-5 border-t border-[var(--color-linha)] pt-7">
           <Link
             href="/"
-            className="touch-manipulation rounded-full border border-[var(--color-linha)] bg-[var(--color-creme)] px-6 py-3 text-[0.62rem] uppercase tracking-[0.2em] transition-transform duration-200 active:scale-[0.97]"
+            className="touch-manipulation rounded-full border border-[var(--color-linha)] bg-[var(--color-creme)] px-6 py-3 text-[0.62rem] uppercase tracking-[0.2em] transition-[transform,border-color] duration-200 hover:border-[var(--color-tinta)] active:scale-[0.97]"
           >
             Ver as peças
           </Link>
@@ -78,7 +78,7 @@ export default async function ContaPage() {
           <form action={sair}>
             <button
               type="submit"
-              className="touch-manipulation text-sm text-[var(--color-suave)] underline underline-offset-4 transition-opacity active:opacity-60"
+              className="touch-manipulation text-sm text-[var(--color-suave)] underline underline-offset-4 transition-colors hover:text-[var(--color-tinta)] active:opacity-60"
             >
               Sair desta conta
             </button>

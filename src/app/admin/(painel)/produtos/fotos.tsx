@@ -79,7 +79,7 @@ export function Fotos({
                   <input type="hidden" name="fotoId" value={foto.id} />
                   <button
                     type="submit"
-                    className="w-full touch-manipulation rounded-lg border border-[var(--color-linha)] py-1 text-[11px] transition-opacity active:opacity-60"
+                    className="w-full touch-manipulation rounded-lg border border-[var(--color-linha)] py-1 text-[11px] transition-[border-color,opacity] hover:border-[var(--color-tinta)] active:opacity-60"
                   >
                     usar na vitrine
                   </button>
@@ -91,7 +91,7 @@ export function Fotos({
                 <input type="hidden" name="fotoId" value={foto.id} />
                 <button
                   type="submit"
-                  className="w-full touch-manipulation py-1 text-[11px] text-[var(--color-suave)] transition-opacity active:opacity-60"
+                  className="w-full touch-manipulation py-1 text-[11px] text-[var(--color-suave)] transition-colors hover:text-[var(--color-tinta)] active:opacity-60"
                 >
                   remover
                 </button>
@@ -110,7 +110,7 @@ export function Fotos({
         ) : null}
 
         <label
-          className={`flex w-full touch-manipulation items-center justify-center gap-2 rounded-full border border-[var(--color-linha)] bg-[var(--color-creme)] px-4 py-3 text-sm transition-[transform,border-color] duration-150 active:scale-[0.98] active:border-[var(--color-tinta)] ${
+          className={`flex w-full touch-manipulation items-center justify-center gap-2 rounded-full border border-[var(--color-linha)] bg-[var(--color-creme)] px-4 py-3 text-sm transition-[transform,border-color] duration-150 active:scale-[0.98] hover:border-[var(--color-tinta)] active:border-[var(--color-tinta)] ${
             enviando ? "pointer-events-none opacity-60" : ""
           }`}
         >

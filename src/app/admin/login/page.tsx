@@ -48,7 +48,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={enviando}
-          className="mt-2 rounded-full bg-[var(--color-tinta)] px-6 py-3.5 text-sm font-medium text-[var(--color-areia)] disabled:opacity-50"
+          className="mt-2 rounded-full bg-[var(--color-tinta)] px-6 py-3.5 text-sm font-medium text-[var(--color-areia)] transition-colors duration-150 hover:bg-[var(--color-tinta-viva)] disabled:opacity-50"
         >
           {enviando ? "Entrando..." : "Entrar"}
         </button>

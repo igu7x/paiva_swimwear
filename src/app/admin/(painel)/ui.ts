@@ -41,20 +41,20 @@ export const cartao =
   "rounded-2xl border border-[var(--color-linha)] bg-[var(--color-creme)] p-4";
 
 /** Bloco branco que também é um link ou botão. */
-export const cartaoClicavel = `${cartao} ${toque} block active:border-[var(--color-tinta)]`;
+export const cartaoClicavel = `${cartao} ${toque} block hover:border-[var(--color-tinta)] active:border-[var(--color-tinta)]`;
 
 /** Campo de texto. */
 export const campo =
   "w-full rounded-xl border border-[var(--color-linha)] bg-[var(--color-creme)] px-4 py-3 text-base outline-none transition-colors duration-150 focus:border-[var(--color-dourado)]";
 
 /** Ação principal da tela. Uma por tela, no máximo. */
-export const botaoPrincipal = `${toque} flex w-full items-center justify-center gap-2 rounded-full bg-[var(--color-tinta)] px-6 py-3.5 text-sm font-medium text-white active:opacity-90 disabled:pointer-events-none disabled:opacity-60`;
+export const botaoPrincipal = `${toque} flex w-full items-center justify-center gap-2 rounded-full bg-[var(--color-tinta)] px-6 py-3.5 text-sm font-medium text-white hover:bg-[var(--color-tinta-viva)] active:opacity-90 disabled:pointer-events-none disabled:opacity-60`;
 
 /** Ação secundária. */
-export const botaoContorno = `${toque} flex w-full items-center justify-center gap-2 rounded-full border border-[var(--color-linha)] bg-[var(--color-creme)] px-4 py-3 text-sm active:border-[var(--color-tinta)] disabled:pointer-events-none disabled:opacity-60`;
+export const botaoContorno = `${toque} flex w-full items-center justify-center gap-2 rounded-full border border-[var(--color-linha)] bg-[var(--color-creme)] px-4 py-3 text-sm hover:border-[var(--color-tinta)] active:border-[var(--color-tinta)] disabled:pointer-events-none disabled:opacity-60`;
 
 /** Ação discreta, sem moldura. */
-export const botaoTexto = `${toque} w-full py-2 text-xs text-[var(--color-suave)] active:opacity-60 disabled:opacity-60`;
+export const botaoTexto = `${toque} w-full py-2 text-xs text-[var(--color-suave)] hover:text-[var(--color-tinta)] active:opacity-60 disabled:opacity-60`;
 
 /** Título da tela. */
 export const titulo = "font-serif text-[1.75rem] leading-tight";

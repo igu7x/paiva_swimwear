@@ -51,6 +51,15 @@
   /* Tons de apoio da vitrine, tirados da arte da marca. */
   --color-dourado-claro: #f5c96b;
   --color-areia-funda: #f0e4d2;
+
+  /*
+    O marrom um passo mais claro, para o botão escuro sob o mouse.
+
+    Um botão escuro não tem como ficar mais escuro no hover sem virar preto e
+    sair da paleta. Clarear um degrau resolve: é percebido como "acendeu" e
+    continua sendo a mesma cor da marca.
+  */
+  --color-tinta-viva: #5f4632;
 }
 
 @keyframes entrada {
@@ -102,6 +111,37 @@ body {
 .font-serif {
   font-family: var(--font-serif);
   letter-spacing: -0.01em;
+}
+
+/* ---------------------------------------------------------------------------
+   O QUE PARECE CLICÁVEL PRECISA PARECER CLICÁVEL
+
+   O Tailwind 4 mudou o padrão: `<button>` deixou de vir com a mãozinha do
+   mouse e passou a usar a seta comum, que é o padrão do navegador. A intenção
+   deles é razoável — botão nativo é assim — mas o efeito aqui foi ruim: metade
+   dos controles da loja não dava nenhum sinal de que dava para clicar.
+
+   Isto devolve a mãozinha, e junto o "proibido" em quem está desabilitado —
+   tamanho esgotado, seta na ponta da galeria. Um botão que não responde
+   precisa dizer que não responde, senão a pessoa acha que o site travou.
+
+   Fica no `layer base` para qualquer utilitário de `cursor` escrito numa tela
+   continuar ganhando desta regra.
+   ------------------------------------------------------------------------- */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [role="tab"],
+  summary,
+  /* O envio de fotos do painel é um <label> com o campo de arquivo escondido
+     dentro — para o mouse ele é um botão como outro qualquer. */
+  label:has(input[type="file"]) {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
 }
 
 /*

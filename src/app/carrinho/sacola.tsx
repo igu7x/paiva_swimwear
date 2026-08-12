@@ -74,7 +74,7 @@ export function Sacola({ frete }: { frete: { cidade: string } | null }) {
         </p>
         <Link
           href="/"
-          className="touch-manipulation rounded-full bg-[var(--color-tinta)] px-6 py-3.5 text-[0.62rem] uppercase tracking-[0.2em] text-white transition-transform duration-200 active:scale-[0.97]"
+          className="touch-manipulation rounded-full bg-[var(--color-tinta)] px-6 py-3.5 text-[0.62rem] uppercase tracking-[0.2em] text-white transition-[transform,background-color] duration-200 hover:bg-[var(--color-tinta-viva)] active:scale-[0.97]"
         >
           Ver as peças
         </Link>
@@ -121,7 +121,10 @@ export function Sacola({ frete }: { frete: { cidade: string } | null }) {
               </Link>
 
               <div className="flex min-w-0 flex-1 flex-col">
-                <Link href={`/${linha.slug}`} className="font-serif text-lg leading-tight">
+                <Link
+                  href={`/${linha.slug}`}
+                  className="font-serif text-lg leading-tight"
+                >
                   {linha.nome}
                 </Link>
                 <p className="mt-0.5 text-xs text-[var(--color-suave)]">
@@ -149,7 +152,7 @@ export function Sacola({ frete }: { frete: { cidade: string } | null }) {
                         mudarQuantidade(linha, linha.quantidade - 1)
                       }
                       aria-label="Tirar uma"
-                      className="grid h-7 w-7 touch-manipulation place-items-center rounded-full text-sm active:bg-[var(--color-creme)]"
+                      className="grid h-7 w-7 touch-manipulation place-items-center rounded-full text-sm transition-colors duration-150 hover:bg-[var(--color-creme)] active:bg-[var(--color-creme)]"
                     >
                       −
                     </button>
@@ -163,7 +166,7 @@ export function Sacola({ frete }: { frete: { cidade: string } | null }) {
                       }
                       disabled={linha.quantidade >= linha.emEstoque}
                       aria-label="Pôr mais uma"
-                      className="grid h-7 w-7 touch-manipulation place-items-center rounded-full text-sm active:bg-[var(--color-creme)] disabled:opacity-35"
+                      className="grid h-7 w-7 touch-manipulation place-items-center rounded-full text-sm transition-colors duration-150 hover:bg-[var(--color-creme)] active:bg-[var(--color-creme)] disabled:opacity-35"
                     >
                       +
                     </button>
@@ -179,7 +182,7 @@ export function Sacola({ frete }: { frete: { cidade: string } | null }) {
                 type="button"
                 onClick={() => remover(linha)}
                 aria-label={`Tirar ${linha.nome} da sacola`}
-                className="self-start p-1 text-lg leading-none text-[var(--color-suave)] transition-opacity active:opacity-50"
+                className="self-start p-1 text-lg leading-none text-[var(--color-suave)] transition-colors hover:text-[var(--color-tinta)] active:opacity-50"
               >
                 ×
               </button>

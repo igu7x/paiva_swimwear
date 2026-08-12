@@ -52,7 +52,7 @@ export function FormularioDaConta({ voltar }: { voltar: string }) {
             className={`flex-1 touch-manipulation rounded-full px-4 py-2.5 text-[0.66rem] uppercase tracking-[0.16em] transition-colors duration-200 ${
               criando === valor
                 ? "bg-[var(--color-tinta)] text-white"
-                : "text-[var(--color-suave)]"
+                : "text-[var(--color-suave)] hover:text-[var(--color-tinta)]"
             }`}
           >
             {rotulo}
@@ -131,7 +131,7 @@ export function FormularioDaConta({ voltar }: { voltar: string }) {
         <button
           type="submit"
           disabled={enviando}
-          className="mt-1 touch-manipulation rounded-full bg-[var(--color-tinta)] px-6 py-3.5 text-[0.66rem] uppercase tracking-[0.2em] text-white transition-transform duration-200 active:scale-[0.98] disabled:opacity-60"
+          className="mt-1 touch-manipulation rounded-full bg-[var(--color-tinta)] px-6 py-3.5 text-[0.66rem] uppercase tracking-[0.2em] text-white transition-[transform,background-color] duration-200 hover:bg-[var(--color-tinta-viva)] active:scale-[0.98] disabled:opacity-60"
         >
           {enviando ? "Um instante" : criando ? "Criar minha conta" : "Entrar"}
         </button>
@@ -139,7 +139,10 @@ export function FormularioDaConta({ voltar }: { voltar: string }) {
 
       <p className="mt-8 text-center text-sm text-[var(--color-suave)]">
         Você não precisa de conta para comprar.{" "}
-        <Link href="/" className="text-[var(--color-tinta)] underline underline-offset-4">
+        <Link
+          href="/"
+          className="text-[var(--color-tinta)] underline underline-offset-4"
+        >
           Ver as peças
         </Link>
       </p>

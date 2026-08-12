@@ -31,7 +31,7 @@ export function Cabecalho() {
       <div className="mx-auto flex w-full max-w-md items-center justify-between gap-3 px-4 py-2.5">
         <Link
           href="/"
-          className="group flex shrink-0 touch-manipulation items-center gap-2 rounded-full border border-[var(--color-linha)] bg-[var(--color-creme)] py-2 pl-3 pr-4 text-[0.6rem] uppercase tracking-[0.16em] transition-[transform,border-color] duration-200 active:scale-[0.97] active:border-[var(--color-tinta)]"
+          className="group flex shrink-0 touch-manipulation items-center gap-2 rounded-full border border-[var(--color-linha)] bg-[var(--color-creme)] py-2 pl-3 pr-4 text-[0.6rem] uppercase tracking-[0.16em] transition-[transform,border-color] duration-200 active:scale-[0.97] hover:border-[var(--color-tinta)] active:border-[var(--color-tinta)]"
         >
           <span
             aria-hidden
@@ -56,7 +56,7 @@ export function Cabecalho() {
         <form action={sair} className="shrink-0">
           <button
             type="submit"
-            className="touch-manipulation rounded-full px-2 py-2 text-xs text-[var(--color-suave)] transition-opacity active:opacity-60"
+            className="touch-manipulation rounded-full px-2 py-2 text-xs text-[var(--color-suave)] transition-colors hover:text-[var(--color-tinta)] active:opacity-60"
           >
             Sair
           </button>
