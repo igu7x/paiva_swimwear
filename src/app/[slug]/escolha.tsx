@@ -24,10 +24,21 @@ export function Escolha({
   nome,
   fotos,
   variacoes,
+  sobreAPeca,
 }: {
   nome: string;
   fotos: Foto[];
   variacoes: Variacao[];
+  /*
+    O texto sobre a peça entra AQUI, logo depois da foto, e não no fim da
+    página. A ordem importa: quem chega pelo link olha a foto e a pergunta
+    seguinte é "como é essa peça?". Depois de responder isso é que faz sentido
+    escolher cor e tamanho.
+
+    Ele vem de fora porque é conteúdo do servidor — este componente é de tela,
+    e não deveria carregar texto que não muda.
+  */
+  sobreAPeca?: React.ReactNode;
 }) {
   const [corId, setCorId] = useState<number | null>(variacoes[0]?.id ?? null);
   const [tamanho, setTamanho] = useState<Tamanho | null>(null);
@@ -62,8 +73,10 @@ export function Escolha({
                 direita que parece defeito de layout. Nesse caso ela ocupa a
                 largura inteira.
               */
-              className={`relative aspect-[3/4] shrink-0 snap-center overflow-hidden rounded-2xl bg-[var(--color-creme)] ${
-                galeria.length === 1 ? "w-full sm:w-[62%]" : "w-[78%] sm:w-[46%]"
+              className={`relative aspect-[4/5] shrink-0 snap-center overflow-hidden rounded-2xl bg-[var(--color-creme)] shadow-[0_24px_60px_-34px_rgba(58,40,26,0.6)] ${
+                galeria.length === 1
+                  ? "w-full max-w-[300px] sm:max-w-[360px]"
+                  : "w-[72%] max-w-[280px] sm:w-[42%] sm:max-w-none"
               }`}
             >
               <Image
@@ -82,6 +95,8 @@ export function Escolha({
           Fotos em breve
         </div>
       )}
+
+      {sobreAPeca}
 
       {variacoes.length > 0 ? (
         <section className="mt-8">
