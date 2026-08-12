@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -92,31 +91,16 @@ export function BarraDaLoja({
         </div>
 
         {/*
-          A LOGO FICA NO MEIO DA BARRA, presa ao centro por cima, e não como
-          mais um item na fila.
+          NÃO EXISTE LOGO AQUI.
 
-          Numa fila o meio depende da largura dos dois lados — e os dois lados
-          mudam: o "Painel" só aparece para a vendedora, a bolinha da sacola
-          aparece e some conforme ela guarda peças. A logo ficaria dançando de
-          lugar dependendo de quem está olhando. Presa ao centro, ela fica onde
-          a marca tem que ficar: sempre no mesmo ponto.
+          Ela esteve no meio desta barra e saiu. Nas telas de dentro — a peça, a
+          sacola, a conta — a pessoa já sabe em que loja está: ela chegou pela
+          capa, que é uma tela inteira só da marca, ou por um link que ela
+          mesma recebeu. Repetir a marca no alto de cada tela não informa nada
+          e rouba o lugar da peça, que é o que ela veio ver.
+
+          O caminho de volta continua existindo, escrito, à esquerda.
         */}
-        {variante === "pagina" ? (
-          <Link
-            href="/"
-            scroll={false}
-            aria-label="Início"
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-          >
-            <Image
-              src="/logo.png"
-              alt="Paiva Swimwear"
-              width={1024}
-              height={622}
-              className="h-10 w-auto sm:h-11"
-            />
-          </Link>
-        ) : null}
 
         <nav className="flex items-center gap-2">
           {/*
