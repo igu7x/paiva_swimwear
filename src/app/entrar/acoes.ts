@@ -54,6 +54,22 @@ export async function entrarNaConta(
   });
 
   if (error) {
+    /*
+      Este caso merece frase própria.
+
+      Ele acontece com quem criou conta enquanto a confirmação por e-mail ainda
+      estava ligada no Supabase: a conta existe, a senha está certa, e mesmo
+      assim o login é recusado. Dizer "e-mail ou senha incorretos" mandaria a
+      pessoa tentar a senha de novo para sempre.
+    */
+    if (error.code === "email_not_confirmed") {
+      return {
+        erro: null,
+        aviso:
+          "Sua conta ainda não foi confirmada. Abra o link que enviamos no seu e-mail e tente de novo.",
+      };
+    }
+
     // Genérica de propósito: dizer "este e-mail não existe" entrega para quem
     // está tentando adivinhar qual e-mail está cadastrado na loja.
     return { erro: "E-mail ou senha incorretos.", aviso: null };
@@ -102,16 +118,31 @@ export async function criarConta(
   }
 
   /*
-    Quando a confirmação por e-mail está ligada no Supabase, o cadastro é
-    aceito mas nenhuma sessão é criada — a pessoa ainda não entrou. Sem este
-    aviso, a tela pareceria ter dado certo e ela ficaria sem entender por que
-    continua deslogada.
+    O CADASTRO DEU CERTO MAS NINGUÉM ENTROU.
+
+    Isso acontece quando o Supabase não devolve sessão na criação da conta. A
+    causa normal é a confirmação por e-mail estar ligada lá.
+
+    Em vez de desistir na hora, tenta entrar com a mesma senha que ela acabou
+    de escolher. Se a confirmação estiver desligada, isso funciona sempre — e é
+    o que faz esta tela ficar certa nas duas configurações do Supabase, sem
+    depender de o código saber qual delas está valendo.
+
+    Se a confirmação estiver ligada mesmo, o login é recusado e aí sim a frase
+    sobre o e-mail aparece.
   */
   if (!data.session) {
-    return {
-      erro: null,
-      aviso: "Conta criada. Confirme pelo link que enviamos no seu e-mail.",
-    };
+    const { error: erroDeEntrada } = await supabase.auth.signInWithPassword({
+      email,
+      password: senha,
+    });
+
+    if (erroDeEntrada) {
+      return {
+        erro: null,
+        aviso: "Conta criada. Confirme pelo link que enviamos no seu e-mail.",
+      };
+    }
   }
 
   redirect(destino);
