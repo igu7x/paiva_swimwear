@@ -72,35 +72,49 @@ export function BarraDaLoja({
         um retângulo invisível atravessaria o alto da página inteira e comeria
         o toque de qualquer coisa que passasse por baixo.
       */}
-      <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 px-3 py-2.5 [&_a]:pointer-events-auto [&_button]:pointer-events-auto sm:px-5">
+      <div className="relative mx-auto flex w-full max-w-5xl items-center justify-between gap-3 px-3 py-2.5 [&_a]:pointer-events-auto [&_button]:pointer-events-auto sm:px-5">
         <div className="flex min-w-0 items-center gap-2">
           {variante === "pagina" ? (
-            <>
-              <Link
-                href="/"
-                className="group flex touch-manipulation items-center gap-2 rounded-full border border-[var(--color-linha)] bg-[var(--color-creme)] py-2 pl-3 pr-4 text-[0.6rem] uppercase tracking-[0.18em] transition-[transform,border-color] duration-200 active:scale-[0.97] hover:border-[var(--color-tinta)] active:border-[var(--color-tinta)]"
+            <Link
+              href="/"
+              className="group flex touch-manipulation items-center gap-2 rounded-full border border-[var(--color-linha)] bg-[var(--color-creme)] py-2 pl-3 pr-4 text-[0.6rem] uppercase tracking-[0.18em] transition-[transform,border-color] duration-200 hover:border-[var(--color-tinta)] active:scale-[0.97] active:border-[var(--color-tinta)]"
+            >
+              <span
+                aria-hidden
+                className="text-[var(--color-dourado)] transition-transform duration-300 group-hover:-translate-x-0.5"
               >
-                <span
-                  aria-hidden
-                  className="text-[var(--color-dourado)] transition-transform duration-300 group-hover:-translate-x-0.5"
-                >
-                  ←
-                </span>
-                Voltar
-              </Link>
-
-              <Link href="/" aria-label="Início" className="hidden sm:block">
-                <Image
-                  src="/logo.png"
-                  alt="Paiva Swimwear"
-                  width={1024}
-                  height={622}
-                  className="h-9 w-auto"
-                />
-              </Link>
-            </>
+                ←
+              </span>
+              Voltar
+            </Link>
           ) : null}
         </div>
+
+        {/*
+          A LOGO FICA NO MEIO DA BARRA, presa ao centro por cima, e não como
+          mais um item na fila.
+
+          Numa fila o meio depende da largura dos dois lados — e os dois lados
+          mudam: o "Painel" só aparece para a vendedora, a bolinha da sacola
+          aparece e some conforme ela guarda peças. A logo ficaria dançando de
+          lugar dependendo de quem está olhando. Presa ao centro, ela fica onde
+          a marca tem que ficar: sempre no mesmo ponto.
+        */}
+        {variante === "pagina" ? (
+          <Link
+            href="/"
+            aria-label="Início"
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+          >
+            <Image
+              src="/logo.png"
+              alt="Paiva Swimwear"
+              width={1024}
+              height={622}
+              className="h-10 w-auto sm:h-11"
+            />
+          </Link>
+        ) : null}
 
         <nav className="flex items-center gap-2">
           {/*

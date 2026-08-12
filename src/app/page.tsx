@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ViewTransition } from "react";
 
 import { BarraDaLoja } from "@/components/barra-da-loja";
 import { MovimentoDaLoja } from "@/components/movimento-da-loja";
@@ -220,6 +221,18 @@ export default async function Home() {
                     {/* A sombra tira a peça do fundo. Sem ela, a foto encosta
                         na praia e as duas viram a mesma superfície — foi a
                         queixa de que a peça se mistura com o fundo. */}
+                    {/*
+                      O NOME DA TROCA DE TELA.
+
+                      Este mesmo nome existe na página da peça, na primeira
+                      foto da galeria. É o que faz o navegador entender que as
+                      duas são A MESMA FOTO em dois lugares diferentes — e em
+                      vez de sumir de um lado e aparecer do outro, ela viaja de
+                      um para o outro, crescendo até o lugar novo.
+
+                      Precisa ser único na página, por isso leva o id da peça.
+                    */}
+                    <ViewTransition name={`peca-${peca.id}`}>
                     <div className="relative aspect-[4/5] overflow-hidden rounded-[1.5rem] bg-[var(--color-creme)] shadow-[0_30px_70px_-30px_rgba(58,40,26,0.75)]">
                       {capa ? (
                         // A cortina sobe revelando a foto conforme ela entra.
@@ -241,6 +254,7 @@ export default async function Home() {
                         </span>
                       )}
                     </div>
+                    </ViewTransition>
                   </Link>
                 </div>
 

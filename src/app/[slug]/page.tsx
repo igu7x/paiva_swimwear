@@ -73,7 +73,21 @@ export default async function PecaPage({ params }: PageProps<"/[slug]">) {
     .filter(Boolean);
 
   return (
-    <div className="animate-entrada">
+    /*
+      A ANIMAÇÃO DE ENTRADA NÃO PODE ENVOLVER A BARRA.
+
+      `animate-entrada` anima `transform`, e enquanto uma animação dessas está
+      valendo o elemento vira o ponto de referência de tudo que for
+      `position: fixed` lá dentro — em vez da janela.
+
+      Com a página inteira envolvida, a barra do topo deixava de ficar presa na
+      tela e a foto em tela cheia era desenhada do tamanho da PÁGINA, não da
+      janela: por isso ela aparecia jogada para baixo no celular.
+
+      A animação continua existindo, só que aplicada ao conteúdo, com a barra
+      do lado de fora.
+    */
+    <>
       <MovimentoDaLoja />
 
       {/*
@@ -90,7 +104,7 @@ export default async function PecaPage({ params }: PageProps<"/[slug]">) {
         um link já sabe o nome da peça, foi por ele que clicou. O que ela ainda
         não viu é a peça.
       */}
-      <main className="mx-auto w-full max-w-md px-5 pb-16 pt-[4.4rem] sm:max-w-4xl sm:px-8 sm:pt-24">
+      <main className="animate-entrada mx-auto w-full max-w-md px-5 pb-16 pt-[4.4rem] sm:max-w-4xl sm:px-8 sm:pt-24">
         <Escolha
           produtoId={peca.id}
           nome={peca.nome}
@@ -138,6 +152,6 @@ export default async function PecaPage({ params }: PageProps<"/[slug]">) {
           </Link>
         </footer>
       </main>
-    </div>
+    </>
   );
 }

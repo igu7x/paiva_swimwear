@@ -28,7 +28,12 @@ export function Cabecalho() {
       // ponto de referência de quem está navegando. Ver globals.css.
       style={{ viewTransitionName: "cabecalho-painel" }}
     >
-      <div className="mx-auto flex w-full max-w-md items-center justify-between gap-3 px-4 py-2.5">
+      {/*
+        A logo é presa ao centro da faixa, e não posta na fila entre o "Loja" e
+        o "Sair". Numa fila o meio depende da largura dos dois lados, e eles não
+        têm a mesma largura — a logo ficaria sempre um pouco torta.
+      */}
+      <div className="relative mx-auto flex w-full max-w-md items-center justify-between gap-3 px-4 py-2.5">
         <Link
           href="/"
           className="group flex shrink-0 touch-manipulation items-center gap-2 rounded-full border border-[var(--color-linha)] bg-[var(--color-creme)] py-2 pl-3 pr-4 text-[0.6rem] uppercase tracking-[0.16em] transition-[transform,border-color] duration-200 active:scale-[0.97] hover:border-[var(--color-tinta)] active:border-[var(--color-tinta)]"
@@ -42,7 +47,11 @@ export function Cabecalho() {
           Loja
         </Link>
 
-        <Link href="/" aria-label="Ver a loja" className="shrink-0">
+        <Link
+          href="/"
+          aria-label="Ver a loja"
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+        >
           <Image
             src="/logo.png"
             alt="Paiva Swimwear"

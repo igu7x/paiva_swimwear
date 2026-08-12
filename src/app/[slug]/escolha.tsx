@@ -2,7 +2,15 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  ViewTransition,
+} from "react";
+import { createPortal } from "react-dom";
 
 import { useCarrinho } from "@/components/usar-carrinho";
 import { fundoDaCor, tomDaCor } from "@/lib/cores";
@@ -92,15 +100,37 @@ export function Escolha({
     });
   }, []);
 
-  // Qual foto está na frente agora — alimenta o contador embaixo da galeria.
+  /*
+    Qual foto está na frente agora — alimenta os traços embaixo da galeria.
+
+    A conta é "qual foto está mais perto de onde o trilho parou", e não uma
+    divisão pela largura da tela. A divisão só funcionava enquanto cada foto
+    ocupava o trilho inteiro; no celular ela passou a ocupar 82%, com espaço
+    entre uma e outra, e a partir daí a divisão apontava para a foto errada.
+
+    Medir a distância de cada uma continua certo em qualquer largura — inclusive
+    na última foto, que nunca chega a encostar na esquerda porque a rolagem
+    acaba antes.
+  */
   useEffect(() => {
     const trilho = carrossel.current;
     if (!trilho) return;
 
     const aoRolar = () => {
-      const largura = trilho.clientWidth;
-      if (largura === 0) return;
-      setAtiva(Math.round(trilho.scrollLeft / largura));
+      let maisPerto = 0;
+      let menorDistancia = Infinity;
+
+      for (const [indice, filho] of [...trilho.children].entries()) {
+        const posicao = (filho as HTMLElement).offsetLeft - trilho.offsetLeft;
+        const distancia = Math.abs(posicao - trilho.scrollLeft);
+
+        if (distancia < menorDistancia) {
+          menorDistancia = distancia;
+          maisPerto = indice;
+        }
+      }
+
+      setAtiva(maisPerto);
     };
 
     trilho.addEventListener("scroll", aoRolar, { passive: true });
@@ -175,36 +205,68 @@ export function Escolha({
                 ref={carrossel}
                 className="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden"
               >
-                {galeria.map((foto, indice) => (
-                  <button
-                    key={foto.id}
-                    type="button"
-                    onClick={() => setAmpliada(indice)}
-                    aria-label="Ver a foto maior"
-                    /*
-                      `cursor-zoom-in` diz o que este clique faz antes de a
-                      pessoa clicar: a foto abre em tela cheia. Uma mãozinha
-                      comum diria só "dá para clicar", e ela clicaria sem saber
-                      no que estava se metendo.
-                    */
-                    className="group relative aspect-[4/5] w-full shrink-0 cursor-zoom-in snap-center touch-manipulation overflow-hidden rounded-[1.5rem] bg-[var(--color-creme)]"
-                  >
-                    <Image
-                      src={enderecoDaFoto(foto.caminho)}
-                      alt={
-                        foto.variacaoId && cor
-                          ? `${nome} na cor ${cor.nome}`
-                          : nome
-                      }
-                      fill
-                      sizes="(max-width: 640px) 100vw, 460px"
-                      // A foto se aproxima devagar sob o mouse. É o retorno de
-                      // "isto responde" sem pôr nenhuma moldura por cima dela.
-                      className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.03]"
-                      priority={indice === 0}
-                    />
-                  </button>
-                ))}
+                {galeria.map((foto, indice) => {
+                  const quadro = (
+                    <button
+                      type="button"
+                      onClick={() => setAmpliada(indice)}
+                      aria-label="Ver a foto maior"
+                      /*
+                        `cursor-zoom-in` diz o que este clique faz antes de a
+                        pessoa clicar: a foto abre em tela cheia. Uma mãozinha
+                        comum diria só "dá para clicar", e ela clicaria sem
+                        saber no que estava se metendo.
+
+                        NO CELULAR A FOTO NÃO OCUPA A LARGURA INTEIRA. Ela
+                        ocupa 82%, e isso faz duas coisas: sobra areia dos dois
+                        lados, então a peça respira em vez de encher a tela; e
+                        com mais de uma foto, a seguinte aparece pela borda —
+                        que é como a pessoa descobre, sem ninguém explicar, que
+                        dá para arrastar.
+
+                        Com uma foto só ela vai para o meio, senão sobraria um
+                        vazio de um lado só, que lê como defeito de layout.
+                      */
+                      className={`group relative aspect-[4/5] w-[82%] max-w-[320px] shrink-0 cursor-zoom-in snap-start touch-manipulation overflow-hidden rounded-[1.5rem] bg-[var(--color-creme)] sm:mx-0 sm:w-full sm:max-w-none ${
+                        galeria.length === 1 ? "mx-auto" : ""
+                      }`}
+                    >
+                      <Image
+                        src={enderecoDaFoto(foto.caminho)}
+                        alt={
+                          foto.variacaoId && cor
+                            ? `${nome} na cor ${cor.nome}`
+                            : nome
+                        }
+                        fill
+                        sizes="(max-width: 640px) 100vw, 460px"
+                        // A foto se aproxima devagar sob o mouse. É o retorno
+                        // de "isto responde" sem pôr moldura por cima dela.
+                        className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.03]"
+                        priority={indice === 0}
+                      />
+                    </button>
+                  );
+
+                  /*
+                    A PRIMEIRA FOTO CARREGA O NOME DA TROCA DE TELA.
+
+                    É o mesmo nome que a foto desta peça tem na vitrine. O
+                    navegador reconhece que são a mesma coisa em dois lugares e
+                    faz uma viajar até a outra, crescendo — em vez de uma sumir
+                    e a outra aparecer do nada.
+
+                    Só a primeira: o nome precisa ser único na página, e a
+                    primeira é justamente a capa, que é o que a vitrine mostra.
+                  */
+                  return indice === 0 ? (
+                    <ViewTransition key={foto.id} name={`peca-${produtoId}`}>
+                      {quadro}
+                    </ViewTransition>
+                  ) : (
+                    <Fragment key={foto.id}>{quadro}</Fragment>
+                  );
+                })}
               </div>
 
               {/*
@@ -581,7 +643,18 @@ function FotoAmpliada({
     };
   }, [indice, fotos.length, aoTrocar, aoFechar]);
 
-  return (
+  /*
+    O visor é desenhado FORA da página, direto no corpo do documento.
+
+    Um `position: fixed` só é preso à janela enquanto nenhum antepassado dele
+    tiver `transform`, `filter` ou `perspective` — basta um, em qualquer altura
+    da árvore, para o "fixo" passar a valer em relação àquele elemento. A
+    página da peça tem animação de entrada, os cartões têm desfoque; qualquer
+    um desses transformaria o visor num retângulo do tamanho da página.
+
+    Tirando ele da árvore, isso deixa de ser uma preocupação para sempre.
+  */
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
@@ -614,7 +687,21 @@ function FotoAmpliada({
         <div
           // O clique nos botões não pode fechar a tela junto.
           onClick={(evento) => evento.stopPropagation()}
-          className="flex items-center justify-center gap-6 p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]"
+          /*
+            A FOLGA GRANDE EMBAIXO É NO CELULAR, e serve para duas coisas ao
+            mesmo tempo.
+
+            A primeira: os navegadores de celular escondem e mostram a barra de
+            endereço conforme a pessoa mexe na tela. Encostado no pé, o botão
+            ficava debaixo dela em metade das vezes.
+
+            A segunda é consequência: como esta faixa ocupa mais espaço, sobra
+            menos para a foto — e a foto sobe junto, saindo de baixo do polegar
+            de quem está segurando o aparelho.
+
+            No computador nada disso existe, e a folga volta ao normal.
+          */
+          className="flex items-center justify-center gap-6 p-6 pb-[max(4.5rem,calc(env(safe-area-inset-bottom)+3.5rem))] sm:pb-[max(1.5rem,env(safe-area-inset-bottom))]"
         >
           <button
             type="button"
@@ -639,6 +726,7 @@ function FotoAmpliada({
           </button>
         </div>
       ) : null}
-    </div>
+    </div>,
+    document.body,
   );
 }

@@ -798,6 +798,42 @@ html.lenis body {
   pointer-events: none;
 }
 
+/* ---------------------------------------------------------------------------
+   DA VITRINE PARA A PEÇA: A FOTO VAI JUNTO
+
+   A foto da peça tem o mesmo nome nos dois lugares — na vitrine e no alto da
+   página da peça. O navegador percebe que é a mesma coisa em dois lugares e,
+   em vez de apagar uma e desenhar a outra, leva uma até a outra.
+
+   É o oposto de uma tela deslizando: nada entra pela lateral, nada pisca. A
+   peça que a pessoa tocou cresce e assenta no lugar novo, e o resto da página
+   troca por baixo dela. A ligação entre as duas telas fica óbvia sem nenhum
+   texto explicando.
+
+   Os tempos abaixo são os do resto do site, não os do navegador. O padrão dele
+   (250ms, curva simétrica) é seco demais perto do movimento desta loja: a curva
+   aqui desacelera no fim, então a foto parece POUSAR em vez de parar.
+   ------------------------------------------------------------------------- */
+::view-transition-group(*) {
+  animation-duration: 480ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/*
+  O fundo da página troca mais rápido do que a foto viaja.
+
+  Se os dois durassem o mesmo, a página nova chegaria inteira junto com a foto e
+  ninguém veria a foto viajando — ela ficaria escondida no meio de tudo mudando
+  ao mesmo tempo. Terminando antes, o fundo já está trocado quando a foto ainda
+  está a caminho, e o olho consegue seguir a peça.
+*/
+::view-transition-old(root) {
+  animation: 200ms ease-in both esmaecer reverse;
+}
+::view-transition-new(root) {
+  animation: 260ms ease-out 80ms both esmaecer;
+}
+
 ::view-transition-old(.ida) {
   --deslocamento: -40px;
   animation:
