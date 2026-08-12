@@ -3,6 +3,31 @@
 import Lenis from "lenis";
 import { useEffect } from "react";
 
+/*
+  ABRIU PÁGINA NOVA, COMEÇA NO TOPO.
+
+  A rolagem com inércia guarda por dentro a posição em que ela acha que a
+  página está, e vai escrevendo esse número na tela a cada quadro. Quando a
+  cliente troca de página, o Next manda a rolagem para o topo — mas a inércia
+  da página ANTIGA ainda pode estar rodando por um ou dois quadros e escrever a
+  posição velha de volta. A página nova nasce rolada.
+
+  É uma corrida, então acontece às vezes e não sempre — que foi exatamente
+  como o problema apareceu.
+
+  Este trecho garante o topo, com uma exceção: o "voltar" do navegador. Aí a
+  pessoa quer encontrar a vitrine onde ela parou, não recomeçar do alto. A
+  marca abaixo vive fora do componente de propósito — ela precisa sobreviver à
+  troca de página, e tudo que está dentro do componente é jogado fora nela.
+*/
+let voltouPeloNavegador = false;
+
+if (typeof window !== "undefined") {
+  window.addEventListener("popstate", () => {
+    voltouPeloNavegador = true;
+  });
+}
+
 /**
  * O movimento da parte que a cliente vê: rolagem com inércia e revelações.
  *
@@ -72,6 +97,20 @@ export function MovimentoDaLoja() {
       raiz.style.setProperty("--rolagem", String(Math.round(scroll)));
     });
 
+    /*
+      Chegou por um link: começa no topo, e a inércia é avisada disso.
+
+      O `immediate` é o que importa: sem ele a página desceria deslizando até o
+      topo na frente da cliente, que é pior do que já estar lá. Com ele, a
+      inércia simplesmente passa a concordar que a página está no alto.
+    */
+    if (!voltouPeloNavegador) {
+      window.scrollTo(0, 0);
+      lenis.scrollTo(0, { immediate: true, force: true });
+    }
+
+    voltouPeloNavegador = false;
+
     let quadro = 0;
     const passo = (tempo: number) => {
       lenis.raf(tempo);
@@ -108,6 +147,9 @@ export function MovimentoDaLoja() {
       clearTimeout(fimDaAbertura);
       cancelAnimationFrame(quadro);
       observador.disconnect();
+      // Para antes de destruir: assim esta página não escreve mais nenhuma
+      // posição de rolagem enquanto a página seguinte está nascendo.
+      lenis.stop();
       lenis.destroy();
       raiz.classList.remove("js-pronto", "abrindo");
     };

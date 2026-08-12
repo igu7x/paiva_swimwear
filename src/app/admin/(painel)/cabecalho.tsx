@@ -23,7 +23,19 @@ import { sair } from "./acoes";
 export function Cabecalho() {
   return (
     <header
-      className="border-b border-[var(--color-linha)] bg-[var(--color-areia)]"
+      /*
+        FICA PRESA NO ALTO. Ela era uma faixa comum, que subia junto com a
+        página — e numa lista de peças com estoque para conferir, a saída para
+        a loja e o "Sair" sumiam logo no primeiro rolar.
+
+        `sticky` e não `fixed`: assim ela continua ocupando o espaço dela no
+        alto da página, e o conteúdo começa embaixo dela sem precisar de
+        margem calculada na mão.
+
+        O fundo é opaco de propósito. Com fundo transparente o texto da página
+        passaria por baixo e as duas coisas se misturariam durante a rolagem.
+      */
+      className="sticky top-0 z-30 border-b border-[var(--color-linha)] bg-[var(--color-areia)]"
       // Marca a faixa para ela ficar parada durante a troca de tela — é o
       // ponto de referência de quem está navegando. Ver globals.css.
       style={{ viewTransitionName: "cabecalho-painel" }}
