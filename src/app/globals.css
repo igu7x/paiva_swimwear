@@ -583,8 +583,8 @@ html.lenis body {
   depois, por cima — não são afetadas.
 */
 .veu-agua {
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
   background: linear-gradient(
     180deg,
     var(--color-areia) 0%,
