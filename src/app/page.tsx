@@ -164,23 +164,22 @@ export default async function Home() {
                 placa ficavam soltas uma da outra, e o olho lia duas coisas
                 separadas em vez de uma composição.
 
-                Agora a placa SOBE POR CIMA da foto e fica recuada nas
-                laterais. As duas viram uma peça só, e a cena cabe na tela sem
-                a pessoa precisar rolar no meio dela.
+                Agora as duas ficam CENTRALIZADAS e a placa sobe por cima do pé
+                da foto. A praia sobra igual dos dois lados, e a cena cabe em
+                meia tela.
 
-                No desktop nada disso vale: lá elas ficam lado a lado, e o
-                recuo e a sobreposição são zerados.
+                Uma versão anterior deslocava cada uma para um lado, criando
+                diagonal. Foi descartada: o tamanho estava certo, o arranjo não.
+
+                No desktop nada disso vale: lá elas ficam lado a lado, sem
+                sobreposição.
               */
               <section
                 key={peca.id}
                 className="mx-auto flex max-w-5xl flex-col items-center gap-0 px-4 py-14 sm:flex-row sm:gap-16 sm:px-6 sm:py-[14vh]"
               >
                 <div
-                  className={`w-[48%] max-w-[195px] sm:w-1/2 sm:max-w-none ${
-                    espelhada
-                      ? "self-end sm:order-2 sm:self-auto"
-                      : "self-start sm:self-auto"
-                  }`}
+                  className={`w-[48%] max-w-[195px] sm:w-1/2 sm:max-w-none ${espelhada ? "sm:order-2" : ""}`}
                 >
                   <Link href={`/${peca.slug}`} className="group block">
                     {/* A sombra tira a peça do fundo. Sem ela, a foto encosta
@@ -229,11 +228,7 @@ export default async function Home() {
                   No desktop tudo isso é desligado: lá elas ficam lado a lado.
                 */}
                 <div
-                  className={`-mt-10 w-[58%] max-w-[240px] sm:mt-0 sm:w-1/2 sm:max-w-none ${
-                    espelhada
-                      ? "self-start sm:order-1 sm:self-auto"
-                      : "self-end sm:self-auto"
-                  }`}
+                  className={`-mt-10 w-[72%] max-w-[290px] sm:mt-0 sm:w-1/2 sm:max-w-none ${espelhada ? "sm:order-1" : ""}`}
                 >
                   <div
                     data-revelar
