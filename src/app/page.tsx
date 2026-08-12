@@ -119,6 +119,34 @@ export default async function Home() {
             </span>
           </span>
         </h1>
+
+        {/*
+          O convite para descer.
+
+          A capa ocupa a tela inteira e não mostra nada abaixo dela — sem um
+          sinal, existe a chance real de a pessoa achar que o site é só isto.
+
+          São duas camadas de propósito: a de fora cuida da entrada (chega por
+          último, depois das duas linhas), a de dentro some conforme a rolagem
+          avança. Assim o aviso não fica pendurado na tela depois de já ter
+          sido obedecido.
+        */}
+        <div
+          data-revelar
+          className="desca pointer-events-none absolute inset-x-0 bottom-[max(1.75rem,env(safe-area-inset-bottom))]"
+        >
+          <div className="desca-some flex flex-col items-center gap-3">
+            <span className="text-[0.58rem] uppercase tracking-[0.3em] text-[var(--color-suave)]">
+              Role para descobrir
+            </span>
+
+            <span aria-hidden className="desca-trilho">
+              <span className="desca-gota" />
+            </span>
+
+            <span aria-hidden className="desca-seta" />
+          </div>
+        </div>
       </section>
 
       <OQuePrometemos />
